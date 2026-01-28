@@ -1,0 +1,73 @@
+/* Box sizing consistente */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove margens padrão */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Melhor tipografia base */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mídia responsiva por padrão */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Inputs herdam fonte */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove estilos padrão de botões */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Remove list-style */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Links sem underline por padrão */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Evita overflow de texto */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
