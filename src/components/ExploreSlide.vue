@@ -33,7 +33,7 @@
       </div>
 
       <div class="menu-section">
-        <h2 class="menu-title">Explorar Áreas</h2>
+        <h2 class="menu-title">Descubra sobre mim</h2>
         <div class="menu-items">
           <MenuButton
             v-for="(option, index) in options"
@@ -55,6 +55,10 @@
 import MenuButton from './MenuButton.vue'
 import { Code2, Music, Gamepad2, GraduationCap, Film } from 'lucide-vue-next'
 import type { Component } from 'vue'
+
+import { useInfoModal } from '@/composables/useInfoModal'
+
+const { show } = useInfoModal()
 
 interface Option {
   id: string
@@ -98,6 +102,12 @@ const options: Option[] = [
 
 const handleNavigate = (id: string) => {
   console.log('Navigate to:', id)
+
+  show({
+    title: options.find((option) => option.id === id)?.title,
+    description: 'Acho que alguém quebrou esse botão..',
+    buttonText: 'Ok',
+  })
 }
 </script>
 

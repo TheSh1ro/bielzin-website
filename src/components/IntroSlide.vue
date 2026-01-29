@@ -20,11 +20,13 @@
         </div>
 
         <div class="buttons-group">
-          <button class="btn-primary">
+          <button class="btn-primary" @click="openInfoModal">
             <span>Explorar Portfólio</span>
             <ArrowRight :size="20" />
           </button>
-          <button class="btn-projects" title="Escolher forma de contato">Entrar em contato</button>
+          <button class="btn-projects" title="Escolher forma de contato" @click="openContactModal">
+            Entrar em contato
+          </button>
         </div>
       </div>
 
@@ -38,11 +40,30 @@
         </div>
       </div>
     </div>
+
+    <ContactModal
+      :isOpen="isContactModalOpen"
+      @close="closeContactModal"
+      @contact="handleContact"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { ArrowRight } from 'lucide-vue-next'
+import ContactModal from './ContactModal.vue'
+import { useInfoModal } from '@/composables/useInfoModal'
+
+const { show } = useInfoModal()
+
+const openInfoModal = () => {
+  show({
+    title: 'Explorar Portfólio',
+    description: 'Acho que alguém quebrou esse botão..',
+    buttonText: 'Ok',
+  })
+}
 
 const techs = [
   'TypeScript',
@@ -55,6 +76,20 @@ const techs = [
   'Mongo',
   '+',
 ]
+
+const isContactModalOpen = ref(false)
+
+const openContactModal = () => {
+  isContactModalOpen.value = true
+}
+
+const closeContactModal = () => {
+  isContactModalOpen.value = false
+}
+
+const handleContact = (id: string) => {
+  console.log('Contact method selected:', id)
+}
 </script>
 
 <style scoped>
@@ -198,7 +233,7 @@ const techs = [
   transform: translateY(-3px);
 }
 
-/* ============ IMAGEM DO PERFIL ============ */
+/* ----------- IMAGEM DO PERFIL ----------- */
 .image-section {
   display: flex;
   justify-content: center;
@@ -270,7 +305,7 @@ const techs = [
   }
 }
 
-/* ============ RESPONSIVE ============ */
+/* ----------- RESPONSIVE ----------- */
 @media (max-width: 1200px) {
   .content-grid {
     grid-template-columns: 1fr;
