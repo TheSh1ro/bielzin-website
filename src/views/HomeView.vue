@@ -1,3 +1,4 @@
+<!-- src\views\HomeView.vue -->
 <template>
   <div class="portfolio">
     <div class="swiper" ref="swiperContainer">
@@ -12,8 +13,8 @@
                 </h1>
 
                 <p class="intro">
-                  Transformando ideias em experiências digitais extraordinárias através de código
-                  elegante e design inovador.
+                  Transformo ideias em experiências digitais por meio de planejamento e código bem
+                  estruturado, entregando soluções completas
                 </p>
 
                 <div class="tech-list">
@@ -27,14 +28,18 @@
                     <span>Explorar Portfólio</span>
                     <ArrowRight :size="20" />
                   </button>
-                  <button class="btn-projects">Entrar em contato</button>
+                  <button class="btn-projects" title="Escolher forma de contato">
+                    Entrar em contato
+                  </button>
                 </div>
               </div>
 
               <div class="image-section">
                 <div class="profile-image">
                   <div class="image-border"></div>
-                  <img src="https://avatars.githubusercontent.com/u/83150503?v=4" alt="Profile" />
+                  <a href="https://github.com/TheSh1ro" target="_blank" title="Acessar GitHub">
+                    <img src="https://avatars.githubusercontent.com/u/83150503?v=4" alt="Profile" />
+                  </a>
                   <div class="image-glow"></div>
                 </div>
               </div>
@@ -48,11 +53,16 @@
               <div class="preview-section">
                 <div class="preview-container">
                   <div class="preview-header">
-                    <span class="preview-tag">Featured Project</span>
+                    <span class="preview-tag">Recent Project</span>
                     <h3 class="preview-title">Plataforma de EloJob</h3>
                   </div>
                   <div class="preview-image">
-                    <a href="https://newelo.vercel.app/" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href="https://newelo.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Navegar para o projeto"
+                    >
                       <img src="https://i.imgur.com/CSkVYf4.png" alt="Project" />
                     </a>
                     <div class="preview-overlay">
@@ -520,11 +530,11 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.5s ease;
 }
 
-.preview-container:hover .preview-image img {
-  transform: scale(1.05);
+.preview-image:hover img {
+  transform: scale(1.02);
 }
 
 .preview-overlay {
@@ -538,7 +548,7 @@ onUnmounted(() => {
   transition: transform 0.4s ease;
 }
 
-.preview-container:hover .preview-overlay {
+.preview-image:hover .preview-overlay {
   transform: translateY(0);
 }
 
