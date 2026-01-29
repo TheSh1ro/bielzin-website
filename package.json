@@ -13,13 +13,17 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "lucide-vue-next": "^0.563.0",
     "pinia": "^3.0.4",
+    "swiper": "^12.1.0",
+    "three": "^0.182.0",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.10.9",
+    "@types/three": "^0.182.0",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
