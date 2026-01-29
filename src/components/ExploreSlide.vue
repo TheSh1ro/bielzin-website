@@ -10,7 +10,7 @@
           </div>
           <div class="preview-image">
             <a
-              href="https://newelo-frontend-thesh1ro-projects.vercel.app/"
+              href="https://newelo.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               title="Navegar para o projeto"
