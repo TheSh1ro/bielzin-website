@@ -5,3 +5,7 @@
   --darker: #050810;
   --accent: #ff006fdc;
 }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
