@@ -593,7 +593,6 @@ function finishEntrance() {
                   loading="lazy"
                 />
                 <div class="favorite-content">
-                  <p class="eyebrow"><Gamepad2 :size="16" aria-hidden="true" /> Jogo favorito</p>
                   <h3>{{ profile.favoriteGame.name }}</h3>
                   <div class="favorite-actions">
                     <a class="button button--primary" :href="profile.favoriteGame.guide">
