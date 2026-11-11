@@ -680,11 +680,6 @@ section[id] {
   gap: 8px 16px;
   margin-top: 20px;
 }
-.rank {
-  color: #e1dce8;
-  font-family: inherit;
-  font-size: 0.8125rem;
-}
 
 .games {
   margin-top: 24px;

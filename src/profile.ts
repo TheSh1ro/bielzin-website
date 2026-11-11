@@ -64,7 +64,6 @@ export const profile = {
   ] satisfies Link[],
   favoriteGame: {
     name: 'League of Legends',
-    rank: 'Grandmaster Riven',
     cover: '/media/riven.jpg',
     guide: 'https://www.canva.com/design/DAGO4iMzYcM/b25o5mj_BhH2WvXUZOIkoA/view',
   },

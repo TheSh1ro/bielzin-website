@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "snapshot:lol": "node scripts/snapshot-lol.mjs",
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",

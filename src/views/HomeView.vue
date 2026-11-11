@@ -14,6 +14,7 @@ import {
 } from 'lucide-vue-next'
 import { profile } from '@/profile'
 import YouTubeTrack from '@/components/YouTubeTrack.vue'
+import LeagueTracker from '@/components/LeagueTracker.vue'
 
 const entered = ref(false)
 const entering = ref(false)
@@ -598,10 +599,11 @@ function finishEntrance() {
                     <a class="button button--primary" :href="profile.favoriteGame.guide">
                       Guia de Riven <ArrowUpRight :size="16" aria-hidden="true" />
                     </a>
-                    <span class="rank">{{ profile.favoriteGame.rank }}</span>
                   </div>
                 </div>
               </div>
+
+              <LeagueTracker />
 
               <section class="games" aria-labelledby="games-title">
                 <h3 id="games-title">Jogos que eu curto</h3>

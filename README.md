@@ -1,5 +1,21 @@
 # bielzin
 
+## Tracker de League of Legends
+
+A aba Jogos lê o snapshot real em `src/data/lol-tracker.json`. O site não faz chamadas à Riot e não recebe a chave. Os ícones da coleta ficam em `public/media/lol/`.
+
+Para atualizar localmente no PowerShell:
+
+```powershell
+$env:RIOT_API_KEY = 'sua-chave'
+npm run snapshot:lol
+Remove-Item Env:RIOT_API_KEY
+```
+
+O padrão é `bielzin#sh1ro`, servidor BR. Para adicionar outra conta BR ao mesmo JSON: `npm run snapshot:lol -- "Nome" "TAG"`. O seletor de contas aparece quando houver mais de uma conta coletada. A chave é usada somente no processo local; não use variáveis `VITE_*` para ela.
+
+Cada coleta busca até 40 partidas ranqueadas recentes, substitui a amostra da conta e preserva os registros de elo anteriores. Uma mudança em elo, LP, vitórias ou derrotas gera um novo registro por fila. Não há reconstrução de LP anteriores à primeira coleta. Campeões, KDA e vitórias recentes são calculados da amostra, com remakes excluídos; os totais por fila vêm da Riot. Depois de atualizar o JSON, gere/publique o site novamente para exibir o novo snapshot.
+
 Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `npm run dev` para abrir a prévia e `npm run build` para gerar o site.
 
 Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e as cores. Coloque arquivos próprios em `public/media/` e use caminhos como `/media/trilha.mp3`.
