@@ -785,6 +785,7 @@ section[id] {
   line-height: 1.5;
 }
 .soundtrack {
+  min-width: 0;
   padding: 20px;
   font-size: 0.8125rem;
 }
@@ -804,10 +805,16 @@ section[id] {
   gap: 12px;
   min-width: 0;
 }
+.soundtrack-info > div {
+  min-width: 0;
+}
 .soundtrack-info strong {
+  display: block;
+  overflow: hidden;
   font-family: var(--display);
   font-size: 1rem;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .soundtrack-info small {
   display: block;
@@ -915,6 +922,7 @@ section[id] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  max-width: 100%;
   min-height: 44px;
 }
 .track-title-link > svg {

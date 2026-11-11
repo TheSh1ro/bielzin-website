@@ -24,14 +24,15 @@ export const profile = {
     backgroundStill: '/media/mikey-fundo.png',
   },
   music: {
-    src: '/media/cant-sleep.mp3',
-    youtubeUrl: 'https://www.youtube.com/watch?v=QNm7nudU6bI',
+    src: '/media/whatever-floats-your-boat.mp3',
+    spotifyUrl: 'https://open.spotify.com/intl-pt/track/2t5UTvg5AxfVGBESIdRq7a?si=38b43a2b88514391',
+    youtubeUrl: '',
     embedYouTube: false,
-    title: 'inoqx - cant sleep',
-    artist: '',
+    title: 'Whatever Floats Your Boat Will Definitely Sink My Ship',
+    artist: '$uicideboy$',
     // Ponto inicial da música em segundos. Exemplo: 32.5 começa em 0:32,5.
     startAt: 0,
-    volume: 0.05,
+    volume: 0.03,
   },
   links: [
     {

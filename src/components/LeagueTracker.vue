@@ -129,10 +129,7 @@ async function collapseMatches() {
 <template>
   <section v-if="account" class="tracker" aria-labelledby="tracker-title">
     <header class="tracker-heading">
-      <div>
-        <p class="eyebrow">League of Legends</p>
-        <h3 id="tracker-title">Meu tracker</h3>
-      </div>
+      <h3 id="tracker-title">Meu perfil</h3>
       <time class="snapshot-label" :datetime="account.collectedAt">
         {{ dateLabel(account.collectedAt, true) }}
       </time>
@@ -345,10 +342,7 @@ async function collapseMatches() {
   </section>
   <section v-else class="tracker" aria-labelledby="tracker-title">
     <header class="tracker-heading">
-      <div>
-        <p class="eyebrow">League of Legends</p>
-        <h3 id="tracker-title">Meu tracker</h3>
-      </div>
+      <h3 id="tracker-title">Meu perfil</h3>
     </header>
     <p class="empty">Nenhuma conta no tracker.</p>
   </section>

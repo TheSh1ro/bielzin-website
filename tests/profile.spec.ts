@@ -24,7 +24,12 @@ test('mostra o snapshot atual e devolve o foco ao trocar de seção', async ({ p
   await page.goto('/')
   await page.getByRole('button', { name: 'Entrar no perfil' }).click()
 
-  await expect(page.getByRole('heading', { name: 'Meu tracker' })).toBeVisible()
+  await expect(
+    page.getByRole('region', { name: 'Meu perfil' }).getByRole('heading', {
+      name: 'Meu perfil',
+      exact: true,
+    }),
+  ).toBeVisible()
   await expect(page.getByRole('link', { name: 'Ver perfil' })).toBeVisible()
   await page.getByRole('button', { name: /Flex/ }).click()
   await expect(page.getByRole('button', { name: /Flex/ })).toHaveAttribute('aria-pressed', 'true')

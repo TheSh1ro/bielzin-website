@@ -209,6 +209,8 @@ const youtubeRequested = ref(false)
 const youtubeId =
   profile.music.embedYouTube && !profile.music.src ? getYouTubeId(profile.music.youtubeUrl) : null
 const canPlayMusic = Boolean(profile.music.src || youtubeId)
+const trackUrl = profile.music.spotifyUrl || profile.music.youtubeUrl
+const trackPlatform = profile.music.spotifyUrl ? 'Spotify' : 'YouTube'
 const backgroundVideoError = ref(false)
 const theme = {
   '--accent': profile.theme.accent,
@@ -433,7 +435,7 @@ function finishEntrance() {
           </section>
 
           <section
-            v-if="profile.music.src || profile.music.youtubeUrl"
+            v-if="profile.music.src || trackUrl"
             ref="soundtrack"
             class="panel soundtrack"
             aria-label="Trilha do perfil"
@@ -443,17 +445,18 @@ function finishEntrance() {
               <div class="soundtrack-info">
                 <div>
                   <a
-                    v-if="profile.music.youtubeUrl"
+                    v-if="trackUrl"
                     class="track-title-link"
-                    :href="profile.music.youtubeUrl"
+                    :href="trackUrl"
                     target="_blank"
                     rel="noopener noreferrer"
-                    :aria-label="`${profile.music.title} no YouTube`"
+                    :aria-label="`${profile.music.title} no ${trackPlatform}`"
+                    :title="profile.music.title"
                   >
                     <strong>{{ profile.music.title }}</strong
                     ><ArrowUpRight :size="14" aria-hidden="true" />
                   </a>
-                  <strong v-else>{{ profile.music.title }}</strong>
+                  <strong v-else :title="profile.music.title">{{ profile.music.title }}</strong>
                   <small v-if="profile.music.artist">{{ profile.music.artist }}</small>
                 </div>
               </div>
@@ -532,7 +535,6 @@ function finishEntrance() {
               :muted="soundMuted"
               preload="metadata"
               hidden
-              loop
               aria-label="Trilha do perfil"
               @loadedmetadata="setAudioStart"
               @error="audioError = true"

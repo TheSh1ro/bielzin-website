@@ -22,7 +22,7 @@ Para rodar os testes localmente, instale o Chromium com `npx playwright install 
 
 Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e as cores. Coloque arquivos próprios em `public/media/` e use caminhos como `/media/trilha.mp3`.
 
-- `music.src` define um arquivo de áudio direto. Para uma faixa do YouTube, preencha `music.youtubeUrl` e ative `music.embedYouTube` se o vídeo permitir reprodução incorporada. O arquivo direto tem prioridade. `music.volume` define o volume inicial entre 0 e 1. O link para o YouTube fica disponível no card da trilha.
+- `music.src` define um arquivo de áudio direto. Para uma faixa do YouTube, preencha `music.youtubeUrl` e ative `music.embedYouTube` se o vídeo permitir reprodução incorporada. O arquivo direto tem prioridade. `music.volume` define o volume inicial entre 0 e 1. O título no card da trilha aponta para `music.spotifyUrl` ou, se estiver vazio, para `music.youtubeUrl`.
 - `music.startAt` define o ponto inicial do MP3 em segundos. Por exemplo, `32.5` inicia em 32,5 segundos. O padrão é `0`. Valores inválidos ou além da duração começam em zero. A barra do player continua permitindo avançar e voltar pela faixa inteira.
 - `theme.backgroundVideo` aceita um MP4 em loop silencioso. `theme.backgroundGif` aceita um GIF se não houver vídeo. `theme.backgroundStill` define a imagem estática usada quando o dispositivo solicita movimento reduzido.
 - O fundo atual usa `public/media/mikey_linktree_preview_animado.gif`, animado desde a entrada. Uma imagem estática do primeiro quadro aparece quando o dispositivo solicita movimento reduzido.

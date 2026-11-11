@@ -22,8 +22,6 @@ const params = new URLSearchParams({
   enablejsapi: '1',
   origin: window.location.origin,
   playsinline: '1',
-  loop: '1',
-  playlist: props.videoId,
 })
 
 const youtube = window as Window & {
