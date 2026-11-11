@@ -15,6 +15,7 @@ import {
 import { profile } from '@/profile'
 import YouTubeTrack from '@/components/YouTubeTrack.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
+import OsuProfile from '@/components/OsuProfile.vue'
 
 const entered = ref(false)
 const entering = ref(false)
@@ -565,7 +566,7 @@ function finishEntrance() {
             <h2 id="connections-title">Conexões</h2>
             <ul>
               <li v-for="link in profile.links" :key="link.label">
-                <a :href="link.href">
+                <a :href="link.href" target="_blank" rel="noopener noreferrer">
                   <span class="connection-icon" aria-hidden="true">
                     <img
                       :src="`/icons/${link.icon === 'link' ? 'linktree' : link.icon}.svg?v=brand-colors-1`"
@@ -602,7 +603,12 @@ function finishEntrance() {
                 />
                 <div class="favorite-content">
                   <h3>{{ profile.favoriteGame.name }}</h3>
-                  <a class="favorite-guide" :href="profile.favoriteGame.guide">
+                  <a
+                    class="favorite-guide"
+                    :href="profile.favoriteGame.guide"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <span class="favorite-guide-blade" aria-hidden="true"></span>
                     <span>Guia de Riven</span>
                     <span class="favorite-guide-arrow" aria-hidden="true">
@@ -613,6 +619,8 @@ function finishEntrance() {
               </div>
 
               <LeagueTracker />
+
+              <OsuProfile />
 
               <section class="games" aria-labelledby="games-title">
                 <h3 id="games-title">Jogos que eu curto</h3>
@@ -749,7 +757,7 @@ function finishEntrance() {
                   <ul class="tags" aria-label="Tecnologias do projeto">
                     <li v-for="tech in profile.project.tech" :key="tech">{{ tech }}</li>
                   </ul>
-                  <a :href="profile.project.href"
+                  <a :href="profile.project.href" target="_blank" rel="noopener noreferrer"
                     >Abrir projeto <ArrowUpRight :size="16" aria-hidden="true"
                   /></a>
                 </div>
@@ -800,7 +808,10 @@ function finishEntrance() {
               </section>
               <div class="dev-outro">
                 <p>Quer trocar uma ideia?</p>
-                <a href="https://discord.com/users/650180750871756826"
+                <a
+                  href="https://discord.com/users/650180750871756826"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   >Me chama no Discord <ArrowUpRight :size="18" aria-hidden="true"
                 /></a>
               </div>

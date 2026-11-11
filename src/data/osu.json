@@ -1,0 +1,233 @@
+{
+  "collectedAt": "2026-11-11T09:17:21.745Z",
+  "profileUrl": "https://osu.ppy.sh/users/19383022",
+  "username": "TKShadow",
+  "country": "BR",
+  "stats": {
+    "globalRank": 317313,
+    "countryRank": 9706,
+    "peakRank": 233804,
+    "pp": 2937,
+    "accuracy": 98.6266,
+    "playTime": 1059447,
+    "plays": 19939,
+    "maxCombo": 1217,
+    "level": 97
+  },
+  "rankHistory": [
+    293795, 294047, 294291, 294522, 294783, 295016, 295346, 295671, 295983, 296282, 296550, 296799,
+    297083, 297315, 297598, 297902, 298171, 298457, 298691, 298959, 299196, 299474, 299753, 300034,
+    300284, 300524, 300777, 301108, 301552, 302032, 302439, 302750, 303100, 303546, 303943, 304297,
+    304635, 304978, 305299, 306070, 306383, 306669, 306978, 307284, 307563, 307794, 308039, 308319,
+    308598, 308858, 309160, 309420, 309672, 309912, 310165, 310401, 310650, 310913, 311151, 311332,
+    311524, 311728, 311958, 312175, 312407, 312610, 312820, 313035, 313240, 313415, 313635, 313844,
+    314065, 314262, 314442, 314654, 314860, 315096, 315325, 315567, 315766, 315945, 316152, 316335,
+    316542, 316776, 316965, 317152, 317313, 317313
+  ],
+  "maps": [
+    {
+      "setId": 1325234,
+      "mapId": 2745187,
+      "title": "KEAN DYSSO - Plain Jane",
+      "artist": "KEAN DYSSO",
+      "version": "Insane",
+      "stars": 4.10519,
+      "plays": 12952,
+      "favorites": 25
+    },
+    {
+      "setId": 1684512,
+      "mapId": 3441852,
+      "title": "Simples Assim",
+      "artist": "Estela Blanco",
+      "version": "Short",
+      "stars": 3.44999,
+      "plays": 211,
+      "favorites": 0
+    },
+    {
+      "setId": 1648128,
+      "mapId": 3376487,
+      "title": "Tremendo Vacilao (Sped Up & Cut Ver.)",
+      "artist": "Perlla",
+      "version": "Hard",
+      "stars": 3.38621,
+      "plays": 8741,
+      "favorites": 18
+    },
+    {
+      "setId": 1679668,
+      "mapId": 3431470,
+      "title": "Guerreiros - Imagine a Pisadinha (Warriors Remix)",
+      "artist": "Imagine Dragons",
+      "version": "Hard",
+      "stars": 3.72827,
+      "plays": 689,
+      "favorites": 5
+    },
+    {
+      "setId": 1586095,
+      "mapId": 3239623,
+      "title": "MC Zaquin -  Moca",
+      "artist": "Mc Zaquin",
+      "version": "Hard",
+      "stars": 3.41221,
+      "plays": 5726,
+      "favorites": 9
+    },
+    {
+      "setId": 1581458,
+      "mapId": 3229254,
+      "title": "Anos 80",
+      "artist": "Mc Poze do Povo",
+      "version": "Pijack de Irelia (Mediano)",
+      "stars": 3.32685,
+      "plays": 5585,
+      "favorites": 16
+    }
+  ],
+  "medals": [
+    {
+      "key": "fc",
+      "label": "Full combo",
+      "highlights": [
+        {
+          "id": 67,
+          "name": "Paradigm Shift",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-fc-5.png",
+          "earnedAt": "2022-12-06T10:25:45Z",
+          "tier": 5
+        },
+        {
+          "id": 66,
+          "name": "Moving Forward",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-fc-4.png",
+          "earnedAt": "2020-12-01T01:09:47Z",
+          "tier": 4
+        },
+        {
+          "id": 65,
+          "name": "Building Steam",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-fc-3.png",
+          "earnedAt": "2020-11-25T18:33:24Z",
+          "tier": 3
+        },
+        {
+          "id": 64,
+          "name": "Business As Usual",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-fc-2.png",
+          "earnedAt": "2020-11-18T12:38:20Z",
+          "tier": 2
+        }
+      ]
+    },
+    {
+      "key": "pass",
+      "label": "Pass",
+      "highlights": [
+        {
+          "id": 60,
+          "name": "Above and Beyond",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-pass-6.png",
+          "earnedAt": "2022-10-22T09:35:35Z",
+          "tier": 6
+        },
+        {
+          "id": 59,
+          "name": "These Clarion Skies",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-pass-5.png",
+          "earnedAt": "2020-12-04T22:56:54Z",
+          "tier": 5
+        },
+        {
+          "id": 58,
+          "name": "Insanity Approaches",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-pass-4.png",
+          "earnedAt": "2020-11-26T22:50:18Z",
+          "tier": 4
+        },
+        {
+          "id": 57,
+          "name": "Building Confidence",
+          "icon": "https://assets.ppy.sh/medals/web/osu-skill-pass-3.png",
+          "earnedAt": "2020-11-18T09:36:48Z",
+          "tier": 3
+        }
+      ]
+    }
+  ],
+  "best": [
+    {
+      "id": 2897875757,
+      "title": "Inferno",
+      "artist": "9mm Parabellum Bullet",
+      "version": "Agonizing Insane",
+      "cover": "https://assets.ppy.sh/beatmaps/482090/covers/list.jpg?1645783744",
+      "pp": 148.525,
+      "grade": "S",
+      "accuracy": 98.87320000000001,
+      "maxCombo": 552,
+      "mods": []
+    },
+    {
+      "id": 2897942524,
+      "title": "Granat",
+      "artist": "Drop",
+      "version": "Extra",
+      "cover": "https://assets.ppy.sh/beatmaps/497769/covers/list.jpg?1645785838",
+      "pp": 144.95,
+      "grade": "S",
+      "accuracy": 97.1326,
+      "maxCombo": 241,
+      "mods": []
+    },
+    {
+      "id": 2897966887,
+      "title": "Hallelujah!",
+      "artist": "Asakura Kirika (CV: Akabane Kyouko)",
+      "version": "You, who are like a God, I'll be there for you every step of the way~",
+      "cover": "https://assets.ppy.sh/beatmaps/2095242/covers/list.jpg?1709462922",
+      "pp": 142.29,
+      "grade": "A",
+      "accuracy": 98.6789,
+      "maxCombo": 282,
+      "mods": []
+    },
+    {
+      "id": 1635441266,
+      "title": "BLACK MEMORY",
+      "artist": "THE ORAL CIGARETTES",
+      "version": "Reform's Expert",
+      "cover": "https://assets.ppy.sh/beatmaps/889313/covers/list.jpg?1650672543",
+      "pp": 137.096,
+      "grade": "S",
+      "accuracy": 98.0702,
+      "maxCombo": 547,
+      "mods": []
+    },
+    {
+      "id": 2806577536,
+      "title": "IGNITE (TV size ver.)",
+      "artist": "Aoi Eir",
+      "version": "Insane",
+      "cover": "https://assets.ppy.sh/beatmaps/190222/covers/list.jpg?1645788403",
+      "pp": 135.873,
+      "grade": "S",
+      "accuracy": 98.3471,
+      "maxCombo": 494,
+      "mods": []
+    },
+    {
+      "id": 2823426397,
+      "title": "Hitorigoto -TV MIX-",
+      "artist": "ClariS",
+      "version": "Little's Insane",
+      "cover": "https://assets.ppy.sh/beatmaps/596704/covers/list.jpg?1650648964",
+      "pp": 135.743,
+      "grade": "X",
+      "accuracy": 100,
+      "maxCombo": 440,
+      "mods": []
+    }
+  ]
+}

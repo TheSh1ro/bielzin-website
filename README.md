@@ -18,6 +18,10 @@ Cada coleta busca até 40 partidas ranqueadas recentes e guarda a última leitur
 
 Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `npm run dev` para abrir a prévia e `npm run build` para gerar o site.
 
+## Perfil de osu!
+
+Em Jogos, a seção de osu! usa uma captura do perfil público de TKShadow no modo osu!standard. Rode `npm run snapshot:osu` para atualizar os dados e as capas em destaque a partir do site oficial. A coleta dispensa credenciais. Gere o site novamente após atualizar a captura.
+
 Para rodar os testes localmente, instale o Chromium com `npx playwright install chromium` e execute `npm test`. O GitHub Actions roda os testes, o lint, a checagem de formatação e o build.
 
 Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e as cores. Coloque arquivos próprios em `public/media/` e use caminhos como `/media/trilha.mp3`.
@@ -32,3 +36,5 @@ Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e
 Os ícones das marcas vêm do [Simple Icons](https://github.com/simple-icons/simple-icons). A imagem da Reyna vem do [VALORANT Media](https://playvalorant.com/en-us/media/).
 
 Capa do osu!: [Twitch](https://static-cdn.jtvnw.net/ttv-boxart/osu%21-285x380.jpg).
+
+Arte do banner de osu! por Senkoru, publicada no [concurso de Halloween de 2026](https://osu.ppy.sh/home/news/2026-10-20-halloween-2026-fanart-contest-results).

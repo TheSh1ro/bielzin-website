@@ -30,7 +30,7 @@ test('mostra o snapshot atual e devolve o foco ao trocar de seção', async ({ p
       exact: true,
     }),
   ).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Ver perfil' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Ver perfil', exact: true })).toBeVisible()
   await page.getByRole('button', { name: /Flex/ }).click()
   await expect(page.getByRole('button', { name: /Flex/ })).toHaveAttribute('aria-pressed', 'true')
 
@@ -38,4 +38,36 @@ test('mostra o snapshot atual e devolve o foco ao trocar de seção', async ({ p
   await next.focus()
   await next.press('Enter')
   await expect(page.getByRole('tab', { name: /Desenvolvimento/ })).toBeFocused()
+})
+
+test('exibe os mapas em destaque e permite explorar o ranking do osu!', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Entrar no perfil' }).click()
+
+  const osu = page.getByRole('region', { name: 'osu!', exact: true })
+  await expect(osu.getByRole('link', { name: 'Ver perfil no osu!' })).toHaveAttribute(
+    'href',
+    'https://osu.ppy.sh/users/19383022',
+  )
+  const maps = osu.getByRole('region', { name: 'Mapas que criei' })
+  await expect(maps.getByRole('link')).toHaveCount(6)
+  await expect(maps.getByRole('link', { name: /Plain Jane/ })).toHaveAttribute(
+    'href',
+    'https://osu.ppy.sh/beatmapsets/1325234#osu/2745187',
+  )
+  await expect(
+    osu.getByRole('region', { name: 'Top plays' }).getByRole('link').first(),
+  ).toHaveAttribute('href', /https:\/\/osu\.ppy\.sh\/scores\/\d+/)
+  const medals = osu.getByRole('region', { name: 'Medalhas', exact: true })
+  for (const category of ['Full combo', 'Pass']) {
+    await expect(
+      medals.getByRole('region', { name: category, exact: true }).getByRole('listitem'),
+    ).toHaveCount(4)
+  }
+
+  const chart = osu.getByRole('slider', { name: 'Dia do histórico do ranking mundial' })
+  const latest = await chart.getAttribute('aria-valuetext')
+  expect(latest).toContain('posição #')
+  await chart.press('Home')
+  await expect(chart).not.toHaveAttribute('aria-valuetext', latest!)
 })

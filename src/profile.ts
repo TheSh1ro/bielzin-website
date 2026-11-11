@@ -70,7 +70,6 @@ export const profile = {
   },
   games: [
     { name: 'VALORANT', cover: '/media/valorant-reyna.jpg' },
-    { name: 'osu!', cover: '/media/osu-cover.jpg' },
     { name: 'Palworld', cover: '/media/palworld.jpg' },
     { name: 'Sea of Thieves', cover: '/media/sea-of-thieves.jpg' },
     { name: 'Stardew Valley', cover: '/media/stardew.jpg' },
