@@ -193,5 +193,4 @@ export const profile = {
       },
     ],
   },
-  stack: ['TypeScript', 'Python', 'Vue.js', 'React', 'Electron', 'Django', 'PostgreSQL', 'MongoDB'],
 }

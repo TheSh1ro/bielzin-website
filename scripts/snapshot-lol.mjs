@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
+import { mkdir, open, readFile, rename, rm, writeFile } from 'node:fs/promises'
 
 // Run locally. Never expose this key through VITE_* variables or browser code.
 const key = process.env.RIOT_API_KEY
@@ -7,6 +8,24 @@ const gameName = process.argv[2] || 'bielzin'
 const tagLine = process.argv[3] || 'sh1ro'
 const file = new URL('../src/data/lol-tracker.json', import.meta.url)
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+async function writeAtomically(destination, content) {
+  const temporary = new URL(`${destination.href}.${randomUUID()}.tmp`)
+  try {
+    await writeFile(temporary, content)
+    await rename(temporary, destination)
+  } finally {
+    await rm(temporary, { force: true })
+  }
+}
+
+async function dataDragon(path) {
+  const response = await fetch(`https://ddragon.leagueoflegends.com/${path}`, {
+    signal: AbortSignal.timeout(20000),
+  })
+  if (!response.ok) throw new Error(`Data Dragon: HTTP ${response.status} em ${path}`)
+  return response
+}
 
 async function riot(host, path) {
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -36,11 +55,9 @@ const ids = await riot(
   'americas',
   `/lol/match/v5/matches/by-puuid/${puuid}/ids?type=ranked&count=40`,
 )
-const versions = await (await fetch('https://ddragon.leagueoflegends.com/api/versions.json')).json()
+const versions = await (await dataDragon('api/versions.json')).json()
 const version = versions[0]
-const championData = await (
-  await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/pt_BR/champion.json`)
-).json()
+const championData = await (await dataDragon(`cdn/${version}/data/pt_BR/champion.json`)).json()
 const champions = new Map(
   Object.values(championData.data).map((champion) => [Number(champion.key), champion]),
 )
@@ -81,52 +98,9 @@ const ranks = entries
     wins,
     losses,
   }))
-let previous = { schemaVersion: 1, accounts: [] }
-try {
-  previous = JSON.parse(await readFile(file, 'utf8'))
-} catch (error) {
-  if (error.code !== 'ENOENT') throw error
-}
-const old = previous.accounts.find((account) => account.puuid === identity.puuid)
 const collectedAt = new Date().toISOString()
-const rankDay = new Intl.DateTimeFormat('pt-BR', {
-  dateStyle: 'short',
-  timeZone: 'America/Sao_Paulo',
-})
-const records = [
-  ...(old?.rankHistory || []),
-  ...ranks.map((rank) => ({ recordedAt: collectedAt, ...rank })),
-]
-records.sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt))
-const dailyRanks = new Map()
-for (const point of records) {
-  const day = rankDay.format(new Date(point.recordedAt))
-  dailyRanks.set(`${point.queueType}:${day}`, point)
-}
-const rankHistory = [...dailyRanks.values()].sort(
-  (a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt),
-)
-const account = {
-  ...identity,
-  platform: 'BR1',
-  region: 'BR',
-  collectedAt,
-  dataDragonVersion: version,
-  profileIconId: summoner.profileIconId,
-  level: summoner.summonerLevel,
-  matchSampleLimit: 40,
-  ranks,
-  rankHistory,
-  matches,
-}
-previous.accounts = [
-  ...previous.accounts.filter((entry) => entry.puuid !== identity.puuid),
-  account,
-]
-await mkdir(new URL('../src/data/', import.meta.url), { recursive: true })
-await writeFile(file, JSON.stringify(previous, null, 2) + '\n')
 
-// Keep the snapshot usable without image requests to external services.
+// Publish only after all referenced icons are available locally.
 const media = new URL('../public/media/lol/', import.meta.url)
 await mkdir(media, { recursive: true })
 const images = new Map(
@@ -134,10 +108,64 @@ const images = new Map(
 )
 images.set(`profile-${summoner.profileIconId}.png`, `profileicon/${summoner.profileIconId}.png`)
 for (const [name, path] of images) {
-  const response = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/img/${path}`)
-  if (!response.ok) throw new Error(`Não foi possível baixar o ícone ${name}`)
-  await writeFile(new URL(name, media), Buffer.from(await response.arrayBuffer()))
+  const response = await dataDragon(`cdn/${version}/img/${path}`)
+  await writeAtomically(new URL(name, media), Buffer.from(await response.arrayBuffer()))
 }
-console.log(
-  `Snapshot salvo: ${matches.length} partidas, ${ranks.length} filas, ${rankHistory.length} registros de elo.`,
-)
+
+await mkdir(new URL('../src/data/', import.meta.url), { recursive: true })
+const lock = new URL(`${file.href}.lock`)
+const publication = await open(lock, 'wx').catch((error) => {
+  if (error.code !== 'EEXIST') throw error
+  throw new Error('Outra coleta está publicando o snapshot. Tente novamente.', { cause: error })
+})
+
+try {
+  let previous = { schemaVersion: 1, accounts: [] }
+  try {
+    previous = JSON.parse(await readFile(file, 'utf8'))
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
+  const old = previous.accounts.find((account) => account.puuid === identity.puuid)
+  const rankDay = new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeZone: 'America/Sao_Paulo',
+  })
+  const records = [
+    ...(old?.rankHistory || []),
+    ...ranks.map((rank) => ({ recordedAt: collectedAt, ...rank })),
+  ]
+  records.sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt))
+  const dailyRanks = new Map()
+  for (const point of records) {
+    const day = rankDay.format(new Date(point.recordedAt))
+    dailyRanks.set(`${point.queueType}:${day}`, point)
+  }
+  const rankHistory = [...dailyRanks.values()].sort(
+    (a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt),
+  )
+  const account = {
+    ...identity,
+    platform: 'BR1',
+    region: 'BR',
+    collectedAt,
+    dataDragonVersion: version,
+    profileIconId: summoner.profileIconId,
+    level: summoner.summonerLevel,
+    matchSampleLimit: 40,
+    ranks,
+    rankHistory,
+    matches,
+  }
+  previous.accounts = [
+    ...previous.accounts.filter((entry) => entry.puuid !== identity.puuid),
+    account,
+  ]
+  await writeAtomically(file, JSON.stringify(previous, null, 2) + '\n')
+  console.log(
+    `Snapshot salvo: ${matches.length} partidas, ${ranks.length} filas, ${rankHistory.length} registros de elo.`,
+  )
+} finally {
+  await publication.close()
+  await rm(lock)
+}

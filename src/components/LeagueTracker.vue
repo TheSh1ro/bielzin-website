@@ -10,14 +10,14 @@ const queue = ref(420)
 const visibleCount = ref(matchPageSize)
 const moreButton = ref<HTMLButtonElement | null>(null)
 const lessButton = ref<HTMLButtonElement | null>(null)
-const account = computed(() => snapshot.accounts[accountIndex.value]!)
+const account = computed(() => snapshot.accounts[accountIndex.value])
 const queueType = computed(() => (queue.value === 420 ? 'RANKED_SOLO_5x5' : 'RANKED_FLEX_SR'))
-const matches = computed(() =>
-  account.value.matches.filter((match) => match.queueId === queue.value),
+const matches = computed(
+  () => account.value?.matches.filter((match) => match.queueId === queue.value) ?? [],
 )
 const completed = computed(() => matches.value.filter((match) => !match.remake))
 const championDays = computed(() => {
-  if (!completed.value.length) return null
+  if (!account.value || !completed.value.length) return null
 
   const oldestMatch = Math.min(...completed.value.map((match) => Date.parse(match.startedAt)))
   const elapsed = Date.parse(account.value.collectedAt) - oldestMatch
@@ -74,8 +74,8 @@ const champions = computed(() => {
   }
   return [...groups.values()].sort((a, b) => b.games - a.games).slice(0, 5)
 })
-const history = computed(() =>
-  account.value.rankHistory.filter((point) => point.queueType === queueType.value),
+const history = computed(
+  () => account.value?.rankHistory.filter((point) => point.queueType === queueType.value) ?? [],
 )
 const tierNames: Record<string, string> = {
   IRON: 'Ferro',
@@ -106,6 +106,7 @@ function duration(seconds: number) {
 }
 const profileUrl = computed(
   () =>
+    account.value &&
     `https://www.leagueofgraphs.com/pt/summoner/br/${encodeURIComponent(account.value.gameName)}-${encodeURIComponent(account.value.tagLine)}`,
 )
 watch([accountIndex, queue], () => {
@@ -126,7 +127,7 @@ async function collapseMatches() {
 </script>
 
 <template>
-  <section class="tracker" aria-labelledby="tracker-title">
+  <section v-if="account" class="tracker" aria-labelledby="tracker-title">
     <header class="tracker-heading">
       <div>
         <p class="eyebrow">League of Legends</p>
@@ -341,6 +342,15 @@ async function collapseMatches() {
         </div>
       </section>
     </div>
+  </section>
+  <section v-else class="tracker" aria-labelledby="tracker-title">
+    <header class="tracker-heading">
+      <div>
+        <p class="eyebrow">League of Legends</p>
+        <h3 id="tracker-title">Meu tracker</h3>
+      </div>
+    </header>
+    <p class="empty">Nenhuma conta no tracker.</p>
   </section>
 </template>
 

@@ -18,6 +18,8 @@ Cada coleta busca até 40 partidas ranqueadas recentes e guarda a última leitur
 
 Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `npm run dev` para abrir a prévia e `npm run build` para gerar o site.
 
+Para rodar os testes localmente, instale o Chromium com `npx playwright install chromium` e execute `npm test`. O GitHub Actions roda os testes, o lint, a checagem de formatação e o build.
+
 Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e as cores. Coloque arquivos próprios em `public/media/` e use caminhos como `/media/trilha.mp3`.
 
 - `music.src` define um arquivo de áudio direto. Para uma faixa do YouTube, preencha `music.youtubeUrl` e ative `music.embedYouTube` se o vídeo permitir reprodução incorporada. O arquivo direto tem prioridade. `music.volume` define o volume inicial entre 0 e 1. O link para o YouTube fica disponível no card da trilha.

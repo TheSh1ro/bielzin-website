@@ -28,9 +28,6 @@ coverage
 
 .eslintcache
 
-# Cypress
-/cypress/videos/
-/cypress/screenshots/
-
-# Vitest
-__screenshots__/
+/playwright-report/
+/test-results/
+/src/data/lol-tracker.json.lock

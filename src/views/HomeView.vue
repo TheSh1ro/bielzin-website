@@ -132,6 +132,11 @@ const sectionTabs = ref<HTMLButtonElement[]>([])
 function selectSection(section: 'games' | 'development', scroll = false) {
   sectionDirection.value = section === 'development' ? 'forward' : 'backward'
   activeSection.value = section
+  if (scroll) {
+    void nextTick(() => {
+      sectionTabs.value[section === 'games' ? 0 : 1]?.focus({ preventScroll: true })
+    })
+  }
   if (switcherDocked.value && content.value) {
     window.scrollTo({
       top: window.scrollY + content.value.getBoundingClientRect().top - 24,
@@ -313,7 +318,7 @@ function finishEntrance() {
         <button
           class="entry-trigger"
           type="button"
-          aria-label="Entrar no perfil"
+          :aria-label="profile.entryLabel"
           @click="enter(true)"
         >
           <span class="entry-content">
