@@ -1,1 +1,10 @@
-{ "collectedAt": "2026-11-11T09:47:10.910Z", "games": 12167, "wins": 6193, "playTime": 2491148 }
+{
+  "collectedAt": "2026-11-11T21:11:53.437Z",
+  "games": 12167,
+  "wins": 6193,
+  "playTime": 2491148,
+  "peakRatings": {
+    "lichess": { "rapid": 1995, "blitz": 2083 },
+    "chessCom": { "rapid": 1713, "blitz": 1714 }
+  }
+}

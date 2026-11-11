@@ -32,6 +32,15 @@ const stats = [
   },
 ]
 
+const ratingModes = [
+  { key: 'rapid', label: 'Maior rating em partidas rápidas' },
+  { key: 'blitz', label: 'Maior rating em Blitz' },
+] as const
+const ratingPlatforms = [
+  { label: 'Lichess', ratings: chess.peakRatings.lichess },
+  { label: 'Chess.com', ratings: chess.peakRatings.chessCom },
+]
+
 const simuls = [
   {
     id: 'C1ir3txm',
@@ -89,6 +98,15 @@ const simuls = [
       <div v-for="stat in stats" :key="stat.label">
         <dt>{{ stat.label }}</dt>
         <dd>{{ stat.value }}</dd>
+      </div>
+      <div v-for="mode in ratingModes" :key="mode.key" class="chess-rating">
+        <dt>{{ mode.label }}</dt>
+        <dd>
+          <span v-for="platform in ratingPlatforms" :key="platform.label">
+            {{ platform.ratings[mode.key] ? number.format(platform.ratings[mode.key]) : '—' }}
+            <small>{{ platform.label }}</small>
+          </span>
+        </dd>
       </div>
     </dl>
 
@@ -236,6 +254,21 @@ const simuls = [
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+.chess-rating {
+  grid-column: span 2;
+  border-top: 1px solid var(--chess-line);
+}
+.chess-rating dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+.chess-rating small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
 .chess-simuls h4 {
   margin: 0 0 10px;
 }
@@ -287,6 +320,9 @@ const simuls = [
   }
   .chess-stats div:nth-child(n + 3) {
     border-top: 1px solid var(--chess-line);
+  }
+  .chess-rating {
+    grid-column: span 1;
   }
 }
 @media (max-width: 360px) {

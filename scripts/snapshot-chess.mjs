@@ -4,6 +4,7 @@ import { format, resolveConfig } from 'prettier'
 
 const lichessUsers = ['Gabriel_TKChess', 'Italian_TKChess']
 const chessComUsers = ['gabrieltkchess', 'gabriel_tkchess']
+const ratingModes = ['rapid', 'blitz']
 
 async function readJson(url) {
   const response = await fetch(url, {
@@ -25,6 +26,10 @@ function count(value) {
 }
 
 const snapshot = { collectedAt: new Date().toISOString(), games: 0, wins: 0, playTime: 0 }
+const peakRatings = {
+  lichess: { rapid: 0, blitz: 0 },
+  chessCom: { rapid: 0, blitz: 0 },
+}
 
 for (const user of lichessUsers) {
   const url = `https://lichess.org/api/user/${user}`
@@ -32,12 +37,29 @@ for (const user of lichessUsers) {
   snapshot.games += count(profile.count.all)
   snapshot.wins += count(profile.count.win)
   snapshot.playTime += count(profile.playTime.total)
+  const history = await readJson(`${url}/rating-history`)
+  for (const mode of ratingModes) {
+    const points = history.find(({ name }) => name === mode)?.points ?? []
+    const performance = await readJson(`${url}/perf/${mode}`)
+    const current = profile.perfs[mode]
+    peakRatings.lichess[mode] = Math.max(
+      peakRatings.lichess[mode],
+      count(performance.stat.highest?.int ?? 0),
+      count(current?.games ? current.rating : 0),
+      ...points.map(([, , , rating]) => count(rating)),
+    )
+  }
 }
 
 for (const chessComUser of chessComUsers) {
-  const { archives } = await readJson(
-    `https://api.chess.com/pub/player/${chessComUser}/games/archives?format=json`,
-  )
+  const url = `https://api.chess.com/pub/player/${chessComUser}`
+  const stats = await readJson(`${url}/stats?format=json`)
+  for (const mode of ratingModes) {
+    const rating = stats[`chess_${mode}`]?.best?.rating
+    if (rating != null)
+      peakRatings.chessCom[mode] = Math.max(peakRatings.chessCom[mode], count(rating))
+  }
+  const { archives } = await readJson(`${url}/games/archives?format=json`)
   const seen = new Set()
   let dailyGames = 0
   let untimedGames = 0
@@ -76,4 +98,7 @@ for (const chessComUser of chessComUsers) {
 
 const filepath = fileURLToPath(new URL('../src/data/chess.json', import.meta.url))
 const config = await resolveConfig(filepath)
-await writeFile(filepath, await format(JSON.stringify(snapshot), { ...config, filepath }))
+await writeFile(
+  filepath,
+  await format(JSON.stringify({ ...snapshot, peakRatings }), { ...config, filepath }),
+)
