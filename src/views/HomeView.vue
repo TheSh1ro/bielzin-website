@@ -304,6 +304,7 @@ function finishEntrance() {
       :src="profile.theme.backgroundGif"
       alt=""
       aria-hidden="true"
+      draggable="false"
     />
 
     <Transition name="entry-dismiss">
@@ -594,11 +595,13 @@ function finishEntrance() {
                 />
                 <div class="favorite-content">
                   <h3>{{ profile.favoriteGame.name }}</h3>
-                  <div class="favorite-actions">
-                    <a class="button button--primary" :href="profile.favoriteGame.guide">
-                      Guia de Riven <ArrowUpRight :size="16" aria-hidden="true" />
-                    </a>
-                  </div>
+                  <a class="favorite-guide" :href="profile.favoriteGame.guide">
+                    <span class="favorite-guide-blade" aria-hidden="true"></span>
+                    <span>Guia de Riven</span>
+                    <span class="favorite-guide-arrow" aria-hidden="true">
+                      <ArrowUpRight :size="16" />
+                    </span>
+                  </a>
                 </div>
               </div>
 

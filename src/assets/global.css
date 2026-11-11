@@ -37,6 +37,11 @@
   z-index: -2;
 }
 
+img.site-backdrop {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .site:has(.site-backdrop)::before {
   content: '';
   position: fixed;
@@ -625,7 +630,7 @@ section[id] {
 }
 
 .favorite {
-  min-height: 272px;
+  min-height: 144px;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -655,25 +660,116 @@ section[id] {
 }
 
 .favorite-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
   width: 100%;
   color: #faf8ff;
-  padding: clamp(16px, 4vw, 32px);
+  padding: 16px clamp(16px, 4vw, 28px);
 }
 .favorite h3 {
   margin: 0;
-  font-size: clamp(1.75rem, 5vw, 2.875rem);
+  font-size: clamp(1.5rem, 4vw, 2rem);
   letter-spacing: -0.06em;
 }
 .favorite-note {
   color: #e1dce8;
   font-size: 0.9rem;
 }
-.favorite-actions {
-  display: flex;
-  flex-wrap: wrap;
+.favorite-guide {
+  --blade-green: #a1fac8;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
   align-items: center;
-  gap: 8px 16px;
-  margin-top: 20px;
+  gap: 9px;
+  min-height: 44px;
+  padding-inline: 12px 6px;
+  color: #e6fff0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.favorite-guide::before,
+.favorite-guide::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    0 100%,
+    0 10px
+  );
+}
+.favorite-guide::before {
+  inset: 0;
+  background: linear-gradient(120deg, #8cf8bb, #36584a 45%, #69b791);
+}
+.favorite-guide::after {
+  inset: 1px;
+  background: linear-gradient(115deg, #234538, #101b17 60%);
+}
+.favorite-guide-blade {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  background: linear-gradient(135deg, #57967a 12%, var(--blade-green) 82%);
+  clip-path: polygon(
+    97% 3%,
+    88% 38%,
+    68% 47%,
+    70% 57%,
+    43% 71%,
+    55% 83%,
+    46% 91%,
+    34% 79%,
+    17% 97%,
+    7% 87%,
+    25% 70%,
+    13% 58%,
+    22% 49%,
+    34% 61%,
+    49% 39%,
+    59% 40%,
+    63% 22%
+  );
+}
+.favorite-guide-arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 30px;
+  padding-left: 4px;
+  clip-path: polygon(22% 0, 100% 0, 100% 66%, 72% 100%, 0 100%);
+  background: #315c49;
+  color: var(--blade-green);
+}
+.favorite-guide:is(:hover, :focus-visible)::before {
+  background: var(--blade-green);
+}
+.favorite-guide:is(:hover, :focus-visible)::after {
+  background: linear-gradient(115deg, #2a5944, #14261d 60%);
+}
+.favorite-guide:focus-visible {
+  outline: 2px solid var(--blade-green);
+  outline-offset: 3px;
+}
+.favorite-guide:is(:hover, :focus-visible) .favorite-guide-arrow {
+  background: var(--blade-green);
+  color: #12291d;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .favorite-guide-arrow svg {
+    transition: transform 160ms ease;
+  }
+  .favorite-guide:hover .favorite-guide-arrow svg,
+  .favorite-guide:focus-visible .favorite-guide-arrow svg {
+    transform: translate(2px, -2px);
+  }
 }
 
 .games {

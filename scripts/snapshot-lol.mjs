@@ -89,18 +89,23 @@ try {
 }
 const old = previous.accounts.find((account) => account.puuid === identity.puuid)
 const collectedAt = new Date().toISOString()
-const rankHistory = [...(old?.rankHistory || [])]
-for (const rank of ranks) {
-  const last = rankHistory.filter((point) => point.queueType === rank.queueType).at(-1)
-  if (
-    !last ||
-    ['tier', 'division', 'leaguePoints', 'wins', 'losses'].some(
-      (field) => last[field] !== rank[field],
-    )
-  ) {
-    rankHistory.push({ recordedAt: collectedAt, ...rank })
-  }
+const rankDay = new Intl.DateTimeFormat('pt-BR', {
+  dateStyle: 'short',
+  timeZone: 'America/Sao_Paulo',
+})
+const records = [
+  ...(old?.rankHistory || []),
+  ...ranks.map((rank) => ({ recordedAt: collectedAt, ...rank })),
+]
+records.sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt))
+const dailyRanks = new Map()
+for (const point of records) {
+  const day = rankDay.format(new Date(point.recordedAt))
+  dailyRanks.set(`${point.queueType}:${day}`, point)
 }
+const rankHistory = [...dailyRanks.values()].sort(
+  (a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt),
+)
 const account = {
   ...identity,
   platform: 'BR1',

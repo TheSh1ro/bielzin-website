@@ -14,7 +14,7 @@ Remove-Item Env:RIOT_API_KEY
 
 O padrão é `bielzin#sh1ro`, servidor BR. Para adicionar outra conta BR ao mesmo JSON: `npm run snapshot:lol -- "Nome" "TAG"`. O seletor de contas aparece quando houver mais de uma conta coletada. A chave é usada somente no processo local; não use variáveis `VITE_*` para ela.
 
-Cada coleta busca até 40 partidas ranqueadas recentes, substitui a amostra da conta e preserva os registros de elo anteriores. Uma mudança em elo, LP, vitórias ou derrotas gera um novo registro por fila. Não há reconstrução de LP anteriores à primeira coleta. Campeões, KDA e vitórias recentes são calculados da amostra, com remakes excluídos; os totais por fila vêm da Riot. Depois de atualizar o JSON, gere/publique o site novamente para exibir o novo snapshot.
+Cada coleta busca até 40 partidas ranqueadas recentes e guarda a última leitura de elo e LP de cada dia por fila, no horário de Brasília. O histórico também inclui registros importados do LeagueOfGraphs. Campeões, KDA e vitórias recentes são calculados a partir das partidas da coleta, com remakes excluídos. Os totais por fila vêm da Riot. Gere e publique o site novamente após atualizar o JSON.
 
 Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `npm run dev` para abrir a prévia e `npm run build` para gerar o site.
 
@@ -27,8 +27,6 @@ Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e
 - `avatar` configura a foto do perfil. A entrada abre ao clicar em qualquer região; o áudio começa após esse clique.
 - O player do MP3 tem controles próprios de reprodução, progresso, reinício e volume.
 
-Assets de marcas: [Simple Icons](https://github.com/simple-icons/simple-icons). Imagens: [VALORANT Media](https://playvalorant.com/en-us/media/) e [osu!](https://assets.ppy.sh/logo-with-background.png), guardadas localmente em `public/`.
+Os ícones das marcas vêm do [Simple Icons](https://github.com/simple-icons/simple-icons). A imagem da Reyna vem do [VALORANT Media](https://playvalorant.com/en-us/media/).
 
 Capa do osu!: [Twitch](https://static-cdn.jtvnw.net/ttv-boxart/osu%21-285x380.jpg).
-
-Capa do VALORANT: [3DJuegos](https://i.3djuegos.com/juegos/16932/fotos/ficha/-5203988.jpg).

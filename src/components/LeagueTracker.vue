@@ -1,17 +1,28 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { ArrowUpRight, ChevronDown } from 'lucide-vue-next'
 import snapshot from '@/data/lol-tracker.json'
+import LeagueRankChart from './LeagueRankChart.vue'
 
+const matchPageSize = 6
 const accountIndex = ref(0)
 const queue = ref(420)
-const visibleCount = ref(6)
+const visibleCount = ref(matchPageSize)
+const moreButton = ref<HTMLButtonElement | null>(null)
+const lessButton = ref<HTMLButtonElement | null>(null)
 const account = computed(() => snapshot.accounts[accountIndex.value]!)
 const queueType = computed(() => (queue.value === 420 ? 'RANKED_SOLO_5x5' : 'RANKED_FLEX_SR'))
 const matches = computed(() =>
   account.value.matches.filter((match) => match.queueId === queue.value),
 )
 const completed = computed(() => matches.value.filter((match) => !match.remake))
+const championDays = computed(() => {
+  if (!completed.value.length) return null
+
+  const oldestMatch = Math.min(...completed.value.map((match) => Date.parse(match.startedAt)))
+  const elapsed = Date.parse(account.value.collectedAt) - oldestMatch
+  return Math.max(1, Math.ceil(elapsed / 86_400_000))
+})
 const wins = computed(() => completed.value.filter((match) => match.win).length)
 const winRate = computed(() =>
   completed.value.length ? Math.round((wins.value / completed.value.length) * 100) : null,
@@ -98,8 +109,20 @@ const profileUrl = computed(
     `https://www.leagueofgraphs.com/pt/summoner/br/${encodeURIComponent(account.value.gameName)}-${encodeURIComponent(account.value.tagLine)}`,
 )
 watch([accountIndex, queue], () => {
-  visibleCount.value = 6
+  visibleCount.value = matchPageSize
 })
+async function showMoreMatches() {
+  visibleCount.value += matchPageSize
+  if (visibleCount.value < matches.value.length) return
+  await nextTick()
+  lessButton.value?.focus()
+}
+async function collapseMatches() {
+  visibleCount.value = matchPageSize
+  await nextTick()
+  moreButton.value?.focus({ preventScroll: true })
+  moreButton.value?.scrollIntoView({ block: 'nearest' })
+}
 </script>
 
 <template>
@@ -109,12 +132,9 @@ watch([accountIndex, queue], () => {
         <p class="eyebrow">League of Legends</p>
         <h3 id="tracker-title">Meu tracker</h3>
       </div>
-      <span class="snapshot-label"
-        >Snapshot
-        <time :datetime="account.collectedAt">{{
-          dateLabel(account.collectedAt, true)
-        }}</time></span
-      >
+      <time class="snapshot-label" :datetime="account.collectedAt">
+        {{ dateLabel(account.collectedAt, true) }}
+      </time>
     </header>
 
     <div class="account-heading">
@@ -192,6 +212,13 @@ watch([accountIndex, queue], () => {
       </button>
     </div>
 
+    <LeagueRankChart
+      :key="`${accountIndex}-${queue}`"
+      :history="history"
+      :collected-at="account.collectedAt"
+      :rank-label="rankLabel"
+    />
+
     <div class="recent-heading">
       <h4>Desempenho recente</h4>
       <span>{{ matches.length }} partidas de {{ queue === 420 ? 'Solo / Duo' : 'Flex' }}</span>
@@ -218,7 +245,12 @@ watch([accountIndex, queue], () => {
 
     <div class="tracker-details">
       <section class="champion-section" aria-labelledby="champion-title">
-        <h4 id="champion-title">Campeões mais jogados <span>Na amostra recente</span></h4>
+        <h4 id="champion-title">
+          Campeões mais jogados
+          <span v-if="championDays">
+            {{ championDays === 1 ? 'No último dia' : `Nos últimos ${championDays} dias` }}
+          </span>
+        </h4>
         <ol class="champion-list">
           <li v-for="champion in champions" :key="champion.name">
             <img
@@ -247,29 +279,13 @@ watch([accountIndex, queue], () => {
           </li>
         </ol>
         <p v-if="!champions.length" class="empty">Nenhuma partida nesta amostra.</p>
-        <div class="rank-history">
-          <h4>Evolução de LP</h4>
-          <p v-if="history.length <= 1" class="history-note">
-            Primeiro registro salvo. A evolução aparece nas próximas coletas.
-          </p>
-          <ol>
-            <li v-for="point in history.slice(-5)" :key="point.recordedAt">
-              <time :datetime="point.recordedAt">{{ dateLabel(point.recordedAt) }}</time
-              ><strong
-                >{{ rankLabel(point) }} ·
-                {{ point.leaguePoints.toLocaleString('pt-BR') }} LP</strong
-              >
-            </li>
-          </ol>
-          <p v-if="!history.length" class="empty">Sem registro de elo nesta fila.</p>
-        </div>
       </section>
 
       <section class="match-section" aria-labelledby="match-title">
         <h4 id="match-title">
           Últimas partidas <span>{{ queue === 420 ? 'Solo / Duo' : 'Flex' }}</span>
         </h4>
-        <ol class="match-list">
+        <ol id="tracker-matches" class="match-list">
           <li
             v-for="match in matches.slice(0, visibleCount)"
             :key="match.id"
@@ -301,14 +317,28 @@ watch([accountIndex, queue], () => {
           </li>
         </ol>
         <p v-if="!matches.length" class="empty">Nenhuma partida nesta amostra.</p>
-        <button
-          v-if="visibleCount < matches.length"
-          type="button"
-          class="more-matches"
-          @click="visibleCount += 6"
-        >
-          Mais partidas <ChevronDown :size="15" aria-hidden="true" />
-        </button>
+        <div v-if="matches.length > matchPageSize" class="match-controls">
+          <button
+            v-if="visibleCount < matches.length"
+            ref="moreButton"
+            type="button"
+            class="more-matches"
+            aria-controls="tracker-matches"
+            @click="showMoreMatches"
+          >
+            Mais partidas <ChevronDown :size="15" aria-hidden="true" />
+          </button>
+          <button
+            v-if="visibleCount > matchPageSize"
+            ref="lessButton"
+            type="button"
+            class="more-matches"
+            aria-controls="tracker-matches"
+            @click="collapseMatches"
+          >
+            Mostrar menos <ChevronDown :size="15" class="rotated" aria-hidden="true" />
+          </button>
+        </div>
       </section>
     </div>
   </section>
@@ -349,7 +379,6 @@ watch([accountIndex, queue], () => {
 .account-name p,
 .recent-heading > span,
 .tracker h4 > span,
-.history-note,
 .empty {
   color: var(--muted);
   font-size: 0.75rem;
@@ -552,8 +581,7 @@ select:focus-visible {
   font-weight: 400;
 }
 .champion-list,
-.match-list,
-.rank-history ol {
+.match-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -641,12 +669,16 @@ select:focus-visible {
   font-size: 0.6875rem;
   text-align: right;
 }
+.match-controls {
+  display: flex;
+  flex-wrap: wrap;
+}
 .more-matches {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  width: 100%;
+  flex: 1;
   padding: 14px;
   font-size: 0.75rem;
   color: var(--muted);
@@ -658,25 +690,8 @@ select:focus-visible {
   color: var(--text);
   background: var(--surface);
 }
-.rank-history {
-  margin-top: 28px;
-}
-.rank-history h4 {
-  margin-bottom: 8px;
-}
-.rank-history li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding-block: 12px;
-  font-size: 0.6875rem;
-  border-bottom: 1px solid var(--line);
-}
-.rank-history time {
-  color: var(--muted);
-}
-.rank-history strong {
-  font-weight: 500;
+.more-matches .rotated {
+  transform: rotate(180deg);
 }
 .empty {
   padding-block: 12px;
