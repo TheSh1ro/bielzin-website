@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>bz</title>
+  <path fill="#0b0b0d" d="M0 0h64v64H0z"/>
+  <g fill="none" stroke="#f4f4f5" stroke-width="6" stroke-linejoin="miter" stroke-linecap="square">
+    <path d="M12 15v34h17V30H12"/>
+    <path d="M39 30h14L39 49h14"/>
+  </g>
+</svg>
