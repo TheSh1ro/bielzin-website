@@ -14,6 +14,7 @@ import {
 } from 'lucide-vue-next'
 import { profile } from '@/profile'
 import YouTubeTrack from '@/components/YouTubeTrack.vue'
+import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
 
@@ -621,6 +622,8 @@ function finishEntrance() {
               <LeagueTracker />
 
               <OsuProfile />
+
+              <ChessProfile />
 
               <section class="games" aria-labelledby="games-title">
                 <h3 id="games-title">Jogos que eu curto</h3>

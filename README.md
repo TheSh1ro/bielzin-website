@@ -22,6 +22,10 @@ Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `
 
 Em Jogos, a seção de osu! usa uma captura do perfil público de TKShadow no modo osu!standard. Rode `npm run snapshot:osu` para atualizar os dados e as capas em destaque a partir do site oficial. A coleta dispensa credenciais. Gere o site novamente após atualizar a captura.
 
+## Xadrez
+
+A seção de xadrez reúne os totais de dois perfis no Lichess e de dois perfis no arquivo público do Chess.com. O tempo registrado soma o total informado pelo Lichess à duração das partidas ao vivo do Chess.com com horários disponíveis. As partidas sem horários e as partidas diárias do Chess.com entram nas estatísticas de resultados. Rode `npm run snapshot:chess` para atualizar os números sem credenciais.
+
 Para rodar os testes localmente, instale o Chromium com `npx playwright install chromium` e execute `npm test`. O GitHub Actions roda os testes, o lint, a checagem de formatação e o build.
 
 Edite `src/profile.ts` para atualizar a bio, as conexões, os jogos, o projeto e as cores. Coloque arquivos próprios em `public/media/` e use caminhos como `/media/trilha.mp3`.

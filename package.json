@@ -6,6 +6,7 @@
   "scripts": {
     "snapshot:lol": "node scripts/snapshot-lol.mjs",
     "snapshot:osu": "node scripts/snapshot-osu.mjs",
+    "snapshot:chess": "node scripts/snapshot-chess.mjs",
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
