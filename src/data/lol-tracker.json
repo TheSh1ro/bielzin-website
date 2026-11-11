@@ -7,7 +7,7 @@
       "tagLine": "sh1ro",
       "platform": "BR1",
       "region": "BR",
-      "collectedAt": "2026-11-11T01:33:26.279Z",
+      "collectedAt": "2026-11-11T02:29:25.225Z",
       "dataDragonVersion": "16.22.1",
       "profileIconId": 3867,
       "level": 742,
@@ -25,8 +25,8 @@
           "queueType": "RANKED_SOLO_5x5",
           "tier": "MASTER",
           "division": "I",
-          "leaguePoints": 1271,
-          "wins": 143,
+          "leaguePoints": 1299,
+          "wins": 144,
           "losses": 107
         }
       ],
@@ -48,9 +48,36 @@
           "leaguePoints": 1271,
           "wins": 143,
           "losses": 107
+        },
+        {
+          "recordedAt": "2026-11-11T02:29:25.225Z",
+          "queueType": "RANKED_SOLO_5x5",
+          "tier": "MASTER",
+          "division": "I",
+          "leaguePoints": 1299,
+          "wins": 144,
+          "losses": 107
         }
       ],
       "matches": [
+        {
+          "id": "BR1_3302988747",
+          "queueId": 420,
+          "startedAt": "2026-11-11T01:54:09.527Z",
+          "durationSeconds": 1858,
+          "championId": 43,
+          "championName": "Karma",
+          "championIcon": "Karma.png",
+          "win": true,
+          "remake": false,
+          "kills": 2,
+          "deaths": 8,
+          "assists": 25,
+          "cs": 32,
+          "visionScore": 115,
+          "role": "UTILITY",
+          "damage": 7243
+        },
         {
           "id": "BR1_3302580364",
           "queueId": 420,
@@ -752,24 +779,6 @@
           "visionScore": 12,
           "role": "TOP",
           "damage": 11619
-        },
-        {
-          "id": "BR1_3292235217",
-          "queueId": 420,
-          "startedAt": "2026-10-12T01:59:51.931Z",
-          "durationSeconds": 2155,
-          "championId": 92,
-          "championName": "Riven",
-          "championIcon": "Riven.png",
-          "win": false,
-          "remake": false,
-          "kills": 6,
-          "deaths": 5,
-          "assists": 4,
-          "cs": 276,
-          "visionScore": 39,
-          "role": "TOP",
-          "damage": 15666
         }
       ]
     }
