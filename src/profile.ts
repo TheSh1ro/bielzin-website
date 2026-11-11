@@ -11,7 +11,7 @@ export const profile = {
   handle: '@thesh1ro',
   avatar: '/media/avatar.jpg',
   role: 'Desenvolvedor',
-  bio: 'Entre código, jogos e alguns projetos pessoais.',
+  bio: 'Planejo, desenho e desenvolvo produtos digitais',
   entryLabel: 'Entrar no perfil',
   theme: {
     accent: '#e4e4e7',
