@@ -5,6 +5,13 @@ type Link = {
   icon: 'twitch' | 'youtube' | 'spotify' | 'x' | 'discord' | 'github' | 'link'
 }
 type Game = { name: string; cover?: string; mark?: string; color?: string }
+export type MusicTrack = {
+  src: string
+  title: string
+  artist: string
+  spotifyUrl: string
+  startAt?: number
+}
 
 export const profile = {
   name: 'bielzin',
@@ -33,6 +40,20 @@ export const profile = {
     // Ponto inicial da música em segundos. Exemplo: 32.5 começa em 0:32,5.
     startAt: 0,
     volume: 0.03,
+    rotation: [
+      {
+        src: '/media/awakening.mp3',
+        title: 'Awakening',
+        artist: 'Ichika Nito',
+        spotifyUrl: 'https://open.spotify.com/track/03JFWSxq5pj3z1kkp9cXOQ',
+      },
+      {
+        src: '/media/flicker-in-the-fog.mp3',
+        title: 'Flicker In The Fog',
+        artist: 'SLVMLORD',
+        spotifyUrl: 'https://open.spotify.com/track/12ZA5C3oLso9sO94pdEIuH',
+      },
+    ] satisfies MusicTrack[],
   },
   links: [
     {

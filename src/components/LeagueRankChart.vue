@@ -258,7 +258,7 @@ function moveBetweenPoints(direction: number) {
 <template>
   <section class="rank-chart" aria-labelledby="rank-chart-title">
     <div class="chart-heading">
-      <h4 id="rank-chart-title">Evolução de LP</h4>
+      <h5 id="rank-chart-title">Evolução de LP</h5>
       <div class="periods" role="group" aria-label="Período do gráfico">
         <button
           v-for="option in periods"
@@ -441,7 +441,7 @@ function moveBetweenPoints(direction: number) {
 .chart-heading {
   margin-bottom: 12px;
 }
-.chart-heading h4 {
+.chart-heading h5 {
   font-size: 0.875rem;
 }
 .periods,

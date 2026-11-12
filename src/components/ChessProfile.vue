@@ -77,7 +77,7 @@ const simuls = [
           <a
             v-for="profile in profiles"
             :key="profile.platform"
-            class="button chess-profile-link"
+            class="button banner-link"
             :class="`chess-profile-link--${profile.theme}`"
             :href="profile.href"
             :aria-label="`Ver perfil no ${profile.platform}`"
@@ -88,7 +88,9 @@ const simuls = [
               <component :is="profile.piece" :size="18" />
             </span>
             <span>{{ profile.platform }}</span>
-            <ArrowUpRight class="chess-link-arrow" :size="14" aria-hidden="true" />
+            <span class="banner-link-arrow" aria-hidden="true">
+              <ArrowUpRight :size="16" />
+            </span>
           </a>
         </div>
       </div>
@@ -169,67 +171,21 @@ const simuls = [
 .chess-simuls a > svg {
   color: var(--chess-accent);
 }
-.chess-profile-link {
-  gap: 7px;
-  padding: 6px 7px 6px 6px;
-  border: 1px solid var(--button-edge);
-  border-radius: 5px;
-  color: #fff4e5;
-  background: linear-gradient(var(--button-top), var(--button-bottom));
-  box-shadow:
-    inset 0 1px #ffffff1f,
-    0 2px 0 #0c0906;
-  font-size: 0.8125rem;
-}
 .chess-profile-link--lichess {
-  --piece-ink: #fae3b9;
-  --tile-light: #55402b;
-  --tile-dark: #3b2b20;
-  --button-top: #34271e;
-  --button-bottom: #201913;
-  --button-edge: #ae8957;
+  --banner-link-accent: var(--chess-accent);
 }
 .chess-profile-link--chesscom {
-  --piece-ink: #d6edac;
-  --tile-light: #455836;
-  --tile-dark: #303e26;
-  --button-top: #2b3824;
-  --button-bottom: #1c2418;
-  --button-edge: #7b915e;
+  --banner-link-accent: #d6edac;
 }
 .chess-link-piece {
+  --tile: color-mix(in srgb, var(--banner-link-accent) 14%, transparent);
   display: grid;
   flex: none;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 3px;
-  color: var(--piece-ink);
-  background: conic-gradient(
-    var(--tile-light) 25%,
-    var(--tile-dark) 0 50%,
-    var(--tile-light) 0 75%,
-    var(--tile-dark) 0
-  );
-  box-shadow: inset 0 0 0 1px #ffffff20;
-}
-.chess-link-piece svg {
-  filter: drop-shadow(0 1px 1px #000);
-}
-.chess-link-arrow {
-  color: var(--piece-ink);
-}
-.chess-profile-link:is(:hover, :focus-visible) {
-  border-color: var(--piece-ink);
-  background: linear-gradient(var(--tile-dark), var(--button-top));
-}
-@media (prefers-reduced-motion: no-preference) {
-  .chess-link-arrow {
-    transition: transform 160ms ease;
-  }
-  .chess-profile-link:is(:hover, :focus-visible) .chess-link-arrow {
-    transform: translate(2px, -2px);
-  }
+  width: 22px;
+  height: 22px;
+  color: var(--banner-link-accent);
+  background: conic-gradient(var(--tile) 25%, transparent 0 50%, var(--tile) 0 75%, transparent 0);
 }
 .chess-stats {
   display: grid;
@@ -306,7 +262,7 @@ const simuls = [
   margin: 10px 0 0;
   text-align: right;
 }
-.chess a:focus-visible {
+.chess-simuls a:focus-visible {
   outline: 2px solid var(--chess-accent);
   outline-offset: 2px;
 }
@@ -323,16 +279,6 @@ const simuls = [
   }
   .chess-rating {
     grid-column: span 1;
-  }
-}
-@media (max-width: 360px) {
-  .chess-profile-link {
-    gap: 5px;
-    padding-inline: 5px;
-  }
-  .chess-link-piece {
-    width: 24px;
-    height: 24px;
   }
 }
 </style>

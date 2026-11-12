@@ -1,5 +1,62 @@
 import { expect, test } from '@playwright/test'
 
+test('ajusta o volume na entrada e controla a trilha pelo topo do perfil', async ({ page }) => {
+  await page.goto('/')
+
+  const sound = page.getByRole('group', { name: 'Trilha do perfil' })
+  const volume = sound.getByRole('slider', { name: 'Volume da trilha' })
+  const audio = page.locator('audio')
+  await volume.press('ArrowRight')
+  await expect(volume).toHaveAttribute('aria-valuetext', '4%')
+  await sound.getByRole('button', { name: 'Entrar sem trilha' }).click()
+  await page.getByRole('button', { name: 'Entrar no perfil' }).click()
+
+  await expect(sound.getByRole('button', { name: 'Reproduzir trilha' })).toBeVisible()
+  await expect(audio).toHaveJSProperty('paused', true)
+  await expect(audio).toHaveJSProperty('volume', 0.04)
+  await expect(page.getByRole('region', { name: 'Trilha do perfil' })).toHaveCount(0)
+
+  await sound.getByRole('button', { name: 'Reproduzir trilha' }).click()
+  await expect(audio).toHaveJSProperty('paused', false)
+  await sound.getByRole('button', { name: 'Pausar trilha' }).click()
+  await expect(audio).toHaveJSProperty('paused', true)
+})
+
+test('troca a faixa em rotação no mesmo player e mantém o volume', async ({ page }) => {
+  await page.goto('/')
+  const volume = page.getByRole('slider', { name: 'Volume da trilha' })
+  await volume.press('ArrowRight')
+  await page.getByRole('button', { name: 'Entrar no perfil' }).click()
+
+  const rotation = page.getByRole('region', { name: 'Playlist' })
+  await expect(rotation.getByRole('listitem')).toHaveCount(3)
+  const audio = page.locator('audio')
+  for (const [title, src, spotifyUrl] of [
+    ['Awakening', 'awakening.mp3', 'https://open.spotify.com/track/03JFWSxq5pj3z1kkp9cXOQ'],
+    [
+      'Flicker In The Fog',
+      'flicker-in-the-fog.mp3',
+      'https://open.spotify.com/track/12ZA5C3oLso9sO94pdEIuH',
+    ],
+  ]) {
+    await expect(rotation.getByRole('link', { name: `Abrir ${title} no Spotify` })).toHaveAttribute(
+      'href',
+      spotifyUrl,
+    )
+    await rotation.getByRole('button', { name: `Tocar ${title}` }).click()
+    await expect(audio).toHaveAttribute('src', `/media/${src}`)
+    await expect(audio).toHaveJSProperty('paused', false)
+    await expect
+      .poll(() => audio.evaluate((player) => (player as HTMLAudioElement).currentTime))
+      .toBeGreaterThan(0)
+    await expect(audio).toHaveJSProperty('volume', 0.04)
+    await expect(rotation.getByRole('button', { name: `Pausar ${title}` })).toHaveAttribute(
+      'aria-current',
+      'true',
+    )
+  }
+})
+
 test('abre o perfil mesmo quando o tracker não tem contas', async ({ page }) => {
   const errors: Error[] = []
   page.on('pageerror', (error) => errors.push(error))
@@ -24,12 +81,17 @@ test('mostra o snapshot atual e devolve o foco ao trocar de seção', async ({ p
   await page.goto('/')
   await page.getByRole('button', { name: 'Entrar no perfil' }).click()
 
+  const games = page.getByRole('tabpanel', { name: /Jogos/ })
+  const league = games.getByRole('region', { name: 'League of Legends', exact: true })
+  await expect(league.getByRole('link', { name: 'Guia de Riven' })).toBeVisible()
   await expect(
-    page.getByRole('region', { name: 'Meu perfil' }).getByRole('heading', {
+    league.getByRole('region', { name: 'Meu perfil' }).getByRole('heading', {
       name: 'Meu perfil',
       exact: true,
+      level: 4,
     }),
   ).toBeVisible()
+  await expect(games.getByRole('region', { name: 'Xadrez', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Ver perfil', exact: true })).toBeVisible()
   await page.getByRole('button', { name: /Flex/ }).click()
   await expect(page.getByRole('button', { name: /Flex/ })).toHaveAttribute('aria-pressed', 'true')

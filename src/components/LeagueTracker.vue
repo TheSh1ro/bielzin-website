@@ -129,7 +129,7 @@ async function collapseMatches() {
 <template>
   <section v-if="account" class="tracker" aria-labelledby="tracker-title">
     <header class="tracker-heading">
-      <h3 id="tracker-title">Meu perfil</h3>
+      <h4 id="tracker-title">Meu perfil</h4>
       <time class="snapshot-label" :datetime="account.collectedAt">
         {{ dateLabel(account.collectedAt, true) }}
       </time>
@@ -144,9 +144,9 @@ async function collapseMatches() {
         loading="lazy"
       />
       <div class="account-name">
-        <h4>
+        <h5>
           {{ account.gameName }}<span>#{{ account.tagLine }}</span>
-        </h4>
+        </h5>
         <p>{{ account.region }} <span aria-hidden="true">·</span> Nível {{ account.level }}</p>
       </div>
       <label v-if="snapshot.accounts.length > 1" class="account-picker"
@@ -218,7 +218,7 @@ async function collapseMatches() {
     />
 
     <div class="recent-heading">
-      <h4>Desempenho recente</h4>
+      <h5>Desempenho recente</h5>
       <span>{{ matches.length }} partidas de {{ queue === 420 ? 'Solo / Duo' : 'Flex' }}</span>
     </div>
     <div class="recent-summary">
@@ -243,12 +243,12 @@ async function collapseMatches() {
 
     <div class="tracker-details">
       <section class="champion-section" aria-labelledby="champion-title">
-        <h4 id="champion-title">
+        <h5 id="champion-title">
           Campeões mais jogados
           <span v-if="championDays">
             {{ championDays === 1 ? 'No último dia' : `Nos últimos ${championDays} dias` }}
           </span>
-        </h4>
+        </h5>
         <ol class="champion-list">
           <li v-for="champion in champions" :key="champion.name">
             <img
@@ -280,9 +280,9 @@ async function collapseMatches() {
       </section>
 
       <section class="match-section" aria-labelledby="match-title">
-        <h4 id="match-title">
+        <h5 id="match-title">
           Últimas partidas <span>{{ queue === 420 ? 'Solo / Duo' : 'Flex' }}</span>
-        </h4>
+        </h5>
         <ol id="tracker-matches" class="match-list">
           <li
             v-for="match in matches.slice(0, visibleCount)"
@@ -342,7 +342,7 @@ async function collapseMatches() {
   </section>
   <section v-else class="tracker" aria-labelledby="tracker-title">
     <header class="tracker-heading">
-      <h3 id="tracker-title">Meu perfil</h3>
+      <h4 id="tracker-title">Meu perfil</h4>
     </header>
     <p class="empty">Nenhuma conta no tracker.</p>
   </section>
@@ -374,15 +374,17 @@ async function collapseMatches() {
   flex-wrap: wrap;
   margin-bottom: 24px;
 }
-.tracker-heading h3 {
+.tracker-heading h4 {
+  font-family: var(--display);
   font-size: 1.75rem;
+  line-height: 1.12;
   letter-spacing: -0.05em;
   margin-top: 6px;
 }
 .snapshot-label,
 .account-name p,
 .recent-heading > span,
-.tracker h4 > span,
+.tracker h5 > span,
 .empty {
   color: var(--muted);
   font-size: 0.75rem;
@@ -403,12 +405,12 @@ async function collapseMatches() {
 .account-name {
   min-width: 0;
 }
-.account-name h4 {
+.account-name h5 {
   overflow-wrap: anywhere;
   font-size: 1.125rem;
   font-weight: 650;
 }
-.account-name h4 span {
+.account-name h5 span {
   font-weight: 400;
   color: var(--muted);
 }
@@ -513,7 +515,7 @@ select:focus-visible {
   margin-top: 24px;
   flex-wrap: wrap;
 }
-.tracker h4 {
+.tracker h5 {
   font-size: 0.875rem;
 }
 .recent-summary {
@@ -572,7 +574,7 @@ select:focus-visible {
   border-top: 1px solid var(--line);
   padding-top: 24px;
 }
-.tracker-details h4 {
+.tracker-details h5 {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -580,7 +582,7 @@ select:focus-visible {
   gap: 4px 8px;
   margin-bottom: 16px;
 }
-.tracker h4 > span {
+.tracker h5 > span {
   font-size: 0.6875rem;
   font-weight: 400;
 }
@@ -727,7 +729,7 @@ select:focus-visible {
     gap: 8px;
     flex-wrap: wrap;
   }
-  .account-name h4 {
+  .account-name h5 {
     font-size: 1rem;
   }
   .rank-grid {

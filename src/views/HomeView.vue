@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, shallowRef } from 'vue'
 import {
   ArrowUpRight,
   ArrowRight,
   ArrowLeft,
   Code2,
-  Play,
-  Pause,
-  RotateCcw,
   Gamepad2,
+  Pause,
+  Play,
   Volume2,
   VolumeX,
 } from 'lucide-vue-next'
-import { profile } from '@/profile'
+import { profile, type MusicTrack } from '@/profile'
 import YouTubeTrack from '@/components/YouTubeTrack.vue'
 import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
@@ -20,15 +19,20 @@ import OsuProfile from '@/components/OsuProfile.vue'
 
 const entered = ref(false)
 const entering = ref(false)
-const soundMuted = ref(false)
+const startWithSound = ref(true)
 const soundVolume = ref(profile.music.volume)
 const motionEnabled = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const heading = ref<HTMLHeadingElement>()
 const audio = ref<HTMLAudioElement>()
 const audioError = ref(false)
 const isPlaying = ref(false)
-const currentTime = ref(0)
-const duration = ref(0)
+const tracks = [profile.music, ...profile.music.rotation]
+const activeTrack = shallowRef<MusicTrack>(profile.music)
+const soundActive = computed(() => (entered.value ? isPlaying.value : startWithSound.value))
+const soundAction = computed(() => {
+  if (entered.value) return soundActive.value ? 'Pausar trilha' : 'Reproduzir trilha'
+  return soundActive.value ? 'Entrar sem trilha' : 'Entrar com trilha'
+})
 const activeSection = ref<'games' | 'development'>('games')
 const sectionDirection = ref('forward')
 const sectionSwitcher = ref<HTMLElement>()
@@ -166,51 +170,10 @@ function onSectionKeydown(event: KeyboardEvent) {
   sectionTabs.value[section === 'games' ? 0 : 1]?.focus()
 }
 
-function formatTime(seconds: number) {
-  const safe = Number.isFinite(seconds) ? Math.max(0, seconds) : 0
-  return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2, '0')}`
-}
-
-function onPlaying() {
-  audioError.value = false
-  isPlaying.value = true
-}
-
-function syncProgress() {
-  if (!audio.value) return
-  currentTime.value = audio.value.currentTime
-  duration.value = Number.isFinite(audio.value.duration) ? audio.value.duration : 0
-}
-
-async function togglePlayback() {
-  if (!audio.value) return
-  if (!audio.value.paused) {
-    audio.value.pause()
-    return
-  }
-  try {
-    await audio.value.play()
-  } catch {
-    audioError.value = true
-  }
-}
-
-function seek(event: Event) {
-  if (!audio.value) return
-  audio.value.currentTime = Number((event.target as HTMLInputElement).value)
-  syncProgress()
-}
-
-function restartTrack() {
-  setAudioStart()
-  syncProgress()
-}
-
 const soundtrack = ref<HTMLElement>()
 const youtubeRequested = ref(false)
 const youtubeId =
   profile.music.embedYouTube && !profile.music.src ? getYouTubeId(profile.music.youtubeUrl) : null
-const canPlayMusic = Boolean(profile.music.src || youtubeId)
 const trackUrl = profile.music.spotifyUrl || profile.music.youtubeUrl
 const trackPlatform = profile.music.spotifyUrl ? 'Spotify' : 'YouTube'
 const backgroundVideoError = ref(false)
@@ -245,9 +208,9 @@ async function startYouTube() {
 function setAudioStart() {
   if (!audio.value) return
   audio.value.volume = soundVolume.value
-  const startAt = Number.isFinite(profile.music.startAt) ? Math.max(0, profile.music.startAt) : 0
+  const offset = activeTrack.value.startAt ?? 0
+  const startAt = Number.isFinite(offset) ? Math.max(0, offset) : 0
   audio.value.currentTime = startAt < audio.value.duration ? startAt : 0
-  syncProgress()
 }
 
 function changeVolume(event: Event) {
@@ -255,29 +218,56 @@ function changeVolume(event: Event) {
   if (audio.value) audio.value.volume = soundVolume.value
 }
 
-function syncAudioSettings() {
-  if (!audio.value) return
-  soundMuted.value = audio.value.muted
-  soundVolume.value = audio.value.volume
+async function playAudio() {
+  const player = audio.value
+  if (!player) return
+  if (player.ended) setAudioStart()
+  player.volume = soundVolume.value
+  try {
+    await player.play()
+    audioError.value = false
+  } catch (error) {
+    if (!(error instanceof DOMException && error.name === 'AbortError')) {
+      audioError.value = true
+    }
+  }
 }
 
-async function enter(withMusic: boolean) {
+function toggleSound() {
+  if (!entered.value) {
+    startWithSound.value = !startWithSound.value
+  } else if (audio.value?.paused) {
+    void playAudio()
+  } else {
+    audio.value?.pause()
+  }
+}
+
+async function selectTrack(track: MusicTrack) {
+  if (track === activeTrack.value) {
+    toggleSound()
+    return
+  }
+  activeTrack.value = track
+  isPlaying.value = false
+  audioError.value = false
+  await nextTick()
+  if (activeTrack.value === track) void playAudio()
+}
+
+async function enter() {
   if (entered.value) return
   entering.value = motionEnabled
-  if (withMusic && audio.value) {
-    audio.value.volume = soundVolume.value
-    audio.value.muted = soundMuted.value
-    setAudioStart()
-    void audio.value.play().catch(() => {
-      audioError.value = true
-    })
-  }
+  if (startWithSound.value) void playAudio()
   entered.value = true
-  if (withMusic && youtubeId) {
+  if (youtubeId) {
     await startYouTube()
     return
   }
-  if (!motionEnabled) finishEntrance()
+  if (!motionEnabled) {
+    await nextTick()
+    finishEntrance()
+  }
 }
 
 function finishEntrance() {
@@ -319,12 +309,7 @@ function finishEntrance() {
     <Transition name="entry-dismiss">
       <main v-if="!entered" class="entry">
         <h1 class="sr-only">{{ profile.name }}</h1>
-        <button
-          class="entry-trigger"
-          type="button"
-          :aria-label="profile.entryLabel"
-          @click="enter(true)"
-        >
+        <button class="entry-trigger" type="button" :aria-label="profile.entryLabel" @click="enter">
           <span class="entry-content">
             <img class="entry-avatar" :src="profile.avatar" alt="" width="112" height="112" />
             <span class="entry-handle">{{ profile.handle }}</span>
@@ -336,17 +321,32 @@ function finishEntrance() {
       </main>
     </Transition>
 
-    <Transition name="entry-sound">
-      <div v-if="!entered && canPlayMusic && profile.music.src" class="sound-controls">
+    <template v-if="profile.music.src">
+      <audio
+        ref="audio"
+        :src="activeTrack.src"
+        preload="metadata"
+        hidden
+        @loadedmetadata="setAudioStart"
+        @error="audioError = true"
+        @play="isPlaying = true"
+        @pause="isPlaying = false"
+        @ended="isPlaying = false"
+      />
+      <div
+        class="sound-controls"
+        :class="{ 'sound-controls--profile': entered }"
+        role="group"
+        aria-label="Trilha do perfil"
+      >
         <button
           class="sound-toggle"
           type="button"
-          :aria-label="soundMuted ? 'Ativar som' : 'Mutar som'"
-          :title="soundMuted ? 'Ativar som' : 'Mutar som'"
-          :aria-pressed="soundMuted"
-          @click="soundMuted = !soundMuted"
+          :aria-label="soundAction"
+          :title="soundAction"
+          @click="toggleSound"
         >
-          <VolumeX v-if="soundMuted || soundVolume === 0" :size="22" aria-hidden="true" />
+          <VolumeX v-if="!soundActive || soundVolume === 0" :size="22" aria-hidden="true" />
           <Volume2 v-else :size="22" aria-hidden="true" />
         </button>
         <input
@@ -364,11 +364,17 @@ function finishEntrance() {
         <span class="sound-volume-value" aria-hidden="true"
           >{{ Math.round(soundVolume * 100) }}%</span
         >
+        <p v-if="audioError" class="sound-error" role="status">Não foi possível tocar a trilha.</p>
       </div>
-    </Transition>
+    </template>
 
     <Transition name="profile-reveal" @after-enter="finishEntrance">
-      <main v-show="entered" id="perfil" class="layout">
+      <main
+        v-show="entered"
+        id="perfil"
+        class="layout"
+        :class="{ 'layout--with-sound': profile.music.src }"
+      >
         <div ref="switcherSlot" class="section-switcher-slot">
           <div
             ref="sectionSwitcher"
@@ -436,8 +442,51 @@ function finishEntrance() {
             </div>
           </section>
 
+          <section v-if="profile.music.src" class="panel rotation" aria-label="Playlist">
+            <ul>
+              <li v-for="track in tracks" :key="track.src" class="rotation-track">
+                <button
+                  class="rotation-play"
+                  type="button"
+                  :aria-current="activeTrack === track ? 'true' : undefined"
+                  :aria-label="`${activeTrack === track && isPlaying ? 'Pausar' : 'Tocar'} ${track.title}`"
+                  @click="selectTrack(track)"
+                >
+                  <Pause v-if="activeTrack === track && isPlaying" :size="16" aria-hidden="true" />
+                  <Play v-else :size="16" aria-hidden="true" />
+                  <span>
+                    <strong :title="track.title">{{ track.title }}</strong>
+                    <small class="rotation-artist">
+                      <span
+                        v-if="activeTrack === track && isPlaying"
+                        class="rotation-equalizer"
+                        aria-hidden="true"
+                      >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </span>
+                      {{ track.artist }}
+                    </small>
+                  </span>
+                </button>
+                <a
+                  v-if="track.spotifyUrl"
+                  class="rotation-spotify"
+                  :href="track.spotifyUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="`Abrir ${track.title} no Spotify`"
+                  title="Abrir no Spotify"
+                >
+                  <img src="/icons/spotify.svg" alt="" width="16" height="16" />
+                </a>
+              </li>
+            </ul>
+          </section>
+
           <section
-            v-if="profile.music.src || trackUrl"
+            v-if="!profile.music.src && (trackUrl || youtubeId)"
             ref="soundtrack"
             class="panel soundtrack"
             aria-label="Trilha do perfil"
@@ -462,91 +511,7 @@ function finishEntrance() {
                   <small v-if="profile.music.artist">{{ profile.music.artist }}</small>
                 </div>
               </div>
-              <button
-                v-if="profile.music.src"
-                class="play-toggle"
-                type="button"
-                :aria-label="isPlaying ? 'Pausar trilha' : 'Reproduzir trilha'"
-                @click="togglePlayback"
-              >
-                <Pause v-if="isPlaying" :size="20" aria-hidden="true" />
-                <Play v-else :size="20" aria-hidden="true" />
-              </button>
             </div>
-            <template v-if="profile.music.src">
-              <input
-                class="track-progress"
-                type="range"
-                min="0"
-                :max="duration || 1"
-                step="0.1"
-                :value="currentTime"
-                :disabled="!duration"
-                aria-label="Posição da trilha"
-                :aria-valuetext="`${formatTime(currentTime)} de ${formatTime(duration)}`"
-                :style="{ '--progress': `${duration ? (currentTime / duration) * 100 : 0}%` }"
-                @input="seek"
-              />
-              <div class="track-times" aria-hidden="true">
-                <span>{{ formatTime(currentTime) }}</span
-                ><span>{{ formatTime(duration) }}</span>
-              </div>
-              <div class="track-footer">
-                <button
-                  class="track-icon"
-                  type="button"
-                  aria-label="Reiniciar trilha"
-                  title="Reiniciar trilha"
-                  @click="restartTrack"
-                >
-                  <RotateCcw :size="16" aria-hidden="true" />
-                </button>
-                <div class="track-volume">
-                  <button
-                    class="track-icon"
-                    type="button"
-                    :aria-label="soundMuted ? 'Ativar som' : 'Mutar som'"
-                    :aria-pressed="soundMuted"
-                    @click="soundMuted = !soundMuted"
-                  >
-                    <VolumeX v-if="soundMuted || soundVolume === 0" :size="18" aria-hidden="true" />
-                    <Volume2 v-else :size="18" aria-hidden="true" />
-                  </button>
-                  <input
-                    class="sound-volume"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    :value="soundVolume"
-                    aria-label="Volume da trilha"
-                    :aria-valuetext="`${Math.round(soundVolume * 100)}%`"
-                    :style="{ '--progress': `${soundVolume * 100}%` }"
-                    @input="changeVolume"
-                  />
-                  <span class="sound-volume-value" aria-hidden="true"
-                    >{{ Math.round(soundVolume * 100) }}%</span
-                  >
-                </div>
-              </div>
-            </template>
-            <audio
-              v-if="profile.music.src"
-              ref="audio"
-              :src="profile.music.src"
-              :muted="soundMuted"
-              preload="metadata"
-              hidden
-              aria-label="Trilha do perfil"
-              @loadedmetadata="setAudioStart"
-              @error="audioError = true"
-              @playing="onPlaying"
-              @pause="isPlaying = false"
-              @timeupdate="syncProgress"
-              @durationchange="syncProgress"
-              @volumechange="syncAudioSettings"
-            />
-            <p v-if="audioError" class="muted" role="status">Não foi possível iniciar a trilha.</p>
             <YouTubeTrack
               v-if="youtubeId && youtubeRequested"
               :video-id="youtubeId"
@@ -595,31 +560,35 @@ function finishEntrance() {
               aria-labelledby="games-tab"
               tabindex="0"
             >
-              <div class="favorite panel">
-                <img
-                  class="favorite-cover"
-                  :src="profile.favoriteGame.cover"
-                  alt=""
-                  loading="lazy"
-                />
-                <div class="favorite-content">
-                  <h3>{{ profile.favoriteGame.name }}</h3>
-                  <a
-                    class="favorite-guide"
-                    :href="profile.favoriteGame.guide"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span class="favorite-guide-blade" aria-hidden="true"></span>
-                    <span>Guia de Riven</span>
-                    <span class="favorite-guide-arrow" aria-hidden="true">
-                      <ArrowUpRight :size="16" />
-                    </span>
-                  </a>
-                </div>
-              </div>
+              <h2 class="sr-only">Jogos</h2>
 
-              <LeagueTracker />
+              <section aria-labelledby="league-title">
+                <header class="favorite panel">
+                  <img
+                    class="favorite-cover"
+                    :src="profile.favoriteGame.cover"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <div class="favorite-content">
+                    <h3 id="league-title">{{ profile.favoriteGame.name }}</h3>
+                    <a
+                      class="favorite-guide"
+                      :href="profile.favoriteGame.guide"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span class="favorite-guide-blade" aria-hidden="true"></span>
+                      <span>Guia de Riven</span>
+                      <span class="favorite-guide-arrow" aria-hidden="true">
+                        <ArrowUpRight :size="16" />
+                      </span>
+                    </a>
+                  </div>
+                </header>
+
+                <LeagueTracker />
+              </section>
 
               <OsuProfile />
 

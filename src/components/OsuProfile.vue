@@ -86,14 +86,16 @@ function scoreGrade(value: string) {
           </div>
         </div>
         <a
-          class="button osu-profile-link"
+          class="button banner-link osu-profile-link"
           :href="osu.profileUrl"
           target="_blank"
           rel="noopener noreferrer"
         >
           <span class="osu-profile-hit-circle" aria-hidden="true"></span>
           <span>Ver perfil no osu!</span>
-          <ArrowUpRight :size="16" aria-hidden="true" />
+          <span class="banner-link-arrow" aria-hidden="true">
+            <ArrowUpRight :size="16" />
+          </span>
         </a>
       </div>
     </header>
@@ -284,26 +286,17 @@ function scoreGrade(value: string) {
   line-height: 1.15;
 }
 .osu-profile-link {
-  gap: 10px;
+  --banner-link-accent: var(--osu-accent);
   margin-top: 2px;
-  padding: 6px 12px 6px 8px;
-  border: 1px solid #ed7ab1b3;
-  border-radius: 24px;
-  background: linear-gradient(115deg, #582342, #281323 72%);
-  color: #fff2f9;
-  text-decoration: none;
-}
-.osu-profile-link > svg {
-  color: var(--osu-accent);
 }
 .osu-profile-hit-circle {
   position: relative;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   flex: none;
-  color: #ffbbdb;
+  color: var(--osu-accent);
 }
 .osu-profile-hit-circle::before,
 .osu-profile-hit-circle::after {
@@ -317,14 +310,9 @@ function scoreGrade(value: string) {
   opacity: 0.6;
 }
 .osu-profile-hit-circle::after {
-  width: 16px;
-  height: 16px;
-  background: #dc488e;
-  box-shadow: inset 0 0 0 3px #882959;
-}
-.osu-profile-link:is(:hover, :focus-visible) {
-  border-color: var(--osu-accent);
-  background: linear-gradient(115deg, #743156, #38172e 72%);
+  width: 12px;
+  height: 12px;
+  background: color-mix(in srgb, var(--osu-accent) 28%, transparent);
 }
 .osu-profile-link:is(:hover, :focus-visible) .osu-profile-hit-circle::before {
   transform: scale(0.7);
@@ -339,6 +327,10 @@ function scoreGrade(value: string) {
 }
 .osu-block {
   margin-top: 24px;
+}
+.osu-banner + .osu-block {
+  padding-top: 24px;
+  border-top: 1px solid var(--osu-line);
 }
 .osu-heading {
   display: flex;
