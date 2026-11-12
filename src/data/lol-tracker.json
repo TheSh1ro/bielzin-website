@@ -7,7 +7,7 @@
       "tagLine": "sh1ro",
       "platform": "BR1",
       "region": "BR",
-      "collectedAt": "2026-11-11T02:29:25.225Z",
+      "collectedAt": "2026-11-12T16:48:55.599Z",
       "dataDragonVersion": "16.22.1",
       "profileIconId": 3867,
       "level": 742,
@@ -25,8 +25,8 @@
           "queueType": "RANKED_SOLO_5x5",
           "tier": "MASTER",
           "division": "I",
-          "leaguePoints": 1299,
-          "wins": 144,
+          "leaguePoints": 1328,
+          "wins": 145,
           "losses": 107
         }
       ],
@@ -152,9 +152,45 @@
           "leaguePoints": 1299,
           "wins": 144,
           "losses": 107
+        },
+        {
+          "recordedAt": "2026-11-12T16:48:55.599Z",
+          "queueType": "RANKED_FLEX_SR",
+          "tier": "DIAMOND",
+          "division": "I",
+          "leaguePoints": 65,
+          "wins": 48,
+          "losses": 24
+        },
+        {
+          "recordedAt": "2026-11-12T16:48:55.599Z",
+          "queueType": "RANKED_SOLO_5x5",
+          "tier": "MASTER",
+          "division": "I",
+          "leaguePoints": 1328,
+          "wins": 145,
+          "losses": 107
         }
       ],
       "matches": [
+        {
+          "id": "BR1_3303289792",
+          "queueId": 420,
+          "startedAt": "2026-11-12T01:49:06.068Z",
+          "durationSeconds": 1596,
+          "championId": 117,
+          "championName": "Lulu",
+          "championIcon": "Lulu.png",
+          "win": true,
+          "remake": false,
+          "kills": 7,
+          "deaths": 5,
+          "assists": 25,
+          "cs": 26,
+          "visionScore": 76,
+          "role": "UTILITY",
+          "damage": 11901
+        },
         {
           "id": "BR1_3302988747",
           "queueId": 420,
@@ -856,24 +892,6 @@
           "visionScore": 31,
           "role": "TOP",
           "damage": 25020
-        },
-        {
-          "id": "BR1_3292486727",
-          "queueId": 440,
-          "startedAt": "2026-10-12T19:48:54.328Z",
-          "durationSeconds": 911,
-          "championId": 92,
-          "championName": "Riven",
-          "championIcon": "Riven.png",
-          "win": false,
-          "remake": false,
-          "kills": 2,
-          "deaths": 8,
-          "assists": 2,
-          "cs": 79,
-          "visionScore": 12,
-          "role": "TOP",
-          "damage": 11619
         }
       ]
     }
