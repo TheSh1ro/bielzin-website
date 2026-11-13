@@ -645,31 +645,33 @@ function finishEntrance() {
               <h2 class="sr-only">Jogos</h2>
 
               <section aria-labelledby="league-title">
-                <header class="favorite panel">
+                <a
+                  ref="rivenShortcut"
+                  class="favorite riven-banner panel"
+                  href="/riven"
+                  aria-labelledby="riven-shortcut-label"
+                  @click.left.exact.prevent="openRiven"
+                  @mouseenter.once="preloadRiven"
+                  @focus.once="preloadRiven"
+                >
                   <img
                     class="favorite-cover"
                     :src="profile.favoriteGame.cover"
                     alt=""
                     loading="lazy"
                   />
+                  <span class="favorite-edge" aria-hidden="true"></span>
                   <div class="favorite-content">
                     <h3 id="league-title">{{ profile.favoriteGame.name }}</h3>
-                    <a
-                      class="favorite-guide"
-                      href="/riven"
-                      ref="rivenShortcut"
-                      @click.left.exact.prevent="openRiven"
-                      @mouseenter.once="preloadRiven"
-                      @focus.once="preloadRiven"
-                    >
+                    <span class="favorite-guide">
                       <span class="favorite-guide-blade" aria-hidden="true"></span>
-                      <span>Guia de Riven</span>
+                      <span id="riven-shortcut-label">Guia de Riven</span>
                       <span class="favorite-guide-arrow" aria-hidden="true">
                         <ArrowRight :size="16" />
                       </span>
-                    </a>
+                    </span>
                   </div>
-                </header>
+                </a>
 
                 <LeagueTracker />
               </section>
