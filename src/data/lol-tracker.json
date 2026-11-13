@@ -26,7 +26,7 @@
       "tagLine": "sh1ro",
       "gameName": "bielzin",
       "platform": "BR1",
-      "collectedAt": "2026-11-13T02:46:51.129Z",
+      "collectedAt": "2026-11-13T05:37:36.429Z",
       "profileIconId": 3867,
       "matchSampleLimit": 40,
       "dataDragonVersion": "16.22.1",
@@ -169,6 +169,24 @@
           "division": "I",
           "queueType": "RANKED_SOLO_5x5",
           "recordedAt": "2026-11-13T02:46:51.129Z",
+          "leaguePoints": 1357
+        },
+        {
+          "tier": "DIAMOND",
+          "wins": 48,
+          "losses": 24,
+          "division": "I",
+          "queueType": "RANKED_FLEX_SR",
+          "recordedAt": "2026-11-13T05:37:36.429Z",
+          "leaguePoints": 65
+        },
+        {
+          "tier": "MASTER",
+          "wins": 146,
+          "losses": 107,
+          "division": "I",
+          "queueType": "RANKED_SOLO_5x5",
+          "recordedAt": "2026-11-13T05:37:36.429Z",
           "leaguePoints": 1357
         }
       ],
