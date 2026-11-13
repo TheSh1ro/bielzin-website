@@ -15,18 +15,18 @@
         },
         {
           "tier": "MASTER",
-          "wins": 145,
+          "wins": 146,
           "losses": 107,
           "division": "I",
           "queueType": "RANKED_SOLO_5x5",
-          "leaguePoints": 1328
+          "leaguePoints": 1357
         }
       ],
       "region": "BR",
       "tagLine": "sh1ro",
       "gameName": "bielzin",
       "platform": "BR1",
-      "collectedAt": "2026-11-12T23:37:35.421Z",
+      "collectedAt": "2026-11-13T02:46:51.129Z",
       "profileIconId": 3867,
       "matchSampleLimit": 40,
       "dataDragonVersion": "16.22.1",
@@ -159,20 +159,38 @@
           "losses": 24,
           "division": "I",
           "queueType": "RANKED_FLEX_SR",
-          "recordedAt": "2026-11-12T23:37:35.421Z",
+          "recordedAt": "2026-11-13T02:46:51.129Z",
           "leaguePoints": 65
         },
         {
           "tier": "MASTER",
-          "wins": 145,
+          "wins": 146,
           "losses": 107,
           "division": "I",
           "queueType": "RANKED_SOLO_5x5",
-          "recordedAt": "2026-11-12T23:37:35.421Z",
-          "leaguePoints": 1328
+          "recordedAt": "2026-11-13T02:46:51.129Z",
+          "leaguePoints": 1357
         }
       ],
       "matches": [
+        {
+          "cs": 11,
+          "id": "BR1_3303593861",
+          "win": true,
+          "role": "UTILITY",
+          "kills": 1,
+          "damage": 6707,
+          "deaths": 6,
+          "remake": false,
+          "assists": 18,
+          "queueId": 420,
+          "startedAt": "2026-11-13T01:49:35.972Z",
+          "championId": 16,
+          "visionScore": 66,
+          "championIcon": "Soraka.png",
+          "championName": "Soraka",
+          "durationSeconds": 1525
+        },
         {
           "cs": 26,
           "id": "BR1_3303289792",
@@ -874,24 +892,6 @@
           "championIcon": "Riven.png",
           "championName": "Riven",
           "durationSeconds": 1762
-        },
-        {
-          "cs": 212,
-          "id": "BR1_3292502065",
-          "win": true,
-          "role": "TOP",
-          "kills": 11,
-          "damage": 25020,
-          "deaths": 2,
-          "remake": false,
-          "assists": 2,
-          "queueId": 440,
-          "startedAt": "2026-10-12T20:10:48.930Z",
-          "championId": 92,
-          "visionScore": 31,
-          "championIcon": "Riven.png",
-          "championName": "Riven",
-          "durationSeconds": 1427
         }
       ]
     }
