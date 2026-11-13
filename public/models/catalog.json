@@ -1,344 +1,344 @@
 [
   {
     "champion": "Aatrox",
-    "bytes": 15508452,
-    "animations": 103,
+    "bytes": 780304,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Akali",
-    "bytes": 19826900,
-    "animations": 97,
+    "bytes": 1360760,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Ambessa",
-    "bytes": 13329500,
-    "animations": 70,
+    "bytes": 1701832,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Camille",
-    "bytes": 6231700,
-    "animations": 53,
+    "bytes": 927216,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Cassiopeia",
-    "bytes": 3022976,
-    "animations": 18,
+    "bytes": 1112532,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Chogath",
-    "bytes": 2314528,
-    "animations": 23,
+    "bytes": 1027176,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Darius",
-    "bytes": 6480420,
-    "animations": 22,
+    "bytes": 980264,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "DrMundo",
-    "bytes": 12910740,
-    "animations": 60,
+    "bytes": 2376416,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Fiora",
-    "bytes": 2612612,
-    "animations": 22,
+    "bytes": 595780,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Gangplank",
-    "bytes": 3360612,
-    "animations": 32,
+    "bytes": 633900,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Garen",
-    "bytes": 3153536,
-    "animations": 34,
+    "bytes": 602128,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Gnar",
-    "bytes": 9788068,
-    "animations": 56,
+    "bytes": 873100,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Gragas",
-    "bytes": 2293312,
-    "animations": 22,
+    "bytes": 520764,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Gwen",
-    "bytes": 13459924,
-    "animations": 96,
+    "bytes": 1553872,
+    "animations": 1,
     "textures": 3
   },
   {
     "champion": "Heimerdinger",
-    "bytes": 7408752,
-    "animations": 35,
+    "bytes": 678800,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Illaoi",
-    "bytes": 5223448,
-    "animations": 41,
+    "bytes": 735196,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Irelia",
-    "bytes": 19062452,
-    "animations": 71,
+    "bytes": 1711792,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Jax",
-    "bytes": 8540660,
-    "animations": 51,
+    "bytes": 1706584,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Jayce",
-    "bytes": 3613660,
-    "animations": 45,
+    "bytes": 825776,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Karma",
-    "bytes": 5007840,
-    "animations": 22,
+    "bytes": 892616,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Kayle",
-    "bytes": 15325512,
-    "animations": 98,
+    "bytes": 939324,
+    "animations": 1,
     "textures": 3
   },
   {
     "champion": "Kennen",
-    "bytes": 1349204,
-    "animations": 18,
+    "bytes": 376328,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Kled",
-    "bytes": 10889528,
-    "animations": 50,
+    "bytes": 1033660,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "KogMaw",
-    "bytes": 3486244,
-    "animations": 20,
+    "bytes": 886912,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "KSante",
-    "bytes": 11287756,
-    "animations": 97,
+    "bytes": 1675336,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Malphite",
-    "bytes": 2083456,
-    "animations": 21,
+    "bytes": 1179552,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Maokai",
-    "bytes": 4183808,
-    "animations": 24,
+    "bytes": 1186928,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Mordekaiser",
-    "bytes": 9393176,
-    "animations": 68,
+    "bytes": 968128,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Nasus",
-    "bytes": 5839288,
-    "animations": 31,
+    "bytes": 1425352,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Olaf",
-    "bytes": 2321168,
-    "animations": 19,
+    "bytes": 572256,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Ornn",
-    "bytes": 11893792,
-    "animations": 48,
+    "bytes": 1449576,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Pantheon",
-    "bytes": 14998420,
-    "animations": 88,
+    "bytes": 1615300,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Poppy",
-    "bytes": 6661584,
-    "animations": 38,
+    "bytes": 678952,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Qiyana",
-    "bytes": 9163976,
-    "animations": 64,
+    "bytes": 1041412,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Quinn",
-    "bytes": 7735740,
-    "animations": 40,
+    "bytes": 951196,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Renekton",
-    "bytes": 4168264,
-    "animations": 19,
+    "bytes": 777792,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Rengar",
-    "bytes": 7792620,
-    "animations": 33,
+    "bytes": 773416,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Rumble",
-    "bytes": 5314672,
-    "animations": 19,
+    "bytes": 1104144,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Ryze",
-    "bytes": 4414068,
-    "animations": 26,
+    "bytes": 785580,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Sett",
-    "bytes": 11397712,
-    "animations": 72,
+    "bytes": 1218812,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Shen",
-    "bytes": 2026280,
-    "animations": 29,
+    "bytes": 513132,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Singed",
-    "bytes": 1605800,
-    "animations": 21,
+    "bytes": 615436,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Sion",
-    "bytes": 5552672,
-    "animations": 47,
+    "bytes": 864852,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "TahmKench",
-    "bytes": 6404140,
-    "animations": 41,
+    "bytes": 970792,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Teemo",
-    "bytes": 8967444,
-    "animations": 51,
+    "bytes": 1816728,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Trundle",
-    "bytes": 3692604,
-    "animations": 30,
+    "bytes": 728428,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Tryndamere",
-    "bytes": 3010140,
-    "animations": 21,
+    "bytes": 736296,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Urgot",
-    "bytes": 9547076,
-    "animations": 99,
+    "bytes": 1016300,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Varus",
-    "bytes": 5412100,
-    "animations": 23,
+    "bytes": 710876,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Vladimir",
-    "bytes": 2946476,
-    "animations": 26,
+    "bytes": 581140,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Volibear",
-    "bytes": 17950176,
-    "animations": 90,
+    "bytes": 1733640,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Warwick",
-    "bytes": 9498388,
-    "animations": 66,
+    "bytes": 919236,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Yasuo",
-    "bytes": 7260068,
-    "animations": 47,
+    "bytes": 806160,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Yone",
-    "bytes": 14696484,
-    "animations": 84,
+    "bytes": 1880612,
+    "animations": 1,
     "textures": 4
   },
   {
     "champion": "Yorick",
-    "bytes": 5122372,
-    "animations": 24,
+    "bytes": 942616,
+    "animations": 1,
     "textures": 1
   },
   {
     "champion": "Zaahen",
-    "bytes": 16038972,
-    "animations": 69,
+    "bytes": 2480004,
+    "animations": 1,
     "textures": 2
   },
   {
     "champion": "Zac",
-    "bytes": 12204296,
-    "animations": 58,
+    "bytes": 702796,
+    "animations": 1,
     "textures": 1
   }
 ]

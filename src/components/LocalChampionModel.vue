@@ -2,27 +2,33 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 const props = defineProps<{ source: string; champion: string }>()
 const host = ref<HTMLDivElement>()
-const status = ref('Carregando modelo…')
-const animations = ref<string[]>([])
-const selected = ref('')
-const paused = ref(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+const loading = ref(true)
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 let disposed = false
 let renderer: THREE.WebGLRenderer | undefined
-let controls: OrbitControls | undefined
 let mixer: THREE.AnimationMixer | undefined
 let model: THREE.Group | undefined
-let clips: THREE.AnimationClip[] = []
 let observer: ResizeObserver | undefined
+const championId = props.source.split('/').pop()?.replace('.glb', '') ?? ''
+const framing: Record<string, { zoom: number; targetY: number }> = {
+  kled: { zoom: 1.75, targetY: -0.18 },
+  kayle: { zoom: 1.15, targetY: 0 },
+}
 
-function play() {
-  if (!mixer) return
-  mixer.stopAllAction()
-  const clip = clips.find((clip) => clip.name === selected.value)
-  if (clip) mixer.clipAction(clip).reset().play()
+// Prefer the resting loop, never an idle transition, spell or idle variation.
+function idleClip(clips: THREE.AnimationClip[]) {
+  const names = clips.map((clip) => ({
+    clip,
+    name: clip.name.replace(/\.anm$/i, '').toLowerCase(),
+  }))
+  return (
+    names.find(({ name }) => /(^|_)idle_?0?1(?:_base|_raw)?$/.test(name)) ??
+    names.find(({ name }) => /(^|_)idle(?:_base)?$/.test(name) || name === 'idlebase') ??
+    names.find(({ name }) => name === 'idle0')
+  )?.clip
 }
 function disposeModel(root: THREE.Object3D) {
   const textures = new Set<THREE.Texture>()
@@ -52,19 +58,30 @@ onMounted(async () => {
     renderer.domElement.setAttribute('role', 'img')
     element.appendChild(renderer.domElement)
     const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100)
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100)
+    const silhouette = new THREE.Vector3()
+    const frame = () => {
+      if (silhouette.y <= 0) return
+      const { width, height } = element.getBoundingClientRect()
+      const aspect = Math.max(width, 1) / Math.max(height, 1)
+      // Identical silhouette margins, including broad champions and their weapons.
+      const halfHeight =
+        Math.max(silhouette.y / 0.84, silhouette.x / (aspect * 0.88)) /
+        (2 * (framing[championId]?.zoom ?? 1))
+      camera.left = -halfHeight * aspect
+      camera.right = halfHeight * aspect
+      camera.top = halfHeight
+      camera.bottom = -halfHeight
+      camera.updateProjectionMatrix()
+    }
     scene.add(new THREE.HemisphereLight(0xffffff, 0x829585, 2.5))
     const light = new THREE.DirectionalLight(0xffffff, 2)
     light.position.set(3, 5, 4)
     scene.add(light)
-    controls = new OrbitControls(camera, renderer.domElement)
-    controls.enableDamping = true
-    controls.enablePan = false
     const resize = () => {
       const { width, height } = element.getBoundingClientRect()
-      renderer?.setSize(width, height)
-      camera.aspect = width / Math.max(height, 1)
-      camera.updateProjectionMatrix()
+      renderer?.setSize(Math.max(width, 1), Math.max(height, 1))
+      frame()
     }
     observer = new ResizeObserver(resize)
     observer.observe(element)
@@ -76,45 +93,78 @@ onMounted(async () => {
     }
     model = gltf.scene
     scene.add(model)
-    clips = gltf.animations
-    animations.value = clips.map((clip) => clip.name)
-    selected.value = clips.find((clip) => /idle1/i.test(clip.name))?.name ?? clips[0]?.name ?? ''
+    const clip = idleClip(gltf.animations)
     mixer = new THREE.AnimationMixer(model)
-    play()
-    mixer.update(0)
-    const box = new THREE.Box3().setFromObject(model)
-    const size = box.getSize(new THREE.Vector3())
-    const center = box.getCenter(new THREE.Vector3())
+    if (clip) mixer.clipAction(clip).play()
+    // Some idle poses are authored facing sideways or away from the camera.
+    const facing: Record<string, number> = {
+      aatrox: 25,
+      akali: 55,
+      garen: 15,
+      irelia: 25,
+      jax: 30,
+      nasus: 25,
+      ryze: 30,
+      sett: 35,
+      shen: 35,
+      tryndamere: 25,
+      yone: 0,
+      yorick: 20,
+    }
+    model.rotation.y = THREE.MathUtils.degToRad(facing[championId] ?? -15)
+
+    // Fit the animated silhouette rather than the export's bind pose. Sampling
+    // the full idle keeps breathing, weapons and tails inside the same frame.
+    const bounds = new THREE.Box3()
+    const vertex = new THREE.Vector3()
+    const meshes: { mesh: THREE.Mesh; vertices: number[] }[] = []
+    model.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return
+      const geometry: THREE.BufferGeometry = object.geometry
+      // Exports retain unused vertices from removed meshes. Including them
+      // makes champions such as Akali and Gnar appear tiny and off-center.
+      const vertices = geometry.index
+        ? [...new Set(geometry.index.array)]
+        : Array.from({ length: geometry.attributes.position!.count }, (_, index) => index)
+      meshes.push({ mesh: object, vertices })
+    })
+    for (let sample = 0; sample < 16; sample++) {
+      mixer.setTime(clip ? (clip.duration * sample) / 16 : 0)
+      model.updateMatrixWorld(true)
+      for (const { mesh, vertices } of meshes) {
+        for (const index of vertices) {
+          mesh.getVertexPosition(index, vertex).applyMatrix4(mesh.matrixWorld)
+          bounds.expandByPoint(vertex)
+        }
+      }
+    }
+    const center = bounds.getCenter(new THREE.Vector3())
     model.position.sub(center)
-    const distance =
-      (Math.max(size.y, size.x / camera.aspect) / (2 * Math.tan(THREE.MathUtils.degToRad(17.5)))) *
-      1.25
-    camera.far = distance * 20
-    camera.position.set(0, size.y * 0.08, distance)
-    camera.updateProjectionMatrix()
-    controls.target.set(0, 0, 0)
-    controls.minDistance = distance * 0.45
-    controls.maxDistance = distance * 2
-    controls.update()
-    status.value = ''
+    bounds.getSize(silhouette)
+    mixer.setTime(0)
+    const distance = Math.max(silhouette.length() * 3, 1)
+    camera.far = distance * 4
+    const targetY = silhouette.y * (framing[championId]?.targetY ?? 0)
+    camera.position.set(0, targetY, distance)
+    camera.lookAt(0, targetY, 0)
+    frame()
+    loading.value = false
     let lastTime = performance.now()
     renderer.setAnimationLoop((time) => {
       const delta = Math.min((time - lastTime) / 1000, 0.1)
       lastTime = time
       if (document.hidden) return
-      if (!paused.value) mixer?.update(delta)
-      controls?.update()
+      if (!reducedMotion) mixer?.update(delta)
       renderer?.render(scene, camera)
     })
   } catch {
-    if (!disposed) status.value = 'O modelo 3D está indisponível.'
+    if (!disposed) loading.value = false
   }
 })
 onUnmounted(() => {
   disposed = true
   observer?.disconnect()
   renderer?.setAnimationLoop(null)
-  controls?.dispose()
   mixer?.stopAllAction()
   if (model) {
     mixer?.uncacheRoot(model)
@@ -126,59 +176,22 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="local-model">
+  <div class="local-model" :aria-busy="loading">
     <div ref="host" class="canvas-host" />
-    <p v-if="status" class="model-status" role="status">{{ status }}</p>
-    <div v-if="animations.length" class="model-controls">
-      <label
-        ><span class="sr-only">Animação de {{ champion }}</span>
-        <select v-model="selected" @change="play">
-          <option v-for="name in animations" :key="name" :value="name">
-            {{ name.replace(/\.anm$/i, '').replace(/^fiora_/i, '') }}
-          </option>
-        </select>
-      </label>
-      <button type="button" :aria-pressed="paused" @click="paused = !paused">
-        {{ paused ? 'Reproduzir' : 'Pausar' }}
-      </button>
-    </div>
   </div>
 </template>
 
 <style scoped>
 .local-model {
   position: relative;
+  pointer-events: none;
 }
 .canvas-host {
   width: 100%;
   height: 480px;
-  touch-action: none;
 }
 .canvas-host :deep(canvas) {
   display: block;
-}
-.model-status {
-  position: absolute;
-  inset: 45% 0 auto;
-  text-align: center;
-  color: var(--riven-muted);
-}
-.model-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  font-size: 0.75rem;
-}
-select {
-  max-width: 220px;
-  padding: 6px;
-  color: var(--riven-green);
-  background: #101512;
-  border: 1px solid var(--riven-line);
-}
-button {
-  color: var(--riven-green);
 }
 @media (max-width: 740px) {
   .canvas-host {
