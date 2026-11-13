@@ -233,7 +233,8 @@
   color: var(--riven-warm);
 }
 
-.riven-matchup-tip {
+.riven-matchup-tips {
+  white-space: pre-line;
   margin: 14px var(--matchup-pad);
   padding: 9px 12px;
   border-left: 2px solid #b4eed0a8;
@@ -333,6 +334,10 @@
   margin-top: 8px;
   color: var(--riven-muted);
   font-size: 0.875rem;
+}
+
+.riven-build-reason {
+  white-space: pre-line;
 }
 
 .riven-item-groups {
@@ -718,4 +723,18 @@
   .riven-spell-name {
     overflow-wrap: anywhere;
   }
+}
+
+.riven-matchup-tips ul {
+  display: grid;
+  gap: 10px;
+  padding-left: 18px;
+  list-style: disc;
+}
+.riven-matchup-tips li {
+  padding-left: 4px;
+  white-space: pre-line;
+}
+.riven-matchup-tips li::marker {
+  color: var(--riven-green);
 }

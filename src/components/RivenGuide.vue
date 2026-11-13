@@ -2,9 +2,8 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { ArrowUpRight, ChevronDown, Clock3, Search, Sword, Swords } from 'lucide-vue-next'
 import { profile } from '@/profile'
-import { rivenLessons, rivenRuneGroups, rivenSkillOrder } from '@/data/riven'
-import { recommendBuild } from '@/data/riven-builds'
-import matchupData from '@/data/riven-matchups.json'
+import { rivenLessons, rivenSkillOrder } from '@/data/riven'
+import { guideBuild, guideMatchup, guideRuneGroups, guideVisible } from '@/lib/riven-guide'
 import {
   abilityText,
   cooldownText,
@@ -17,8 +16,6 @@ import {
   type Item,
 } from '@/lib/data-dragon'
 
-type Matchup = { early: boolean | null; late: boolean | null; tip: string }
-const matchups: Partial<Record<string, Matchup>> = matchupData
 const guideLinks = [
   { id: 'riven-matchups', name: 'Matchups', icon: Swords },
   { id: 'riven-habilidades', name: 'Habilidades', icon: Sword },
@@ -43,67 +40,6 @@ const greavesSynergies = [
   { id: 6333, summary: 'Adia parte do dano e limpa o restante ao participar de um abate.' },
   { id: 3156, summary: 'Resistência mágica e, ao ativar a passiva, escudo e vampirismo.' },
 ]
-
-const topLaneOpponents = new Set([
-  'Riven',
-  'Volibear',
-  'Malphite',
-  'Jayce',
-  'Cassiopeia',
-  'Gangplank',
-  'Garen',
-  'Olaf',
-  'Gnar',
-  'Kennen',
-  'Jax',
-  'KSante',
-  'Gragas',
-  'Renekton',
-  'Rumble',
-  'Teemo',
-  'Varus',
-  'Pantheon',
-  'Heimerdinger',
-  'KogMaw',
-  'Poppy',
-  'Quinn',
-  'Karma',
-  'Camille',
-  'Urgot',
-  'Akali',
-  'Chogath',
-  'Zac',
-  'Nasus',
-  'Fiora',
-  'Gwen',
-  'Kled',
-  'Zaahen',
-  'Mordekaiser',
-  'Warwick',
-  'Shen',
-  'Illaoi',
-  'Yone',
-  'Yorick',
-  'Sett',
-  'Irelia',
-  'Aatrox',
-  'Yasuo',
-  'Darius',
-  'Ambessa',
-  'Trundle',
-  'Tryndamere',
-  'Singed',
-  'Vladimir',
-  'Rengar',
-  'Ryze',
-  'Maokai',
-  'Qiyana',
-  'DrMundo',
-  'Sion',
-  'Ornn',
-  'Kayle',
-  'TahmKench',
-])
 
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
 
@@ -188,8 +124,11 @@ async function loadPatch() {
       .catch(() => {})
     const { data } = await riotData<ChampionSummary>(v, 'champion')
     roster.value = Object.values(data)
-      .filter(({ id }) => topLaneOpponents.has(id))
+      .filter(({ id }) => guideVisible(id))
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+    if (!roster.value.some(({ id }) => id === selectedId.value)) {
+      selectedId.value = roster.value[0]?.id ?? ''
+    }
     dataState.value = 'ready'
   } catch {
     dataState.value = 'error'
@@ -251,13 +190,17 @@ function selectOpponent(id: string) {
   closePicker(true)
 }
 
-const build = computed(() => recommendBuild(selectedId.value))
+const build = computed(() => guideBuild(selectedId.value))
+const runeGroups = computed(() => guideRuneGroups(selectedId.value))
 const itemGroups = computed(() => [
-  { name: 'Início e botas', ids: [build.value.start, build.value.boots] },
+  {
+    name: 'Início e botas',
+    ids: [...build.value.start, ...(build.value.boots ? [build.value.boots] : [])],
+  },
   { name: 'Ordem de compra', ids: build.value.core },
 ])
 const selected = computed(() => roster.value.find(({ id }) => id === selectedId.value))
-const matchup = computed(() => matchups[selectedId.value])
+const matchup = computed(() => guideMatchup(selectedId.value))
 const assessment = computed(() => [
   { label: 'Early game', value: matchup.value?.early },
   { label: 'Late game', value: matchup.value?.late },
@@ -432,6 +375,9 @@ void loadPatch()
         <p>O catálogo de campeões está indisponível.</p>
         <button type="button" @click="loadPatch">Tentar novamente</button>
       </div>
+      <p v-else-if="!roster.length" class="riven-feedback" role="status">
+        Nenhum matchup disponível no momento.
+      </p>
       <div v-else-if="selected" class="riven-matchup riven-glass">
         <div class="riven-controls">
           <div
@@ -500,13 +446,18 @@ void loadPatch()
           <dl class="riven-assessment" aria-label="Avaliação do duelo para a Riven">
             <div v-for="stage in assessment" :key="stage.label">
               <dt>{{ stage.label }}</dt>
-              <dd :class="{ favorable: stage.value === true, unfavorable: stage.value === false }">
+              <dd
+                :class="{
+                  favorable: stage.value === 'favorable',
+                  unfavorable: stage.value === 'unfavorable',
+                }"
+              >
                 {{
-                  stage.value === true
+                  stage.value === 'favorable'
                     ? 'Favorável'
-                    : stage.value === false
+                    : stage.value === 'unfavorable'
                       ? 'Desfavorável'
-                      : matchup
+                      : stage.value === 'even'
                         ? selectedId === 'Riven'
                           ? 'Espelho'
                           : 'Equilibrado'
@@ -517,9 +468,14 @@ void loadPatch()
           </dl>
         </div>
 
-        <p class="riven-matchup-tip" aria-live="polite">
-          {{ matchup?.tip ?? 'Dica de matchup em preparação.' }}
-        </p>
+        <div class="riven-matchup-tips" aria-live="polite">
+          <ul v-if="matchup?.tips.some((tip) => tip.trim())" aria-label="Dicas do matchup">
+            <li v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())" :key="index">
+              {{ tip }}
+            </li>
+          </ul>
+          <p v-else>Dicas de matchup em preparação.</p>
+        </div>
 
         <div class="riven-matchup-grid">
           <section class="riven-matchup-column" aria-labelledby="riven-enemy-title">
@@ -559,7 +515,7 @@ void loadPatch()
           <section class="riven-matchup-column" aria-labelledby="riven-build-title">
             <div class="riven-title-line">
               <h2 id="riven-build-title">Build recomendada</h2>
-              <span v-if="build.isBase" class="riven-meta">Base de Top</span>
+              <span v-if="build.isBase" class="riven-meta">Padrão</span>
             </div>
             <p class="riven-build-reason" aria-live="polite">{{ build.reason }}</p>
             <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
@@ -584,24 +540,52 @@ void loadPatch()
                       />
                       {{ items[id].name }}
                     </template>
-                    <span v-else>Item indisponível neste patch</span>
+                    <span v-else>Item {{ id }} indisponível neste patch</span>
                   </li>
                 </ul>
               </div>
-              <p
-                v-if="build.situational && items[build.situational.item]"
-                class="riven-meta riven-situational"
-              >
-                <strong>{{ items[build.situational.item]?.name }}</strong>
-                {{ build.situational.condition }}
-              </p>
+              <div v-if="build.situational.length" class="riven-item-group">
+                <h3>Situacionais</h3>
+                <ul>
+                  <li v-for="(choice, index) in build.situational" :key="index" class="riven-item">
+                    <template v-if="items[choice.item]">
+                      <img
+                        :src="riotImage(version, 'item', items[choice.item]!.image.full)"
+                        alt=""
+                        width="28"
+                        height="28"
+                        loading="lazy"
+                      />
+                      <span
+                        ><strong>{{ items[choice.item]?.name }}</strong
+                        ><span v-if="choice.condition" class="riven-meta riven-situational">
+                          {{ choice.condition }}</span
+                        ></span
+                      >
+                    </template>
+                    <span v-else
+                      >Item {{ choice.item }} indisponível neste patch<span v-if="choice.condition">
+                        — {{ choice.condition }}</span
+                      ></span
+                    >
+                  </li>
+                </ul>
+              </div>
             </div>
             <div class="riven-runes">
               <h3>Runas</h3>
               <div class="riven-rune-groups">
-                <ul v-for="group in rivenRuneGroups" :key="group.name" :aria-label="group.name">
-                  <li v-for="[name, icon] in group.runes" :key="name" :title="name">
-                    <img :src="icon" :alt="name" width="30" height="30" loading="lazy" />
+                <ul v-for="group in runeGroups" :key="group.name" :aria-label="group.name">
+                  <li v-for="rune in group.runes" :key="rune.id" :title="rune.name">
+                    <img
+                      v-if="rune.icon"
+                      :src="rune.icon"
+                      :alt="rune.name"
+                      width="30"
+                      height="30"
+                      loading="lazy"
+                    />
+                    <span v-else>{{ rune.name }}</span>
                   </li>
                 </ul>
               </div>

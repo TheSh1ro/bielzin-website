@@ -18,6 +18,10 @@ Cada coleta busca até 40 partidas ranqueadas recentes e guarda a última leitur
 
 Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `npm run dev` para abrir a prévia e `npm run build` para gerar o site.
 
+## Guia de Riven
+
+O guia lê `src/data/riven-guide.json`, exportado do PostgreSQL do projeto vizinho `bielzin-tracker`. Edite matchups, padrões de itens e runas no painel local em **http://127.0.0.1:5173/admin**. Inicie o tracker com Docker e rode `npm run dev` neste projeto. A rota `/admin` existe apenas no desenvolvimento e seu código é excluído do build público. As chamadas `/api/guide` passam pelo proxy do Vite até a API do tracker em `127.0.0.1:8765`, mantendo as escritas na mesma origem. A publicação do tracker atualiza esse arquivo junto com os dados do LoL; o site público não acessa a API local. Para conferir alterações antes de publicar, execute `guide-export` conforme o README do tracker e abra a prévia deste site. O snapshot é gerado e não deve ser editado manualmente.
+
 ## Perfil de osu!
 
 Em Jogos, a seção de osu! usa uma captura do perfil público de TKShadow no modo osu!standard. Rode `npm run snapshot:osu` para atualizar os dados e as capas em destaque a partir do site oficial. A coleta dispensa credenciais. Gere o site novamente após atualizar a captura.

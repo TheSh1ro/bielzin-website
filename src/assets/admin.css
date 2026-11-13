@@ -1,0 +1,1291 @@
+/* Editor local: mesma tipografia e verde do guia público. */
+.admin-page {
+  --admin-bg: #090c0b;
+  --admin-surface: #101512;
+  --admin-line: #d4eedc1a;
+  --admin-text: #f0f5f2;
+  --admin-muted: #9aafa3;
+  --admin-accent: #b4eed0;
+  --focus-color: var(--admin-accent);
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  background: radial-gradient(ellipse at 80% 0%, #b4eed007, transparent 45%), var(--admin-bg);
+  color: var(--admin-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.admin-page button,
+.admin-page a,
+.admin-page input,
+.admin-page textarea,
+.admin-page select {
+  -webkit-tap-highlight-color: transparent;
+}
+.admin-page button {
+  color: inherit;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    opacity 0.15s;
+}
+.admin-page button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.admin-page button:focus-visible,
+.admin-page a:focus-visible,
+.admin-page input:focus-visible,
+.admin-page select:focus-visible,
+.admin-page textarea:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+.admin-page .muted,
+.admin-page .field-help {
+  color: var(--admin-muted);
+}
+.admin-page .admin-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--admin-line);
+  background: #0c100ed9;
+  padding: 28px 16px 12px;
+  min-width: 0;
+}
+.admin-page .admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 12px 32px;
+  font: 600 15px/1.4 var(--display);
+}
+.admin-page .brand-mark {
+  font: 600 36px/1 var(--display);
+  letter-spacing: -4px;
+  color: var(--admin-accent);
+  padding-right: 4px;
+}
+.admin-page small {
+  display: block;
+  font:
+    400 12px/1.6 'Segoe UI',
+    system-ui,
+    sans-serif;
+  color: var(--admin-muted);
+}
+.admin-page .default-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 12px;
+  text-align: left;
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  margin-bottom: 28px;
+}
+.admin-page .default-nav[aria-current],
+.admin-page .default-nav:hover {
+  background: #b4eed00c;
+  border-color: #b4eed04d;
+  color: var(--admin-accent);
+}
+.admin-page .roster-heading {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--admin-muted);
+  margin: 0 4px 12px;
+}
+.admin-page .roster-heading > :first-child {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: #d7e0db;
+}
+.admin-page .search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  border: 1px solid var(--admin-line);
+  border-radius: 5px;
+  padding: 0 12px;
+  background: #ffffff03;
+  color: var(--admin-muted);
+}
+.admin-page .search-field:focus-within {
+  border-color: #b4eed080;
+}
+.admin-page .search-field input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  color: var(--admin-text);
+  border: 0;
+  background: none;
+  outline: none;
+  font-size: 13px;
+}
+.admin-page .search-field input:focus-visible {
+  outline: 0;
+}
+.admin-page input::placeholder,
+.admin-page textarea::placeholder {
+  color: #809087;
+  opacity: 1;
+}
+.admin-page .roster-filters {
+  display: flex;
+  gap: 18px;
+  margin: 12px 4px 8px;
+  border-bottom: 1px solid var(--admin-line);
+}
+.admin-page .roster-filters button {
+  min-height: 36px;
+  color: var(--admin-muted);
+  font-size: 12px;
+  border-bottom: 2px solid transparent;
+}
+.admin-page .roster-filters button[aria-pressed='true'] {
+  color: var(--admin-accent);
+  border-color: var(--admin-accent);
+}
+.admin-page .champion-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #33463b transparent;
+}
+.admin-page .champion-list button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 7px 10px;
+  min-height: 48px;
+  text-align: left;
+  border-left: 2px solid transparent;
+  border-radius: 3px;
+  margin: 2px 0;
+  color: #bfcec5;
+}
+.admin-page .champion-list button:hover {
+  background: #ffffff06;
+  color: var(--admin-text);
+}
+.admin-page .champion-list button[aria-current] {
+  color: var(--admin-accent);
+  background: #b4eed010;
+  border-left-color: var(--admin-accent);
+}
+.admin-page .champion-list img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #ffffff1a;
+}
+.admin-page .visibility-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--admin-accent);
+  margin-left: auto;
+  flex: none;
+}
+.admin-page .back-link {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--admin-muted);
+  border-top: 1px solid var(--admin-line);
+  padding: 16px 8px 4px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+.admin-page .back-link:hover {
+  color: var(--admin-accent);
+}
+.admin-page .admin-main {
+  min-width: 0;
+}
+.admin-page .admin-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #090c0beb;
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--admin-line);
+  min-height: 76px;
+  padding: 16px clamp(20px, 4vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.admin-page .editor-breadcrumb {
+  display: flex;
+  gap: 12px;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+.admin-page .editor-breadcrumb > span {
+  color: #526358;
+}
+
+.admin-page .primary:hover:not(:disabled) {
+  background: #d0f8e2;
+}
+
+.admin-page .admin-content {
+  max-width: 1560px;
+  padding: 40px clamp(20px, 4vw, 64px) 80px;
+  margin: auto;
+}
+.admin-page .editor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.admin-page .editor-identity {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+.admin-page .champion-portrait,
+.admin-page .default-portrait {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  border: 1px solid #b4eed044;
+  padding: 4px;
+  border-radius: 7px;
+  background: #b4eed008;
+}
+.admin-page .default-portrait {
+  display: grid;
+  place-items: center;
+  color: var(--admin-accent);
+}
+.admin-page .eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--admin-accent);
+  margin-bottom: 6px;
+}
+.admin-page h1 {
+  font: 600 clamp(25px, 2.6vw, 34px)/1.15 var(--display);
+  letter-spacing: -0.045em;
+  margin-bottom: 8px;
+}
+.admin-page .editor-identity .muted {
+  font-size: 13px;
+}
+.admin-page .visibility-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--admin-muted);
+  white-space: nowrap;
+}
+.admin-page .visibility-toggle input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.admin-page .switch-track {
+  display: block;
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 20px;
+  border: 1px solid #64796d;
+  background: #1b261f;
+}
+.admin-page .switch-track::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: #9aafa3;
+  transition: transform 0.15s;
+}
+.admin-page .visibility-toggle input:checked + .switch-track {
+  background: var(--admin-accent);
+  border-color: var(--admin-accent);
+}
+.admin-page .visibility-toggle input:checked + .switch-track::after {
+  transform: translateX(14px);
+  background: #152e20;
+}
+.admin-page .visibility-toggle input:focus-visible + .switch-track {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 4px;
+}
+.admin-page .editor-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #8b9f93;
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+.admin-page .patch-badge {
+  border: 1px solid var(--admin-line);
+  border-radius: 3px;
+  padding: 3px 7px;
+  color: #c2d2c8;
+}
+.admin-page .text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--admin-muted);
+  min-height: 30px;
+}
+.admin-page .text-button:hover {
+  color: var(--admin-accent);
+}
+
+/* Todos os grupos ficam abertos na mesma página. */
+.admin-page .editor-sections {
+  display: grid;
+  gap: 36px;
+}
+.admin-page .editor-panel {
+  min-width: 0;
+  border-top: 1px solid var(--admin-line);
+  padding-top: 28px;
+}
+.admin-page .duel-panel {
+  display: grid;
+  gap: 0 28px;
+}
+@media (min-width: 1000px) {
+  .admin-page .duel-panel {
+    grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.2fr);
+  }
+  .admin-page .duel-panel > .section-heading {
+    grid-column: 1 / -1;
+  }
+  .admin-page .duel-panel .assessment {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 0;
+  }
+  .admin-page .duel-panel .assessment-card {
+    padding: 14px 16px;
+  }
+}
+.admin-page .section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.admin-page h2 {
+  font: 600 20px/1.3 var(--display);
+  letter-spacing: -0.025em;
+}
+.admin-page .section-heading p {
+  color: var(--admin-muted);
+  font-size: 13px;
+  margin-top: 5px;
+}
+.admin-page h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.admin-page .secondary-button,
+.admin-page .load-error button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #b4eed038;
+  background: #b4eed008;
+  border-radius: 4px;
+  min-height: 38px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--admin-accent);
+  white-space: nowrap;
+}
+.admin-page .secondary-button:hover {
+  background: #b4eed014;
+  border-color: #b4eed080;
+}
+.admin-page .assessment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.admin-page .assessment-card {
+  border: 1px solid var(--admin-line);
+  background: #ffffff02;
+  padding: 20px;
+  border-radius: 5px;
+}
+.admin-page label {
+  font-size: 13px;
+}
+.admin-page .assessment-card label {
+  display: block;
+  margin-bottom: 12px;
+  color: #d4e2da;
+}
+.admin-page select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #ffffff26;
+  background: #101813;
+  color: var(--admin-text);
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.admin-page select.favorable {
+  color: #b4eed0;
+}
+.admin-page select.even {
+  color: #dfc991;
+}
+.admin-page select.unfavorable {
+  color: #f2aaa7;
+}
+.admin-page select option {
+  color: var(--admin-text);
+  background: #101813;
+}
+.admin-page textarea {
+  display: block;
+  width: 100%;
+  border: 1px solid #d4eedc26;
+  border-radius: 4px;
+  background: #ffffff03;
+  padding: 14px 16px;
+  color: var(--admin-text);
+  line-height: 1.7;
+  resize: vertical;
+  font-size: 14px;
+  min-height: 90px;
+}
+.admin-page textarea:disabled {
+  color: #a4b6ab;
+  cursor: default;
+}
+.admin-page .field-help {
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+.admin-page .field-block > label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.admin-page .field-counter {
+  display: block;
+  text-align: right;
+  color: #82998b;
+  margin-top: 8px;
+  font-size: 11px;
+}
+/* Inventário inicial e botas compartilham a mesma faixa. */
+.admin-page .build-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.65fr);
+  gap: 0 32px;
+}
+.admin-page .build-workspace > :nth-child(n + 3) {
+  grid-column: 1 / -1;
+}
+.admin-page .build-group {
+  border-bottom: 1px solid var(--admin-line);
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+.admin-page .build-group-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-page .build-group-heading > span {
+  font-size: 10px;
+  color: #82998b;
+}
+.admin-page .build-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 4px;
+}
+.admin-page .build-slot,
+.admin-page .add-slot {
+  position: relative;
+  width: 94px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.admin-page .item-tile,
+.admin-page .add-tile {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border: 1px solid #bcab704d;
+  border-radius: 4px;
+  padding: 3px;
+  background: #080d0a;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.admin-page .item-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.admin-page .item-tile:disabled {
+  opacity: 1;
+}
+.admin-page .item-tile:hover:not(:disabled) {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 16px #b4eed018;
+}
+.admin-page .tile-edit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0009;
+  opacity: 0;
+}
+.admin-page .item-tile:hover .tile-edit,
+.admin-page .item-tile:focus-visible .tile-edit {
+  opacity: 1;
+}
+.admin-page .slot-name {
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+  margin-top: 9px;
+  min-height: 32px;
+  color: #becfc4;
+  overflow-wrap: anywhere;
+}
+.admin-page .slot-number {
+  position: absolute;
+  top: -7px;
+  left: 8px;
+  z-index: 1;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #b4eed0;
+  color: #15261b;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 2px solid var(--admin-bg);
+}
+.admin-page .slot-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+.admin-page .icon-button {
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 3px;
+  color: #91a699;
+}
+.admin-page .icon-button:hover:not(:disabled) {
+  background: #ffffff0c;
+  color: var(--admin-text);
+}
+.admin-page .remove-button:hover:not(:disabled) {
+  color: #f3aaa6;
+  background: #f3aaa610;
+}
+.admin-page .add-tile {
+  border: 1px dashed #b4eed040;
+  color: #9cc7af;
+  background: #b4eed003;
+}
+.admin-page .add-tile:hover {
+  background: #b4eed00d;
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+}
+.admin-page .add-slot > span {
+  font-size: 11px;
+  color: #8ca796;
+  margin-top: 9px;
+}
+.admin-page .situational-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.admin-page .situational-card {
+  border: 1px solid var(--admin-line);
+  background: #ffffff02;
+  border-radius: 5px;
+  padding: 16px;
+}
+.admin-page .situational-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.admin-page .situational-item .item-tile {
+  width: 44px;
+  height: 44px;
+}
+.admin-page .situational-item strong {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+}
+.admin-page .situational-card label {
+  display: block;
+  font-size: 11px;
+  color: var(--admin-muted);
+  margin-bottom: 8px;
+}
+.admin-page .situational-card textarea {
+  padding: 10px 12px;
+  min-height: 76px;
+  font-size: 12px;
+}
+.admin-page .add-situational {
+  margin-top: 16px;
+}
+.admin-page .warning {
+  color: #efc68a !important;
+}
+.admin-page .missing-item {
+  color: #efc68a;
+  font-size: 26px;
+}
+.admin-page .rune-workspace {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  background: radial-gradient(ellipse at 20% 10%, #d4b16507, transparent 55%), #0b100d;
+}
+.admin-page .rune-path {
+  min-width: 0;
+  padding: 26px clamp(16px, 2.5vw, 40px);
+}
+.admin-page .primary-path {
+  border-right: 1px solid var(--admin-line);
+}
+.admin-page .path-label {
+  display: flex;
+  justify-content: space-between;
+  color: var(--admin-muted);
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+.admin-page .path-label span {
+  color: #7d9486;
+  font-size: 10px;
+}
+.admin-page .path-options {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 12px);
+  margin-bottom: 24px;
+}
+.admin-page .path-options button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+.admin-page .path-options img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+.admin-page .path-options button[aria-pressed='true'] {
+  border-color: var(--path-color);
+  background: color-mix(in srgb, var(--path-color) 9%, transparent);
+}
+.admin-page .path-options button[aria-pressed='true'] img,
+.admin-page .path-options button:hover img {
+  opacity: 1;
+  filter: none;
+}
+.admin-page .path-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0 24px;
+  color: var(--path-color);
+}
+.admin-page .path-title img {
+  width: 28px;
+  height: 28px;
+}
+.admin-page .path-title h3 {
+  font: 600 18px/1.2 var(--display);
+  letter-spacing: -0.02em;
+}
+.admin-page .rune-tier {
+  position: relative;
+  padding: 18px 0;
+}
+.admin-page .rune-tier + .rune-tier {
+  border-top: 1px solid #d4eedc0a;
+}
+.admin-page .rune-choices {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 10px;
+}
+.admin-page .rune-orb {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid #8b9d9026;
+  display: grid;
+  place-items: center;
+  background: #070b09;
+}
+.admin-page .rune-orb img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  opacity: 0.45;
+  filter: grayscale(0.6);
+  transition:
+    opacity 0.15s,
+    filter 0.15s;
+}
+.admin-page .rune-orb[aria-pressed='true'] {
+  border-color: var(--path-color, var(--admin-accent));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--path-color, var(--admin-accent)) 13%, transparent);
+}
+.admin-page .rune-orb[aria-pressed='true'] img,
+.admin-page .rune-orb:hover:not(:disabled) img {
+  opacity: 1;
+  filter: none;
+}
+.admin-page .rune-orb:hover:not(:disabled) {
+  border-color: var(--path-color, var(--admin-accent));
+}
+.admin-page .rune-check {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  color: #101b13;
+  background: var(--path-color);
+  border-radius: 50%;
+  padding: 1px;
+  width: 15px;
+  height: 15px;
+}
+.admin-page .keystone .rune-orb {
+  width: 64px;
+  height: 64px;
+  border-color: transparent;
+  background: transparent;
+}
+.admin-page .keystone .rune-orb[aria-pressed='true'] {
+  border-color: var(--path-color);
+  background: color-mix(in srgb, var(--path-color) 6%, transparent);
+}
+.admin-page .keystone .rune-orb img {
+  width: 60px;
+  height: 60px;
+}
+.admin-page .selected-rune-name {
+  text-align: center;
+  color: var(--path-color);
+  font-size: 11px;
+  margin-top: 12px;
+  min-height: 17px;
+}
+.admin-page .rune-tooltip {
+  pointer-events: none;
+  position: absolute;
+  z-index: 8;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 200px;
+  width: max-content;
+  padding: 8px 12px;
+  border: 1px solid #b4eed040;
+  border-radius: 4px;
+  background: #17211b;
+  color: #ecf5ef;
+  font-size: 11px;
+  opacity: 0;
+  box-shadow: 0 8px 24px #0006;
+}
+.admin-page .rune-orb:hover .rune-tooltip,
+.admin-page .rune-orb:focus-visible .rune-tooltip {
+  opacity: 1;
+}
+.admin-page .rune-hint {
+  font-size: 10px;
+  color: var(--admin-muted);
+  text-align: center;
+  margin: 10px 0 24px;
+}
+.admin-page .shard-section {
+  border-top: 1px solid var(--admin-line);
+  padding-top: 20px;
+  --path-color: #b4eed0;
+}
+.admin-page .shard-section h3 {
+  font-size: 11px;
+  color: #abbeb1;
+  margin-bottom: 12px;
+}
+.admin-page .shard-row {
+  margin-top: 12px;
+}
+.admin-page .shard-orb {
+  width: 32px;
+  height: 32px;
+}
+.admin-page .shard-orb img {
+  width: 26px;
+  height: 26px;
+}
+.admin-page .shard-row > span {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: #a8bcaf;
+  margin-top: 7px;
+}
+.admin-page .rune-workspace button:disabled {
+  opacity: 1;
+}
+.admin-page .rune-workspace.inherited {
+  background-color: #0d110f;
+}
+.admin-page .item-shop {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(800px, calc(100vw - 32px));
+  max-height: min(760px, calc(100svh - 48px));
+  background: #0e1511;
+  color: var(--admin-text);
+  border: 1px solid #b4eed047;
+  border-radius: 8px;
+  padding: 28px;
+  box-shadow: 0 24px 100px #000a;
+}
+.admin-page .item-shop[open] {
+  display: flex;
+  flex-direction: column;
+}
+.admin-page .item-shop::backdrop {
+  background: #030805c9;
+  backdrop-filter: blur(6px);
+}
+.admin-page .dialog-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.admin-page .dialog-heading h2 {
+  font-size: 24px;
+}
+.admin-page .shop-count {
+  font-size: 11px;
+  color: var(--admin-muted);
+  margin: 14px 0;
+}
+.admin-page .item-results {
+  overflow-y: auto;
+  min-height: 120px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: #33463b transparent;
+}
+.admin-page .item-results > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--admin-line);
+  border-radius: 4px;
+  padding: 10px;
+  min-height: 68px;
+  text-align: left;
+  background: #ffffff02;
+}
+.admin-page .item-results > button:hover {
+  background: #b4eed00c;
+  border-color: #b4eed077;
+}
+.admin-page .item-results img {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: 1px solid #c8ac6355;
+  border-radius: 3px;
+}
+.admin-page .item-results button > span {
+  font-size: 11px;
+  line-height: 1.4;
+}
+.admin-page .item-results .shop-add {
+  margin-left: auto;
+  color: var(--admin-accent);
+  font-size: 18px;
+}
+.admin-page .shop-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  padding-top: 20px;
+  margin-top: 16px;
+  border-top: 1px solid var(--admin-line);
+}
+.admin-page kbd {
+  font: inherit;
+  color: #859b8e;
+}
+.admin-page .empty-state {
+  padding: 24px 8px;
+  font-size: 12px;
+  color: var(--admin-muted);
+  grid-column: 1 / -1;
+}
+.admin-page .spinning {
+  animation: admin-spin 1s linear infinite;
+}
+@keyframes admin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (min-width: 1500px) {
+  .admin-page .editor-sections {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 36px;
+    align-items: start;
+  }
+  .admin-page .duel-panel {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(280px, 0.7fr) minmax(0, 1.3fr);
+  }
+  .admin-page .build-panel .build-workspace {
+    grid-template-columns: 1fr;
+  }
+  .admin-page .rune-path {
+    padding: 24px 16px;
+  }
+  .admin-page .keystone .rune-orb {
+    width: 56px;
+    height: 56px;
+  }
+  .admin-page .keystone .rune-orb img {
+    width: 52px;
+    height: 52px;
+  }
+}
+@media (min-width: 1600px) {
+  .admin-page {
+    grid-template-columns: 288px minmax(0, 1fr);
+  }
+}
+@media (max-width: 1100px) {
+  .admin-page {
+    grid-template-columns: 228px minmax(0, 1fr);
+  }
+  .admin-page .editor-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .admin-page .rune-path {
+    padding: 24px 16px;
+  }
+  .admin-page .rune-orb {
+    width: 42px;
+    height: 42px;
+  }
+  .admin-page .rune-orb img {
+    width: 34px;
+    height: 34px;
+  }
+  .admin-page .keystone .rune-orb {
+    width: 52px;
+    height: 52px;
+  }
+  .admin-page .keystone .rune-orb img {
+    width: 48px;
+    height: 48px;
+  }
+  .admin-page .shard-orb {
+    width: 32px;
+    height: 32px;
+  }
+  .admin-page .shard-orb img {
+    width: 26px;
+    height: 26px;
+  }
+}
+@media (max-width: 900px) {
+  .admin-page .build-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .admin-page {
+    display: block;
+  }
+  .admin-page .admin-sidebar {
+    position: relative;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--admin-line);
+    padding: 16px 20px;
+  }
+  .admin-page .admin-brand {
+    margin: 0 0 16px;
+  }
+  .admin-page .default-nav {
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  .admin-page .champion-list {
+    max-height: 185px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 8px;
+  }
+  .admin-page .champion-list button {
+    padding: 6px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .admin-page .back-link {
+    display: none;
+  }
+  .admin-page .admin-toolbar {
+    min-height: 68px;
+    padding: 12px 20px;
+  }
+  .admin-page .editor-breadcrumb {
+    font-size: 11px;
+    display: block;
+  }
+  .admin-page .editor-breadcrumb > span {
+    padding: 0 5px;
+  }
+
+  .admin-page .admin-content {
+    padding: 28px 20px 56px;
+  }
+  .admin-page .champion-portrait,
+  .admin-page .default-portrait {
+    width: 60px;
+    height: 60px;
+  }
+  .admin-page .editor-identity {
+    gap: 14px;
+  }
+  .admin-page .editor-identity .muted {
+    font-size: 12px;
+  }
+  .admin-page .assessment {
+    gap: 12px;
+  }
+  .admin-page .assessment-card {
+    padding: 12px;
+  }
+  .admin-page select {
+    padding: 8px;
+    font-size: 13px;
+  }
+  .admin-page .situational-list {
+    grid-template-columns: 1fr;
+  }
+  .admin-page .rune-workspace {
+    grid-template-columns: 1fr;
+  }
+  .admin-page .primary-path {
+    border-right: 0;
+    border-bottom: 1px solid var(--admin-line);
+  }
+  .admin-page .rune-path {
+    padding: 24px;
+  }
+  .admin-page .rune-choices {
+    justify-content: center;
+    gap: 24px;
+  }
+  .admin-page .rune-orb {
+    width: 48px;
+    height: 48px;
+  }
+  .admin-page .rune-orb img {
+    width: 38px;
+    height: 38px;
+  }
+  .admin-page .shard-orb {
+    width: 34px;
+    height: 34px;
+  }
+  .admin-page .shard-orb img {
+    width: 26px;
+    height: 26px;
+  }
+  .admin-page .item-shop {
+    padding: 20px;
+  }
+  .admin-page .item-results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-page .item-results > button {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .admin-page .item-results .shop-add {
+    display: none;
+  }
+  .admin-page .shop-footer kbd {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-page *,
+  .admin-page *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.admin-page .shop-group-title {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--admin-muted);
+  padding: 12px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-page .autosave-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--admin-accent);
+  font-size: 12px;
+  max-width: min(65%, 560px);
+}
+.admin-page .autosave-state p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.admin-page .autosave-state svg {
+  flex: none;
+}
+.admin-page .autosave-state.error {
+  color: #f3aaa6;
+}
+.admin-page .editor-meta {
+  margin-bottom: 24px;
+}
+
+.admin-page .tips-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-page .tips-heading > span {
+  color: var(--admin-muted);
+  font-size: 11px;
+}
+.admin-page .tip-editor-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.admin-page .tip-editor-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.admin-page .tip-editor-row textarea {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.admin-page .tip-index {
+  padding-top: 12px;
+  color: var(--admin-muted);
+  font-size: 11px;
+  min-width: 16px;
+}
+.admin-page .tip-controls {
+  display: flex;
+  flex-direction: column;
+}
+.admin-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

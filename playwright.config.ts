@@ -5,7 +5,7 @@ const baseURL = `http://127.0.0.1:${port}`
 
 export default defineConfig({
   testDir: './tests',
-  testMatch: '**/*.spec.ts',
+  testMatch: ['**/*.spec.ts', '**/*.spec.js'],
   use: { baseURL, reducedMotion: 'reduce' },
   webServer: {
     command: `npm run dev -- --host 127.0.0.1 --port ${port} --strictPort`,

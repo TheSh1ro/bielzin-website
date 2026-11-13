@@ -1,7 +1,3 @@
-import { riotCdn } from '@/lib/data-dragon'
-
-const runeIconBase = riotCdn + '/cdn/img/perk-images/'
-
 export const rivenSkillOrder = [
   'Q',
   'E',
@@ -21,33 +17,6 @@ export const rivenSkillOrder = [
   'R',
   'W',
   'W',
-] as const
-
-export const rivenRuneGroups = [
-  {
-    name: 'Precisão',
-    runes: [
-      ['Conquistador', runeIconBase + 'Styles/Precision/Conqueror/Conqueror.png'],
-      ['Triunfo', runeIconBase + 'Styles/Precision/Triumph.png'],
-      ['Lenda: Aceleração', runeIconBase + 'Styles/Precision/LegendHaste/LegendHaste.png'],
-      ['Até a Morte', runeIconBase + 'Styles/Sorcery/LastStand/LastStand.png'],
-    ],
-  },
-  {
-    name: 'Inspiração',
-    runes: [
-      ['Reembolso', runeIconBase + 'Styles/Inspiration/CashBack/CashBack2.png'],
-      ['Quebra-galho', '/media/riven/jack-of-all-trades.png'],
-    ],
-  },
-  {
-    name: 'Fragmentos',
-    runes: [
-      ['Aceleração de Habilidade', runeIconBase + 'StatMods/StatModsCDRScalingIcon.png'],
-      ['Força Adaptativa', runeIconBase + 'StatMods/StatModsAdaptiveForceIcon.png'],
-      ['Vida Escalável', runeIconBase + 'StatMods/StatModsHealthScalingIcon.png'],
-    ],
-  },
 ] as const
 
 export const rivenLessons = [
