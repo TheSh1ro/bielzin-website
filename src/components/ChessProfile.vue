@@ -144,6 +144,7 @@ const simuls = [
 <style scoped>
 .chess {
   --chess-accent: #f2ce99;
+  --focus-color: var(--chess-accent);
   --chess-line: #ffffff1f;
   margin-block: 32px;
   padding-top: 32px;
@@ -262,11 +263,6 @@ const simuls = [
   margin: 10px 0 0;
   text-align: right;
 }
-.chess-simuls a:focus-visible {
-  outline: 2px solid var(--chess-accent);
-  outline-offset: 2px;
-}
-
 @media (max-width: 540px) {
   .chess-banner .favorite-cover {
     width: 100%;

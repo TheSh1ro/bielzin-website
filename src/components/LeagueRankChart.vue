@@ -467,11 +467,6 @@ function moveBetweenPoints(direction: number) {
   color: var(--text);
   background: var(--surface);
 }
-button:focus-visible,
-.chart:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 .chart-panel {
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 80%, transparent);

@@ -255,6 +255,7 @@ function scoreGrade(value: string) {
 <style scoped>
 .osu {
   --osu-accent: #ffa2cf;
+  --focus-color: var(--osu-accent);
   --osu-line: #ffffff1f;
   margin-block: 32px;
 }
@@ -562,10 +563,6 @@ function scoreGrade(value: string) {
   text-align: center;
   font-size: 0.75rem;
   overflow-wrap: anywhere;
-}
-.osu :is(a, input):focus-visible {
-  outline: 2px solid var(--osu-accent);
-  outline-offset: 3px;
 }
 @media (max-width: 640px) {
   .osu-banner .favorite-cover {

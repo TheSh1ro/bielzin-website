@@ -458,12 +458,6 @@ async function collapseMatches() {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 5%, var(--surface));
 }
-.rank-card:focus-visible,
-.more-matches:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
-}
 .rank-queue {
   width: 100%;
   color: var(--muted);

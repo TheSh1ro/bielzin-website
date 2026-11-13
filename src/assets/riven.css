@@ -1,0 +1,721 @@
+.riven {
+  --riven-green: #b4eed0;
+  --focus-color: var(--riven-green);
+  --riven-muted: #bac8c1;
+  --riven-line: #e0eee51c;
+  --riven-hover: #b2f7cd0c;
+  --riven-warm: #f4b9ad;
+  color: #f4f8f5;
+}
+
+.riven-glass {
+  border: 1px solid var(--riven-line);
+  background: linear-gradient(135deg, #f1fff50d, #f1fff504 70%);
+  backdrop-filter: blur(10px);
+}
+
+.riven-nav {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  min-height: 56px;
+  padding-inline: clamp(8px, 2vw, 20px);
+  border: 1px solid var(--riven-line);
+  background: #0c0e0dcc;
+  backdrop-filter: blur(18px);
+}
+
+.riven-nav-sections {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.riven-nav-sections a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-inline: 8px;
+  color: var(--riven-muted);
+  font: 600 0.875rem/1.25 var(--display);
+}
+
+.riven-nav-sections a:hover {
+  color: var(--riven-green);
+}
+
+.riven-nav-sections svg {
+  flex: none;
+  color: var(--riven-green);
+}
+
+.riven-section {
+  margin-top: clamp(26px, 4vw, 48px);
+  scroll-margin-top: 68px;
+}
+
+.riven-hot-tip {
+  margin-top: clamp(16px, 2.5vw, 28px);
+}
+
+.riven-section-heading h1,
+.riven-section > h2 {
+  font: 600 clamp(1.5rem, 3vw, 2.375rem)/1.1 var(--display);
+  letter-spacing: -0.045em;
+}
+
+.riven-section-heading,
+.riven-section > h2 {
+  margin-bottom: 12px;
+}
+
+.riven-title-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.riven-patch,
+.riven-meta,
+.riven-field > span,
+.riven-assessment dt,
+.riven-item-group h3,
+.riven-runes h3 {
+  color: var(--riven-muted);
+  font-size: 0.75rem;
+}
+
+.riven-patch,
+.riven-cooldown {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.riven-matchup {
+  --matchup-pad: clamp(14px, 2.2vw, 26px);
+}
+
+.riven-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px 16px;
+  align-items: end;
+  padding: var(--matchup-pad);
+  padding-bottom: 0;
+}
+
+.riven-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.riven-skill-list button[aria-pressed='true'] {
+  background: #a4f2c42b;
+  color: var(--riven-green);
+}
+
+.riven-picker {
+  position: relative;
+  z-index: 1;
+}
+
+.riven-opponent-trigger,
+.riven-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px 9px;
+  border: 1px solid var(--riven-line);
+  background: #0003;
+  color: inherit;
+  text-align: left;
+}
+
+.riven-opponent-trigger img,
+.riven-search svg {
+  flex: none;
+}
+
+.riven-opponent-trigger svg {
+  margin-left: auto;
+  flex: none;
+  color: var(--riven-green);
+}
+
+.riven-popover {
+  position: absolute;
+  inset: calc(100% + 6px) 0 auto;
+  padding: 8px;
+  border: 1px solid var(--riven-line);
+  background: #121413f5;
+  box-shadow: 0 14px 30px #0008;
+}
+
+.riven-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+.riven-popover > p {
+  padding: 10px 5px 2px;
+}
+
+.riven-roster-list {
+  max-height: min(250px, 34dvh);
+  overflow-y: auto;
+  scrollbar-color: #617c70 transparent;
+  margin-top: 5px;
+}
+
+.riven-roster-list button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 42px;
+  padding: 4px 7px;
+  color: inherit;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.riven-roster-list button[aria-pressed='true'],
+.riven-roster-list button:hover,
+.riven-opponent-trigger:hover {
+  background: var(--riven-hover);
+}
+
+.riven-search:focus-within {
+  box-shadow: var(--focus-highlight);
+}
+
+.riven-search input:focus-visible {
+  box-shadow: none;
+}
+
+.riven-section:focus {
+  outline: none;
+}
+
+.riven-assessment {
+  display: flex;
+  gap: clamp(12px, 2.4vw, 30px);
+  align-items: center;
+  min-height: 44px;
+  padding-left: 16px;
+  border-left: 1px solid var(--riven-line);
+}
+
+.riven-assessment dd {
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.riven-assessment .favorable {
+  color: var(--riven-green);
+}
+
+.riven-assessment .unfavorable {
+  color: var(--riven-warm);
+}
+
+.riven-matchup-tip {
+  margin: 14px var(--matchup-pad);
+  padding: 9px 12px;
+  border-left: 2px solid #b4eed0a8;
+  background: var(--riven-hover);
+  color: #e3eee8;
+  font-size: 0.9375rem;
+}
+
+.riven-matchup-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  border-top: 1px solid var(--riven-line);
+}
+
+.riven-matchup-column {
+  min-width: 0;
+  padding: 14px var(--matchup-pad) var(--matchup-pad);
+}
+
+.riven-matchup-column + .riven-matchup-column {
+  border-left: 1px solid var(--riven-line);
+}
+
+.riven-matchup-column > h2,
+.riven-matchup-column > .riven-title-line > h2,
+.riven-lesson-copy h3 {
+  font: 600 clamp(1.0625rem, 2.2vw, 1.375rem)/1.2 var(--display);
+  letter-spacing: -0.025em;
+}
+
+.riven-enemy-spells {
+  margin-top: 8px;
+}
+
+.riven-enemy-spells li + li {
+  border-top: 1px solid var(--riven-line);
+}
+
+.riven details > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.riven details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.riven details > summary > svg:last-child {
+  color: var(--riven-muted);
+}
+
+.riven details[open] > summary > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.riven-enemy-spells summary {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto 15px;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 5px 0;
+}
+
+.riven-enemy-spells summary > svg {
+  grid-column: 4;
+}
+
+.riven-spell-name {
+  font-size: 0.8125rem;
+}
+
+.riven-spell-key {
+  color: var(--riven-green);
+  margin-right: 4px;
+}
+
+.riven-cooldown {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--riven-green);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.riven-enemy-spells details > p {
+  padding: 2px 0 10px 40px;
+  color: var(--riven-muted);
+  white-space: pre-line;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.riven-build-reason,
+.riven-lesson-copy > p {
+  margin-top: 8px;
+  color: var(--riven-muted);
+  font-size: 0.875rem;
+}
+
+.riven-item-groups {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.riven-item-group ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  margin-top: 4px;
+}
+
+.riven-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  font-size: 0.8125rem;
+}
+
+.riven-item img {
+  flex: none;
+  border: 1px solid var(--riven-line);
+}
+
+.riven-situational strong {
+  color: var(--riven-green);
+  margin-right: 4px;
+}
+
+.riven-runes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--riven-line);
+}
+
+.riven-rune-groups,
+.riven-rune-groups ul {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.riven-rune-groups {
+  flex-wrap: wrap;
+}
+
+.riven-rune-groups ul + ul {
+  padding-left: 4px;
+  border-left: 1px solid var(--riven-line);
+}
+
+.riven-rune-groups img {
+  width: clamp(24px, 2.4vw, 30px);
+  height: auto;
+}
+
+.riven-skill-order {
+  margin-bottom: 12px;
+  padding: 12px clamp(12px, 2vw, 22px);
+}
+
+.riven-skill-order h3 {
+  font: 600 1rem/1.2 var(--display);
+}
+
+.riven-skill-priority,
+.riven-skill-level {
+  font: 0.75rem/1.2 var(--mono);
+}
+
+.riven-skill-priority,
+.riven-ultimate-level {
+  color: var(--riven-green);
+}
+
+.riven-skill-order ol {
+  display: grid;
+  grid-template-columns: repeat(18, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.riven-skill-order li {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 4px 0;
+  background: #ffffff06;
+  font-size: 0.75rem;
+}
+
+.riven-skill-level {
+  color: var(--riven-muted);
+}
+
+.riven-skill-order .riven-ultimate-level {
+  background: var(--riven-hover);
+}
+
+@media (max-width: 900px) {
+  .riven-skill-order ol {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+  }
+}
+
+.riven-lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+
+.riven-film {
+  grid-row: span 2;
+  display: grid;
+  align-items: center;
+  min-width: 0;
+  background: #0004;
+}
+
+.riven-film video {
+  width: 100%;
+  max-height: 290px;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+}
+
+.riven-film a {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 24px;
+  color: var(--riven-green);
+}
+
+.riven-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px var(--matchup-pad, 16px);
+  border-bottom: 1px solid var(--riven-line);
+}
+
+.riven-skill-list button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  padding: 4px;
+  border: 1px solid transparent;
+  color: var(--riven-muted);
+  font-size: 0.75rem;
+}
+
+.riven-skill-list button:hover {
+  background: var(--riven-hover);
+}
+
+.riven-skill-list img {
+  width: 30px;
+  height: 30px;
+}
+
+.riven-lesson-copy {
+  padding: 14px 16px 18px;
+}
+
+.riven-lesson-copy .riven-tip {
+  color: var(--riven-green);
+}
+
+.riven-feedback {
+  margin-top: 8px;
+  color: var(--riven-muted);
+  font-size: 0.875rem;
+}
+
+.riven-feedback button {
+  min-height: 44px;
+  color: var(--riven-green);
+  text-decoration: underline;
+}
+
+.riven-hot-tip {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  border-top: 1px solid #b4eed080;
+  background: linear-gradient(125deg, #b4eed018, #f1fff505 58%);
+}
+
+.riven-hot-tip-copy,
+.riven-hot-tip-build {
+  min-width: 0;
+  padding: clamp(16px, 2.6vw, 30px);
+}
+
+.riven-hot-tip-heading {
+  color: var(--riven-green);
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  letter-spacing: -0.025em;
+}
+
+.riven-hot-tip-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block: 10px 12px;
+}
+
+.riven-hot-tip-title h3 {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+}
+
+.riven-hot-tip-copy > p,
+.riven-hot-tip-build li p,
+.riven-item-preview {
+  color: var(--riven-muted);
+  font-size: 0.875rem;
+}
+
+.riven-greaves-effects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 175px), 1fr));
+  gap: 12px;
+  margin-block: 16px;
+  padding-block: 12px;
+  border-block: 1px solid var(--riven-line);
+}
+
+.riven-greaves-effects dt {
+  color: var(--riven-muted);
+  font-size: 0.75rem;
+}
+
+.riven-greaves-effects dd {
+  color: var(--riven-green);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.riven-hot-tip-build {
+  border-left: 1px solid var(--riven-line);
+}
+
+.riven-hot-tip-build ul {
+  display: grid;
+  grid-auto-rows: 1fr;
+  margin-top: 8px;
+}
+
+.riven-synergy-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.riven-synergy-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+}
+
+.riven-item-price {
+  color: #e9cb87;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.riven-item-preview {
+  display: block;
+  margin-top: 2px;
+}
+
+.riven-hot-tip-build li {
+  display: grid;
+  align-items: center;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--riven-line);
+}
+
+.riven-hot-tip-build li:last-child {
+  border-bottom: 0;
+}
+
+.riven-hot-tip img {
+  flex: none;
+  border: 1px solid var(--riven-line);
+}
+
+@media (max-width: 740px) {
+  .riven-hot-tip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .riven-hot-tip-build {
+    border-left: 0;
+    border-top: 1px solid var(--riven-line);
+  }
+}
+
+.riven-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin-top: 24px;
+  padding-bottom: 8px;
+  color: var(--riven-muted);
+  font-size: 0.75rem;
+}
+
+.riven-footer a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 4px;
+}
+
+.riven-footer a:hover {
+  color: var(--riven-green);
+}
+
+.riven-footer p {
+  flex-basis: 100%;
+}
+
+@media (max-width: 740px) {
+  .riven-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .riven-assessment {
+    grid-column: 1 / -1;
+    gap: 24px;
+    min-height: 0;
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .riven-matchup-grid,
+  .riven-lesson {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .riven-matchup-column + .riven-matchup-column {
+    border-left: none;
+    border-top: 1px solid var(--riven-line);
+  }
+
+  .riven-film {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .riven-skill-order ol {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .riven-nav-sections {
+    gap: 0;
+  }
+
+  .riven-nav-sections a {
+    gap: 5px;
+    padding-right: 5px;
+    font-size: 0.75rem;
+  }
+
+  .riven-nav-sections a > svg {
+    display: none;
+  }
+
+  .riven-spell-name {
+    overflow-wrap: anywhere;
+  }
+}

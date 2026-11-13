@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onBeforeUnmount, ref, shallowRef } from 'vue'
+import {
+  computed,
+  defineAsyncComponent,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  shallowRef,
+  watchEffect,
+} from 'vue'
 import {
   ArrowUpRight,
   ArrowRight,
@@ -17,7 +26,50 @@ import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
 
-const entered = ref(false)
+const loadRiven = () => import('@/components/RivenGuide.vue')
+const RivenGuide = defineAsyncComponent(loadRiven)
+
+function preloadRiven() {
+  void loadRiven().catch(() => {})
+}
+const sections = [
+  {
+    id: 'games',
+    panel: 'mural',
+    label: 'Jogos',
+    detail: 'Favoritos e o que eu jogo',
+    icon: Gamepad2,
+    arrow: ArrowLeft,
+  },
+  {
+    id: 'development',
+    panel: 'projeto',
+    label: 'Desenvolvimento',
+    detail: 'Projetos, código e trajetória',
+    icon: Code2,
+    arrow: ArrowRight,
+  },
+] as const
+type Section = (typeof sections)[number]['id']
+
+function sectionFromLocation(): Section {
+  return window.history.state?.section === 'development' ? 'development' : 'games'
+}
+
+function isRivenLocation() {
+  return window.location.pathname.replace(/\/$/, '') === '/riven'
+}
+
+const rivenOpen = ref(isRivenLocation())
+const rivenShortcut = ref<HTMLAnchorElement>()
+const rivenBack = ref<HTMLAnchorElement>()
+const activeSection = ref<Section>(sectionFromLocation())
+const sectionIndex = computed(() => sections.findIndex(({ id }) => id === activeSection.value))
+const entered = ref(rivenOpen.value || Number.isFinite(window.history.state?.rivenReturnScroll))
+const profileTitle = document.title
+watchEffect(() => {
+  document.title = rivenOpen.value ? 'Riven · bielzin' : profileTitle
+})
 const entering = ref(false)
 const startWithSound = ref(true)
 const soundVolume = ref(profile.music.volume)
@@ -33,7 +85,6 @@ const soundAction = computed(() => {
   if (entered.value) return soundActive.value ? 'Pausar trilha' : 'Reproduzir trilha'
   return soundActive.value ? 'Entrar sem trilha' : 'Entrar com trilha'
 })
-const activeSection = ref<'games' | 'development'>('games')
 const sectionDirection = ref('forward')
 const sectionSwitcher = ref<HTMLElement>()
 const switcherSlot = ref<HTMLElement>()
@@ -124,10 +175,13 @@ function scheduleSwitcher() {
 onMounted(() => {
   window.addEventListener('scroll', scheduleSwitcher, { passive: true })
   window.addEventListener('resize', scheduleSwitcher)
+  window.addEventListener('popstate', syncSection)
+  if (!rivenOpen.value && entered.value) void restoreGamesPosition()
 })
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', scheduleSwitcher)
   window.removeEventListener('resize', scheduleSwitcher)
+  window.removeEventListener('popstate', syncSection)
   cancelAnimationFrame(scrollFrame)
   dockAnimation?.cancel()
   dockRevision++
@@ -135,14 +189,54 @@ onBeforeUnmount(() => {
 })
 const sectionTabs = ref<HTMLButtonElement[]>([])
 
-function selectSection(section: 'games' | 'development', scroll = false) {
-  sectionDirection.value = section === 'development' ? 'forward' : 'backward'
-  activeSection.value = section
-  if (scroll) {
-    void nextTick(() => {
-      sectionTabs.value[section === 'games' ? 0 : 1]?.focus({ preventScroll: true })
-    })
+function syncSection() {
+  const wasRivenOpen = rivenOpen.value
+  rivenOpen.value = isRivenLocation()
+  if (rivenOpen.value) {
+    entered.value = true
+    void nextTick(() => rivenBack.value?.focus({ preventScroll: true }))
+  } else {
+    activeSection.value = sectionFromLocation()
+    if (wasRivenOpen) void restoreGamesPosition()
+    scheduleSwitcher()
   }
+}
+
+async function restoreGamesPosition() {
+  await nextTick()
+  const scroll = window.history.state?.rivenReturnScroll
+  if (Number.isFinite(scroll)) window.scrollTo({ top: scroll, behavior: 'instant' })
+  rivenShortcut.value?.focus({ preventScroll: true })
+}
+
+function openRiven() {
+  window.history.replaceState(
+    { ...window.history.state, section: 'games', rivenReturnScroll: window.scrollY },
+    '',
+  )
+  window.history.pushState({ fromProfile: true }, '', '/riven')
+  syncSection()
+}
+
+function closeRiven() {
+  if (window.history.state?.fromProfile) {
+    window.history.back()
+    return
+  }
+  window.history.replaceState({ section: 'games' }, '', '/')
+  syncSection()
+}
+
+async function selectSection(section: Section, scroll = false) {
+  const targetIndex = sections.findIndex(({ id }) => id === section)
+  sectionDirection.value = targetIndex > sectionIndex.value ? 'forward' : 'backward'
+  if (section !== activeSection.value) {
+    window.history.replaceState({ ...window.history.state, section }, '')
+    activeSection.value = section
+  }
+
+  await nextTick()
+  if (scroll) sectionTabs.value[targetIndex]?.focus({ preventScroll: true })
   if (switcherDocked.value && content.value) {
     window.scrollTo({
       top: window.scrollY + content.value.getBoundingClientRect().top - 24,
@@ -156,18 +250,15 @@ function selectSection(section: 'games' | 'development', scroll = false) {
 }
 
 function onSectionKeydown(event: KeyboardEvent) {
-  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+  const direction = switcherDocked.value ? ['ArrowUp', 'ArrowDown'] : ['ArrowLeft', 'ArrowRight']
+  if (![...direction, 'Home', 'End'].includes(event.key)) return
   event.preventDefault()
-  const section =
-    event.key === 'Home'
-      ? 'games'
-      : event.key === 'End'
-        ? 'development'
-        : activeSection.value === 'games'
-          ? 'development'
-          : 'games'
-  selectSection(section)
-  sectionTabs.value[section === 'games' ? 0 : 1]?.focus()
+  let index =
+    (sectionIndex.value + (event.key === direction[0] ? -1 : 1) + sections.length) % sections.length
+  if (event.key === 'Home') index = 0
+  if (event.key === 'End') index = sections.length - 1
+  selectSection(sections[index]!.id)
+  sectionTabs.value[index]?.focus()
 }
 
 const soundtrack = ref<HTMLElement>()
@@ -272,12 +363,12 @@ async function enter() {
 
 function finishEntrance() {
   entering.value = false
-  heading.value?.focus({ preventScroll: true })
+  void nextTick(() => heading.value?.focus({ preventScroll: true }))
 }
 </script>
 
 <template>
-  <div class="site" :class="{ 'is-entering': entering }" :style="theme">
+  <div class="site" :class="{ 'is-entering': entering, 'site--riven': rivenOpen }" :style="theme">
     <img
       v-if="profile.theme.backgroundStill"
       class="site-backdrop"
@@ -336,6 +427,8 @@ function finishEntrance() {
       <div
         class="sound-controls"
         :class="{ 'sound-controls--profile': entered }"
+        :inert="rivenOpen"
+        :aria-hidden="rivenOpen || undefined"
         role="group"
         aria-label="Trilha do perfil"
       >
@@ -374,6 +467,8 @@ function finishEntrance() {
         id="perfil"
         class="layout"
         :class="{ 'layout--with-sound': profile.music.src }"
+        :inert="rivenOpen || entering"
+        :aria-hidden="rivenOpen || undefined"
       >
         <div ref="switcherSlot" class="section-switcher-slot">
           <div
@@ -382,52 +477,39 @@ function finishEntrance() {
             :class="{ 'is-docked': switcherDocked }"
             role="tablist"
             aria-label="Explorar perfil"
+            :aria-orientation="switcherDocked ? 'vertical' : 'horizontal'"
+            :style="{ '--section-index': sectionIndex }"
             @keydown="onSectionKeydown"
           >
-            <span
-              class="section-switcher-indicator"
-              :class="{ 'is-development': activeSection === 'development' }"
-              aria-hidden="true"
-            ></span>
+            <span class="section-switcher-indicator" aria-hidden="true"></span>
             <button
-              id="games-tab"
+              v-for="(section, index) in sections"
+              :id="`${section.id}-tab`"
+              :key="section.id"
               :ref="
                 (el) => {
-                  if (el) sectionTabs[0] = el as HTMLButtonElement
+                  if (el) sectionTabs[index] = el as HTMLButtonElement
                 }
               "
               class="section-tab"
               type="button"
               role="tab"
-              aria-controls="mural"
-              :aria-selected="activeSection === 'games'"
-              :tabindex="activeSection === 'games' ? 0 : -1"
-              @click="selectSection('games')"
+              :aria-controls="section.panel"
+              :aria-selected="activeSection === section.id"
+              :tabindex="activeSection === section.id ? 0 : -1"
+              @click="selectSection(section.id)"
             >
-              <Gamepad2 :size="24" aria-hidden="true" />
-              <span><strong>Jogos</strong><small>Favoritos e o que eu jogo</small></span>
-              <ArrowLeft class="section-tab-arrow" :size="20" aria-hidden="true" />
-            </button>
-            <button
-              id="development-tab"
-              :ref="
-                (el) => {
-                  if (el) sectionTabs[1] = el as HTMLButtonElement
-                }
-              "
-              class="section-tab"
-              type="button"
-              role="tab"
-              aria-controls="projeto"
-              :aria-selected="activeSection === 'development'"
-              :tabindex="activeSection === 'development' ? 0 : -1"
-              @click="selectSection('development')"
-            >
-              <Code2 :size="24" aria-hidden="true" />
+              <component :is="section.icon" :size="24" aria-hidden="true" />
               <span
-                ><strong>Desenvolvimento</strong><small>Projetos, código e trajetória</small></span
+                ><strong>{{ section.label }}</strong
+                ><small>{{ section.detail }}</small></span
               >
-              <ArrowRight class="section-tab-arrow" :size="20" aria-hidden="true" />
+              <component
+                :is="section.arrow"
+                class="section-tab-arrow"
+                :size="20"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>
@@ -574,14 +656,16 @@ function finishEntrance() {
                     <h3 id="league-title">{{ profile.favoriteGame.name }}</h3>
                     <a
                       class="favorite-guide"
-                      :href="profile.favoriteGame.guide"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href="/riven"
+                      ref="rivenShortcut"
+                      @click.left.exact.prevent="openRiven"
+                      @mouseenter.once="preloadRiven"
+                      @focus.once="preloadRiven"
                     >
                       <span class="favorite-guide-blade" aria-hidden="true"></span>
                       <span>Guia de Riven</span>
                       <span class="favorite-guide-arrow" aria-hidden="true">
-                        <ArrowUpRight :size="16" />
+                        <ArrowRight :size="16" />
                       </span>
                     </a>
                   </div>
@@ -629,7 +713,7 @@ function finishEntrance() {
             </section>
 
             <section
-              v-else
+              v-else-if="activeSection === 'development'"
               id="projeto"
               key="development"
               role="tabpanel"
@@ -794,6 +878,30 @@ function finishEntrance() {
               </button>
             </section>
           </Transition>
+        </div>
+      </main>
+    </Transition>
+    <Transition name="riven-page">
+      <main v-if="rivenOpen" class="riven-page" aria-label="Guia da Riven">
+        <div class="riven-page-inner">
+          <RivenGuide>
+            <template #back>
+              <a
+                ref="rivenBack"
+                class="riven-back"
+                href="/"
+                aria-label="Voltar para Jogos"
+                @click.left.exact.prevent="closeRiven"
+              >
+                <span class="riven-back-mark" aria-hidden="true">
+                  <ArrowLeft :size="16" />
+                </span>
+                <span class="riven-back-label">
+                  <span class="riven-back-prefix">Voltar para </span>Jogos
+                </span>
+              </a>
+            </template>
+          </RivenGuide>
         </div>
       </main>
     </Transition>

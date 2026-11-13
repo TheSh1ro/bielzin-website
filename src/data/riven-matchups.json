@@ -1,0 +1,867 @@
+{
+  "Aatrox": {
+    "early": true,
+    "late": true,
+    "tip": "Entre na zona interna do Q1 e Q2. Guarde E para esquivar do centro do Q3 e espere a cura do R acabar antes de insistir."
+  },
+  "Ahri": {
+    "early": false,
+    "late": true,
+    "tip": "Fique atrás das tropas até ela errar o E. No late, pressione de um flanco e espere os avanços do R antes de gastar Q3."
+  },
+  "Akali": {
+    "early": null,
+    "late": null,
+    "tip": "Troque antes do nível 6 e recue quando ela soltar a fumaça. Guarde E para desviar da shuriken ou segurar o dano quando ela voltar."
+  },
+  "Akshan": {
+    "early": false,
+    "late": true,
+    "tip": "Use os arbustos para limitar os ataques grátis. Fique no caminho do balanço do E quando já estiver perto e corte a fuga com W."
+  },
+  "Alistar": {
+    "early": true,
+    "late": true,
+    "tip": "Espere ele gastar W ou Q antes de entrar. Se ativar o R, mude de alvo ou recue até acabar a redução de dano."
+  },
+  "Ambessa": {
+    "early": true,
+    "late": true,
+    "tip": "Troque depois do Q2 e guarde W para o fim de um avanço. Saia do alcance do R quando estiver sem E ou Flash."
+  },
+  "Amumu": {
+    "early": true,
+    "late": true,
+    "tip": "Tropas bloqueiam o Q e ele tem duas cargas. Use E para sair do alcance do R e entre quando ele gastar o controle em outro alvo."
+  },
+  "Anivia": {
+    "early": false,
+    "late": false,
+    "tip": "Aproxime-se atrás das tropas até o Q explodir. Guarde Q3 para atravessar a parede quando o terreno permitir e confira se o ovo está disponível."
+  },
+  "Annie": {
+    "early": false,
+    "late": true,
+    "tip": "Conte os acúmulos do atordoamento antes de avançar. Depois que ela usar o stun e o Tibbers, pressione pelo lado e interrompa a fuga com W."
+  },
+  "Aphelios": {
+    "early": true,
+    "late": true,
+    "tip": "Evite o corpo a corpo enquanto ele estiver com chakrams acumulados. Entre pelo lado e guarde um avanço para o deslocamento do Flash."
+  },
+  "Ashe": {
+    "early": false,
+    "late": true,
+    "tip": "Use cobertura para chegar sem ser desacelerado por vários ataques. Desvie da flecha com E e encadeie W com Q3 quando encostar."
+  },
+  "AurelionSol": {
+    "early": true,
+    "late": true,
+    "tip": "Interrompa a canalização do Q ou o voo com W. Mais tarde, ataque pelo flanco e saia da área do E antes de prolongar a luta."
+  },
+  "Aurora": {
+    "early": false,
+    "late": true,
+    "tip": "Use E para evitar a volta do Q e respeite o salto do E dela. Se ela usar R, saia da área quando a perseguição custar seu combo inteiro."
+  },
+  "Azir": {
+    "early": false,
+    "late": false,
+    "tip": "Aproxime-se pelo lado oposto aos soldados. Faça-o gastar o deslocamento ou a muralha antes de usar seu último avanço."
+  },
+  "Bard": {
+    "early": true,
+    "late": true,
+    "tip": "Evite ficar alinhado com tropas ou parede para o Q. Quando ele abrir o túnel, prefira cortar a saída a segui-lo no escuro."
+  },
+  "Belveth": {
+    "early": true,
+    "late": false,
+    "tip": "Use W ou Q3 para interromper os golpes do E e espere a redução de dano. Evite brigar perto de um coral que ela possa consumir."
+  },
+  "Blitzcrank": {
+    "early": true,
+    "late": true,
+    "tip": "Use as tropas para bloquear o puxão e faça trocas longe da torre. Guarde parte do combo para depois do escudo da passiva."
+  },
+  "Brand": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie do Q quando estiver em chamas e saia de perto das tropas marcadas. No late, pegue um ângulo separado dos aliados para evitar o ricochete do R."
+  },
+  "Braum": {
+    "early": true,
+    "late": true,
+    "tip": "Recue antes de tomar o quarto acúmulo da passiva. Bata de lado quando o escudo estiver levantado e evite jogar o R2 de frente."
+  },
+  "Briar": {
+    "early": true,
+    "late": true,
+    "tip": "Leve a perseguição do W para perto da sua torre se a wave permitir. Desvie lateralmente do grito e evite ficar entre ela e uma parede."
+  },
+  "Caitlyn": {
+    "early": false,
+    "late": true,
+    "tip": "Use arbustos e cuidado com armadilhas nas entradas. Guarde E para seguir a rede ou desviar dela antes de encadear o controle."
+  },
+  "Camille": {
+    "early": null,
+    "late": null,
+    "tip": "Puxe a luta para longe de paredes e recue quando ela preparar o Q2. Espere o escudo físico cair antes de gastar a parte forte do combo."
+  },
+  "Cassiopeia": {
+    "early": false,
+    "late": false,
+    "tip": "Vá pelo lado para evitar o W, que trava seus avanços. Esquive do Q e vire de costas na animação do R se já estiver perto."
+  },
+  "Chogath": {
+    "early": null,
+    "late": null,
+    "tip": "Guarde E para sair do círculo do Q e ataque após o silêncio. No late, evite entrar com pouca vida enquanto a Mordida estiver disponível."
+  },
+  "Corki": {
+    "early": false,
+    "late": true,
+    "tip": "Use E para absorver o Q ou um míssil isolado. Force a Valquíria com uma entrada curta e guarde outro avanço para segui-la."
+  },
+  "Darius": {
+    "early": true,
+    "late": true,
+    "tip": "Entre no círculo interno do Q e saia antes dos cinco acúmulos. Se ele errar o puxão, troque curto e conserve uma saída."
+  },
+  "Diana": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie do Q para limitar os avanços consecutivos. Recue quando ela usar o escudo e deixe o E pronto para sair do R após o puxão."
+  },
+  "DrMundo": {
+    "early": true,
+    "late": true,
+    "tip": "Fique atrás da wave contra o Q e use um controle para gastar a passiva. Pise na cápsula quando for seguro e guarde o resto do combo para depois."
+  },
+  "Draven": {
+    "early": false,
+    "late": true,
+    "tip": "Use o ponto de queda do machado para prever o caminho dele. Evite entrar em linha reta no E e corte a fuga com W ou Q3."
+  },
+  "Ekko": {
+    "early": true,
+    "late": true,
+    "tip": "Saia da trajetória de volta do Q para evitar a terceira marca. No nível 6, acompanhe a sombra do R antes de gastar seu R2."
+  },
+  "Elise": {
+    "early": false,
+    "late": true,
+    "tip": "Fique atrás das tropas contra o Casulo. Se ela subir com Rapel, mantenha W para o pouso e evite lutar com pouca vida contra o Q da aranha."
+  },
+  "Evelynn": {
+    "early": true,
+    "late": true,
+    "tip": "Recue ao ver o coração e vire a entrada com W se ela aparecer ao alcance. No late, use visão de controle e guarde o R2 para depois do salto do R."
+  },
+  "Ezreal": {
+    "early": true,
+    "late": true,
+    "tip": "Avance atrás das tropas para bloquear o Q. Ameace com Q ou E e só comprometa o restante do combo depois do teleporte dele."
+  },
+  "Fiddlesticks": {
+    "early": true,
+    "late": true,
+    "tip": "Interrompa o dreno com W ou Q3. Quando ele sumir da visão, confira os flancos antes de entrar e evite agrupar em espaço fechado."
+  },
+  "Fiora": {
+    "early": true,
+    "late": false,
+    "tip": "Proteja um ponto vital junto à parede se for encurralado. Varie o momento do W e Q3 para fazer a Ripostar sair antes do controle."
+  },
+  "Fizz": {
+    "early": true,
+    "late": true,
+    "tip": "Troque depois que ele aterrissar do E. Se o peixe acertar, abra distância e guarde o escudo para o dano que vem depois."
+  },
+  "Galio": {
+    "early": true,
+    "late": true,
+    "tip": "Saia do círculo do W e volte quando ele gastar o avanço. Se ele canalizar R perto de você, interrompa com W ou Q3."
+  },
+  "Gangplank": {
+    "early": false,
+    "late": false,
+    "tip": "Dispute o último ataque nos barris quando puder chegar sem tomar o Q. Force o W com um controle e guarde o outro para depois da laranja."
+  },
+  "Garen": {
+    "early": false,
+    "late": false,
+    "tip": "Apare o Q com E e saia do giro. Espere o W perder o escudo e vigie a própria vida quando a execução estiver disponível."
+  },
+  "Gnar": {
+    "early": false,
+    "late": false,
+    "tip": "Aproveite o Gnar pequeno depois que ele gastar o salto. Com a barra de fúria alta, mantenha a luta longe das paredes e espere a transformação passar."
+  },
+  "Gragas": {
+    "early": false,
+    "late": true,
+    "tip": "Espere o avanço antes de gastar Q3 e use suas tropas para bloquear o impacto. Troque longe do barril e guarde E para reposicionar após o R."
+  },
+  "Graves": {
+    "early": true,
+    "late": true,
+    "tip": "Evite paredes para não tomar a volta rápida do Q. Saia da fumaça e troque antes que ele empilhe armadura com o E."
+  },
+  "Gwen": {
+    "early": true,
+    "late": false,
+    "tip": "Ataque com poucos acúmulos no Q dela e saia do centro das tesouradas. Quando a névoa cair, espere na borda ou entre com controle pronto."
+  },
+  "Hecarim": {
+    "early": true,
+    "late": true,
+    "tip": "Troque antes de ele acumular Q e recue quando ligar o W. Evite rotas estreitas onde o medo do R facilita a sequência."
+  },
+  "Heimerdinger": {
+    "early": false,
+    "late": true,
+    "tip": "Limpe torres isoladas enquanto ele estiver sem granada. Ataque pelo flanco quando o E errar e evite lutar cercado pelas torres."
+  },
+  "Hwei": {
+    "early": false,
+    "late": true,
+    "tip": "Force o feitiço de medo com uma aproximação curta. Depois que a família do E estiver em recarga, feche distância pelo lado."
+  },
+  "Illaoi": {
+    "early": true,
+    "late": false,
+    "tip": "Use a wave para bloquear o E e limpe tentáculos quando for seguro. Saia assim que ela ultar e volte depois que os tentáculos perderem força."
+  },
+  "Irelia": {
+    "early": true,
+    "late": true,
+    "tip": "Conte as marcas e os minions baixos que ela pode usar para avançar. Segure o burst durante o W e troque quando a passiva cair."
+  },
+  "Ivern": {
+    "early": true,
+    "late": true,
+    "tip": "Esquive da raiz e abra distância até o escudo estourar. Reposicione após o segundo ataque da Margarida para evitar o arremesso seguinte."
+  },
+  "Janna": {
+    "early": false,
+    "late": true,
+    "tip": "Aproxime-se por um ângulo diferente da linha do tornado. Se ela afastar você com R, preserve Q3 para a volta ou mude de alvo."
+  },
+  "JarvanIV": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie lateralmente do E → Q e puna quando ele ficar sem saída. Guarde Q3 para atravessar a arena do R se o terreno e o ângulo permitirem."
+  },
+  "Jax": {
+    "early": false,
+    "late": true,
+    "tip": "Saia do alcance do Contra-Ataque ou use W para recuar antes do stun. Volte com os ataques da passiva enquanto o E estiver em recarga."
+  },
+  "Jayce": {
+    "early": false,
+    "late": false,
+    "tip": "Proteja-se do disparo acelerado atrás da wave. Force o empurrão na forma de martelo e guarde um avanço para reentrar."
+  },
+  "Jhin": {
+    "early": true,
+    "late": true,
+    "tip": "Entre enquanto ele recarrega e desvie do W se estiver marcado. Use E para evitar a armadilha na saída e acompanhe a posição do quarto tiro."
+  },
+  "Jinx": {
+    "early": true,
+    "late": true,
+    "tip": "Entre pelo lado para evitar as mordidinhas. No late, inicie antes que ela consiga uma eliminação e ganhe velocidade para manter distância."
+  },
+  "KSante": {
+    "early": false,
+    "late": true,
+    "tip": "Evite o Q3 e lute no centro da rota para limitar o R pela parede. Entre depois que o W terminar e guarde mobilidade para a forma ofensiva."
+  },
+  "Kaisa": {
+    "early": true,
+    "late": false,
+    "tip": "Evite tomar todo o Q quando estiver isolado. Guarde W para depois do R ou para quando ela reaparecer do E evoluído."
+  },
+  "Kalista": {
+    "early": false,
+    "late": true,
+    "tip": "Evite trocas longas com lanças acumuladas e saia do alcance do E. Encadeie W e Q3 para limitar os saltos assim que encostar."
+  },
+  "Karma": {
+    "early": false,
+    "late": true,
+    "tip": "Desvie do Mantra Q sem ficar perto das tropas que ele pode explodir. Rompa o vínculo do W e entre de novo depois que o escudo cair."
+  },
+  "Karthus": {
+    "early": true,
+    "late": true,
+    "tip": "Lute perto de tropas para dividir o dano dos Qs. Afaste-se do corpo após o abate e interrompa o R se ele canalizar enquanto vivo."
+  },
+  "Kassadin": {
+    "early": true,
+    "late": false,
+    "tip": "Pressione com dano físico antes do nível 6. Mais tarde, ataque logo após o salto dele e aplique W antes que o próximo fique disponível."
+  },
+  "Katarina": {
+    "early": true,
+    "late": true,
+    "tip": "Evite as adagas no chão e guarde W ou Q3 para interromper o R. Puna a janela em que ela saltar para longe de outra adaga."
+  },
+  "Kayle": {
+    "early": true,
+    "late": true,
+    "tip": "Segure a wave perto da sua torre antes de ela ganhar alcance. Force o R com parte do combo e solte o Golpe de Vento após a invulnerabilidade."
+  },
+  "Kayn": {
+    "early": true,
+    "late": false,
+    "tip": "Esquive do W pelo lado e afaste-se das paredes para reduzir a rota de fuga. Se ele entrar com R, guarde escudo e controle para a saída."
+  },
+  "Kennen": {
+    "early": false,
+    "late": true,
+    "tip": "Evite acumular duas marcas antes de avançar e puna quando ele gastar o E. Saia do R e volte quando a tempestade acabar."
+  },
+  "Khazix": {
+    "early": true,
+    "late": true,
+    "tip": "Lute junto da wave para evitar o dano do isolamento. Guarde um controle para quando ele sair da invisibilidade e se comprometer com o salto."
+  },
+  "Kindred": {
+    "early": false,
+    "late": true,
+    "tip": "Evite a área do lobo durante a perseguição. Dentro do R, guarde o burst para o fim ou use Q3 para deslocar Kindred na borda."
+  },
+  "Kled": {
+    "early": true,
+    "late": false,
+    "tip": "Esquive da corda e recue quando ele disparar os quatro ataques do W. Após desmontar, finalize rápido ou recue antes que recupere coragem."
+  },
+  "KogMaw": {
+    "early": false,
+    "late": true,
+    "tip": "Espere o W acabar para iniciar com menos alcance contra você. Depois do abate, use um avanço para escapar da explosão da passiva."
+  },
+  "Leblanc": {
+    "early": false,
+    "late": true,
+    "tip": "Quebre a corrente com E e observe o ponto de retorno do W. Use o controle quando ela já tiver voltado ou gastado o retorno."
+  },
+  "LeeSin": {
+    "early": true,
+    "late": true,
+    "tip": "Use tropas para bloquear o Q e mude de ângulo para evitar um chute contra a torre. Puna depois que ele gastar W para se reposicionar."
+  },
+  "Leona": {
+    "early": true,
+    "late": true,
+    "tip": "Abra distância quando ela ativar W e volte após a explosão. Guarde E para evitar o centro do R e ataque quando o controle acabar."
+  },
+  "Lillia": {
+    "early": false,
+    "late": false,
+    "tip": "Avance logo depois do Q e evite sua borda externa. Se estiver marcada e sonolenta, saia do alcance do W antes de dormir."
+  },
+  "Lissandra": {
+    "early": false,
+    "late": true,
+    "tip": "Evite o W na primeira entrada e observe para onde a garra viaja. Guarde R2 até a invulnerabilidade do R acabar se ela ultar a si mesma."
+  },
+  "Locke": {
+    "early": true,
+    "late": false,
+    "tip": "Desvie dos pregos e recue durante a Ignição da Alma. Guarde E para o artefato do R quando estiver com pouca vida."
+  },
+  "Lucian": {
+    "early": false,
+    "late": true,
+    "tip": "Evite o Q que atravessa minions e guarde Q3 para depois do deslize. Se ele canalizar o R perto, interrompa com W."
+  },
+  "Lulu": {
+    "early": false,
+    "late": true,
+    "tip": "Force a polimorfia com uma entrada curta e recue. Guarde R2 para depois do ganho de vida do R e evite lutar dentro da lentidão."
+  },
+  "Lux": {
+    "early": true,
+    "late": true,
+    "tip": "Ataque de lado para evitar o Q, que atravessa o primeiro alvo. Saia da zona do E e feche distância assim que ela gastar a raiz."
+  },
+  "Malphite": {
+    "early": false,
+    "late": false,
+    "tip": "Dê um ataque para tirar o escudo e mantenha a pressão para evitar a recarga da passiva. Guarde mobilidade para o R e considere Cutelo contra armadura."
+  },
+  "Malzahar": {
+    "early": true,
+    "late": true,
+    "tip": "Remova o escudo antes da entrada e limpe os voidlings. Depois do nível 6, evite all-in perto da torre se a supressão estiver pronta."
+  },
+  "Maokai": {
+    "early": true,
+    "late": true,
+    "tip": "Evite lutar em arbustos com mudas e pressione depois do empurrão do Q. Guarde o controle até ele reaparecer do W."
+  },
+  "MasterYi": {
+    "early": true,
+    "late": false,
+    "tip": "Aplique W após ele reaparecer do Q. Interrompa a Meditação com Q3 e evite usar R2 enquanto ele puder ficar inalvejável."
+  },
+  "Mel": {
+    "early": false,
+    "late": true,
+    "tip": "Aproxime-se pelo lado para evitar o enraizamento. Segure R2 enquanto a reflexão estiver disponível e recue se acumular muitas marcas da passiva."
+  },
+  "Milio": {
+    "early": true,
+    "late": true,
+    "tip": "Mude o ângulo para esquivar do chute e pressione na recarga. Separe W e Q3 para que a ultimate dele não resolva a sequência inteira."
+  },
+  "MissFortune": {
+    "early": true,
+    "late": true,
+    "tip": "Evite ficar atrás de minions baixos contra o Q. Se ela abrir o R ao alcance, interrompa com W ou Q3 antes de continuar o combo."
+  },
+  "MonkeyKing": {
+    "early": true,
+    "late": false,
+    "tip": "Troque curto antes que ele empilhe armadura e não gaste R2 na cópia. Depois do 6, conte as duas ativações do R antes de voltar."
+  },
+  "Mordekaiser": {
+    "early": true,
+    "late": false,
+    "tip": "Desvie do puxão e divida o Q com a wave. Saia antes de ele ativar a passiva e atrase seu burst até o escudo cair."
+  },
+  "Morgana": {
+    "early": true,
+    "late": true,
+    "tip": "Use tropas contra a raiz e aproxime-se pelo flanco. Faça o Escudo Negro expirar antes de usar seus controles e rompa a corrente do R com E."
+  },
+  "Naafiri": {
+    "early": true,
+    "late": true,
+    "tip": "Esquive da segunda adaga quando já estiver sangrando. Agrupe os cães para acertá-los com Q e espere ela sair do estado inalvejável para usar W."
+  },
+  "Nami": {
+    "early": true,
+    "late": true,
+    "tip": "Avance na diagonal para evitar a bolha. Use o terreno para chegar por fora da onda do R e guarde um avanço para depois do Flash."
+  },
+  "Nasus": {
+    "early": true,
+    "late": false,
+    "tip": "Congele a wave para negar acúmulos do Q. Se ele ultar ou usar Murchar, gaste seus avanços para sair e reentre quando o efeito acabar."
+  },
+  "Nautilus": {
+    "early": true,
+    "late": true,
+    "tip": "Evite o ângulo de gancho e não fique perto da parede que ele pode usar para escapar. Entre quando o Q ou o R já tiver sido gasto."
+  },
+  "Neeko": {
+    "early": false,
+    "late": true,
+    "tip": "Evite ficar atrás da wave, que fortalece o E dela. Desconfie de tropas extras e guarde E ou Flash para sair do círculo do R."
+  },
+  "Nidalee": {
+    "early": true,
+    "late": true,
+    "tip": "Fique atrás das tropas para bloquear a lança e evite caminhos com armadilhas. Guarde W para quando ela pousar depois do salto de puma."
+  },
+  "Nilah": {
+    "early": true,
+    "late": false,
+    "tip": "Faça a esquiva do W sair antes dos ataques com passiva. Guarde E para sair do círculo do R e volte depois do puxão."
+  },
+  "Nocturne": {
+    "early": false,
+    "late": true,
+    "tip": "Saia da trilha do Q e rompa o vínculo do medo com E. Force o escudo de feitiço antes de usar W ou Q3."
+  },
+  "Nunu": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie da bola pelo lado e interrompa o R com W ou Q3. Evite disputar o último golpe de um monstro enquanto ele tiver Q e Golpear."
+  },
+  "Olaf": {
+    "early": false,
+    "late": false,
+    "tip": "Esquive dos machados e saia do caminho da coleta. Quando ele ultar, use a mobilidade para abrir distância e não deixe que renove o efeito com ataques."
+  },
+  "Orianna": {
+    "early": false,
+    "late": true,
+    "tip": "Use E para absorver poke e observe onde a esfera está. Entre pelo lado oposto à bola e recue antes da Onda de Choque."
+  },
+  "Ornn": {
+    "early": true,
+    "late": true,
+    "tip": "Evite alinhar-se com parede ou pilar. Espere o sopro acabar antes do controle e tente interromper a segunda ativação do R."
+  },
+  "Pantheon": {
+    "early": false,
+    "late": true,
+    "tip": "Troque quando ele estiver com poucos acúmulos da passiva. Caminhe para trás do escudo ou espere baixar antes do R2."
+  },
+  "Poppy": {
+    "early": false,
+    "late": true,
+    "tip": "Espere a zona do W acabar para usar avanços. Lute longe das paredes e interrompa a canalização do R se estiver perto."
+  },
+  "Pyke": {
+    "early": true,
+    "late": true,
+    "tip": "Bloqueie o gancho com tropas e esquive do retorno do E. Saia do X do R com um avanço quando a vida estiver baixa."
+  },
+  "Qiyana": {
+    "early": true,
+    "late": true,
+    "tip": "Lute longe das paredes e evite ficar alinhado com o R. Guarde W para quando ela reaparecer da grama e recue com pouca vida contra o Q de pedra."
+  },
+  "Quinn": {
+    "early": false,
+    "late": true,
+    "tip": "Use arbustos para encurtar distância e faça uma entrada curta para puxar o E. Guarde outro avanço para depois do salto dela."
+  },
+  "Rakan": {
+    "early": true,
+    "late": true,
+    "tip": "Esquive do centro do W com E. Se ele recuar com escudos para um aliado, controle a chegada ou ataque o aliado que ficou exposto."
+  },
+  "Rammus": {
+    "early": true,
+    "late": false,
+    "tip": "Pare de atacar durante a postura defensiva e saia do alcance da provocação. Considere Cutelo cedo e pressione enquanto o W estiver em recarga."
+  },
+  "RekSai": {
+    "early": true,
+    "late": true,
+    "tip": "Evite lutar sobre a entrada de um túnel com ela enterrada. Depois do arremesso, prepare E para o dano do R e W para quando ela reaparecer."
+  },
+  "Rell": {
+    "early": true,
+    "late": true,
+    "tip": "Saia da área da queda com E e guarde o escudo para depois do Q, que pode quebrá-lo. Preserve um avanço para sair da área do R."
+  },
+  "Renata": {
+    "early": true,
+    "late": true,
+    "tip": "Use tropas para bloquear o Q e recue se ela aplicar W no alvo focado. Saia da trajetória da onda do R para não bater nos aliados."
+  },
+  "Renekton": {
+    "early": false,
+    "late": true,
+    "tip": "Fique fora do alcance do W com 50 de Fúria, pois ele quebra seu escudo. Se ele gastar os dois avanços, faça uma troca curta enquanto o E recarrega."
+  },
+  "Rengar": {
+    "early": true,
+    "late": true,
+    "tip": "Mantenha a wave longe dos arbustos quando ele puder saltar. Guarde controle até ele gastar a cura fortalecida ou ficar sem Ferocidade."
+  },
+  "Riven": {
+    "early": null,
+    "late": null,
+    "tip": "O espelho favorece quem acerta mais ataques com a passiva e guarda E para a resposta. Use a primeira ativação do Q inimigo para contar a janela da recarga."
+  },
+  "Rumble": {
+    "early": false,
+    "late": true,
+    "tip": "Evite o lança-chamas quando a barra de calor estiver alta. Saia lateralmente do R e use a janela depois do superaquecimento."
+  },
+  "Ryze": {
+    "early": true,
+    "late": true,
+    "tip": "Evite ficar junto das tropas marcadas pelo E. Faça o enraizamento sair antes da entrada longa e interrompa o teleporte com W ou Q3."
+  },
+  "Samira": {
+    "early": true,
+    "late": true,
+    "tip": "Guarde W ou Q3 para interromper o R. Espere o giro do W dela acabar antes de soltar Golpe de Vento."
+  },
+  "Sejuani": {
+    "early": true,
+    "late": true,
+    "tip": "Tire a armadura da passiva com uma troca curta e espere antes de voltar. Guarde E para desviar do R e lute longe dos aliados corpo a corpo dela."
+  },
+  "Senna": {
+    "early": true,
+    "late": false,
+    "tip": "Quebre a linha do W e fique longe da tropa marcada prestes a morrer. Entre pelo lado e prenda Senna antes que ela possa manter distância."
+  },
+  "Seraphine": {
+    "early": true,
+    "late": true,
+    "tip": "Evite o E duplicado e não entre alinhado com seus aliados, que estendem o R dela. Ataque depois que o escudo do W cair."
+  },
+  "Sett": {
+    "early": true,
+    "late": true,
+    "tip": "Evite ficar entre Sett e uma tropa para que o E não atordoe. Guarde um avanço lateral para o centro do W e recue quando a barra encher."
+  },
+  "Shaco": {
+    "early": true,
+    "late": true,
+    "tip": "Evite perseguir para dentro de caixas sem visão. Observe a posição anterior ao Q e espere identificar o verdadeiro antes de gastar R2."
+  },
+  "Shen": {
+    "early": true,
+    "late": false,
+    "tip": "Troque longe do trajeto da espada dele e aguarde o bloqueio de ataques do W. Interrompa a canalização do R quando estiver ao alcance."
+  },
+  "Shyvana": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie da bola de fogo pelo lado. Na forma de dragão, saia do rastro do E e recue antes da explosão do W para negar a cura."
+  },
+  "Singed": {
+    "early": true,
+    "late": true,
+    "tip": "Congele a wave e corte a rota dele sem perseguir pelo veneno. Evite o adesivo que trava avanços e o arremesso de volta para dentro dele."
+  },
+  "Sion": {
+    "early": true,
+    "late": true,
+    "tip": "Interrompa o Q com W ou Q3 e recue se o escudo estiver prestes a explodir. Depois do abate, guarde um avanço para a passiva."
+  },
+  "Sivir": {
+    "early": true,
+    "late": true,
+    "tip": "Force o escudo de feitiço com um Q antes do W. Esquive da volta do bumerangue e guarde mobilidade se ela acelerar com R."
+  },
+  "Skarner": {
+    "early": true,
+    "late": true,
+    "tip": "Evite lutar junto à parede quando ele usar o E. Saia da frente durante o preparo do R e reentre pelo lado quando as caudas passarem."
+  },
+  "Smolder": {
+    "early": true,
+    "late": true,
+    "tip": "Pressione antes de acumular o Q e guarde um avanço para quando ele descer do voo. Saia do centro do R, onde o dano é maior."
+  },
+  "Sona": {
+    "early": true,
+    "late": true,
+    "tip": "Dê um flanco para não tomar o Crescendo junto com seu time. Force o escudo com a primeira entrada e guarde o resto do combo para quando cair."
+  },
+  "Soraka": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie do Q para cortar a cura dela e use E para sair do silêncio. Ao entrar por um flanco, encadeie controle antes que ela salve o alvo."
+  },
+  "Swain": {
+    "early": true,
+    "late": false,
+    "tip": "Esquive do retorno do E antes de entrar. Depois do nível 6, afaste-se até a transformação acabar e volte no intervalo."
+  },
+  "Sylas": {
+    "early": true,
+    "late": true,
+    "tip": "Use tropas para bloquear o E2 e não fique parado na explosão do Q. Guarde R2 para depois da cura do W e confira qual ultimate ele roubou."
+  },
+  "Syndra": {
+    "early": false,
+    "late": true,
+    "tip": "Avance pelo lado para evitar a linha entre Syndra e as esferas. Force o empurrão com uma entrada curta e volte quando ele estiver em recarga."
+  },
+  "TahmKench": {
+    "early": true,
+    "late": true,
+    "tip": "Use a wave para bloquear a língua e recue antes do terceiro acúmulo. Troque em ciclos curtos para evitar o escudo cinza inteiro de uma vez."
+  },
+  "Taliyah": {
+    "early": true,
+    "late": true,
+    "tip": "Espere o campo de pedras desaparecer para usar avanços. Entre por um lado onde ela já gastou o W e interrompa o Q com controle."
+  },
+  "Talon": {
+    "early": false,
+    "late": true,
+    "tip": "Evite a volta das lâminas para impedir a passiva. Use E para absorver o dano quando ele reaparecer do R e evite perseguir por cima das paredes."
+  },
+  "Taric": {
+    "early": true,
+    "late": true,
+    "tip": "Esquive do E pelo lado e observe também o aliado ligado a ele. Quando ativar o R, recue durante a invulnerabilidade e volte depois."
+  },
+  "Teemo": {
+    "early": false,
+    "late": true,
+    "tip": "Use arbustos para encurtar o caminho e espere a cegueira passar antes dos ataques. No late, leve lente ao atravessar as entradas da lateral."
+  },
+  "Thresh": {
+    "early": true,
+    "late": true,
+    "tip": "Entre por um ângulo em que as tropas bloqueiem o gancho. Force o E antes de usar Q3 e controle o alvo antes que pegue a lanterna."
+  },
+  "Tristana": {
+    "early": false,
+    "late": true,
+    "tip": "Recue quando ela colocar a bomba para evitar o salto reiniciado. Guarde o último avanço até ela gastar W ou o empurrão do R."
+  },
+  "Trundle": {
+    "early": true,
+    "late": true,
+    "tip": "Faça trocas curtas e evite se prender entre o pilar e a parede. Quando ele roubar suas resistências com R, saia antes de continuar."
+  },
+  "Tryndamere": {
+    "early": true,
+    "late": true,
+    "tip": "Troque com a Fúria dele baixa e guarde W para impedir que cole em você. Conte a duração da ultimate e use R2 depois que ela acabar."
+  },
+  "TwistedFate": {
+    "early": true,
+    "late": true,
+    "tip": "Recue quando ele mostrar a carta dourada e avance após o arremesso. Se ele canalizar o teleporte perto, interrompa com W ou Q3."
+  },
+  "Twitch": {
+    "early": true,
+    "late": true,
+    "tip": "Use visão de controle no flanco e ameace quando ele aparecer sem distância. Evite alinhar-se com aliados durante o R e encerre a troca antes de muitas marcas."
+  },
+  "Udyr": {
+    "early": false,
+    "late": false,
+    "tip": "Evite a postura fortalecida e faça trocas antes que ele renove o escudo. Guarde W até passar a imunidade a controle do E fortalecido."
+  },
+  "Urgot": {
+    "early": null,
+    "late": null,
+    "tip": "Desvie do E para evitar o arremesso e ataque pelo lado onde as pernas já dispararam. Se o R marcar você com pouca vida, recue antes de cruzar o limite da execução."
+  },
+  "Varus": {
+    "early": false,
+    "late": true,
+    "tip": "Evite a flecha carregada e guarde E para desviar da corrente do R. Quando entrar, não prolongue a troca com marcas acumuladas."
+  },
+  "Vayne": {
+    "early": false,
+    "late": false,
+    "tip": "Jogue longe de paredes para evitar o atordoamento do E. Force o empurrão cedo e guarde um avanço para seguir o próximo rolamento."
+  },
+  "Veigar": {
+    "early": true,
+    "late": true,
+    "tip": "Passe pela borda antes de a gaiola fechar ou espere o efeito acabar. Entre enquanto o E recarrega e use escudo antes do dano da ultimate."
+  },
+  "Velkoz": {
+    "early": true,
+    "late": true,
+    "tip": "Varie o ângulo para desviar do Q dividido e guarde E para o arremesso. Interrompa o feixe com W ou Q3 quando estiver perto."
+  },
+  "Vex": {
+    "early": false,
+    "late": true,
+    "tip": "Espere que gaste o medo na wave antes de usar avanços. Se o R errar, pressione na janela e evite alimentar a marca com dashes desnecessários."
+  },
+  "Vi": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie do Q carregado na diagonal. Se ela travar em você com R, prepare E para a chegada e guarde o stun para depois do impacto."
+  },
+  "Viego": {
+    "early": true,
+    "late": false,
+    "tip": "Esquive do W e troque enquanto ele estiver fora da névoa. Evite entregar uma possessão quando estiver com pouca vida e saia do centro do R."
+  },
+  "Viktor": {
+    "early": true,
+    "late": false,
+    "tip": "Espere o escudo do Q cair e use E para sair do Campo Gravítico. No late, procure um flanco antes de cruzar a tempestade."
+  },
+  "Vladimir": {
+    "early": true,
+    "late": true,
+    "tip": "Recue com a barra do Q vermelha e force a poça sem gastar R2. Reentre quando ele voltar e a poça ainda estiver em recarga."
+  },
+  "Volibear": {
+    "early": false,
+    "late": false,
+    "tip": "Evite ficar no círculo do E durante o avanço dele e saia antes da segunda mordida. Depois do 6, respeite o mergulho mesmo sob a própria torre."
+  },
+  "Warwick": {
+    "early": true,
+    "late": false,
+    "tip": "Faça trocas curtas com a vida dele alta e recue antes da cura aumentar. Espere o medo do E e desvie do R pelo lado."
+  },
+  "Xayah": {
+    "early": true,
+    "late": true,
+    "tip": "Observe a linha das penas e avance por fora dela. Force o R com um controle e guarde o outro para o pouso."
+  },
+  "Xerath": {
+    "early": true,
+    "late": true,
+    "tip": "Use tropas contra o E e E lateral para desviar do Q. Quando ele abrir o R perto de você, interrompa com W ou Q3."
+  },
+  "XinZhao": {
+    "early": false,
+    "late": true,
+    "tip": "Recue antes do terceiro ataque do Q e volte quando ele gastar o avanço. Use R2 de dentro do círculo do R para evitar o bloqueio de dano."
+  },
+  "Yasuo": {
+    "early": true,
+    "late": true,
+    "tip": "Tire o escudo da passiva com uma troca curta e conte os Qs. Use Golpe de Vento depois da parede ou de um ângulo que não a atravesse."
+  },
+  "Yone": {
+    "early": true,
+    "late": false,
+    "tip": "Saia da linha do Q3 e recue durante o E. Se a volta estiver exposta, prepare W no ponto de retorno antes de continuar o combo."
+  },
+  "Yorick": {
+    "early": true,
+    "late": false,
+    "tip": "Desvie do E para evitar que os carniçais saltem em você. Guarde um avanço para sair da parede e pressione quando a Donzela estiver fora de jogo."
+  },
+  "Yunara": {
+    "early": true,
+    "late": true,
+    "tip": "Evite trocar junto da wave quando os ataques dela estiverem fortalecidos. Após a transformação, espere o avanço dela antes de gastar seu último Q."
+  },
+  "Yuumi": {
+    "early": true,
+    "late": true,
+    "tip": "Pressione a campeã que carrega Yuumi e troque depois do escudo. Se Yuumi ficar solta, use W antes que ela consiga se prender a outro aliado."
+  },
+  "Zaahen": {
+    "early": true,
+    "late": false,
+    "tip": "Troque curto antes que ele acumule Determinação. Saia da área do R para negar a cura e confira se a ressurreição está pronta antes de gastar tudo."
+  },
+  "Zac": {
+    "early": null,
+    "late": null,
+    "tip": "Interrompa o salto com Q3 ou W se conseguir alcançá-lo antes da aterrissagem. Pise nas gosmas entre as trocas para reduzir a cura."
+  },
+  "Zed": {
+    "early": true,
+    "late": true,
+    "tip": "Saia da linha entre Zed e a sombra para evitar duas shurikens. Guarde W para quando ele sair do R e E para o dano seguinte."
+  },
+  "Zeri": {
+    "early": true,
+    "late": true,
+    "tip": "Lute longe de paredes longas que permitam a fuga com E. Entre antes de ela acumular velocidade e recue se o R já estiver acelerando a perseguição."
+  },
+  "Ziggs": {
+    "early": true,
+    "late": true,
+    "tip": "Desvie das bombas pelo lado e evite atravessar o campo minado. Guarde um avanço para depois da carga explosiva."
+  },
+  "Zilean": {
+    "early": false,
+    "late": true,
+    "tip": "Espalhe-se da wave para evitar as duas bombas na mesma área. Force a ressurreição e espere o efeito acabar ou troque de alvo."
+  },
+  "Zoe": {
+    "early": true,
+    "late": true,
+    "tip": "Evite ângulos junto a paredes, onde a bolha ganha alcance. Mire o ponto de retorno do R e use E antes de dormir se a bolha acertar."
+  },
+  "Zyra": {
+    "early": true,
+    "late": true,
+    "tip": "Evite entrar pelo corredor das sementes e esquive da raiz. Saia da zona do R antes do arremesso e volte pelo lado."
+  }
+}
