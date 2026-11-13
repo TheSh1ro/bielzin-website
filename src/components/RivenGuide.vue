@@ -3,7 +3,11 @@ import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } fr
 import { ArrowUpRight, ChevronDown, Clock3, Search, Sword, Swords } from 'lucide-vue-next'
 import { profile } from '@/profile'
 import { rivenLessons, rivenSkillOrder } from '@/data/riven'
-import { guideBuild, guideMatchup, guideRuneGroups, guideVisible } from '@/lib/riven-guide'
+import { guideBuild, guideMatchup, guideVisible, guideItemization } from '@/lib/riven-guide'
+import RivenItemization from './RivenItemization.vue'
+import RivenBootsGuide from './RivenBootsGuide.vue'
+import RivenRunePage from './RivenRunePage.vue'
+import ChampionModel from './ChampionModel.vue'
 import {
   abilityText,
   cooldownText,
@@ -44,7 +48,7 @@ const greavesSynergies = [
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
 
 const lessonIndex = ref(0)
-const skillProgression = rivenSkillOrder.map((key) => ({
+const skillRows = (['Q', 'W', 'E', 'R'] as const).map((key) => ({
   key,
   ...rivenLessons[spellKeys.indexOf(key)]!,
 }))
@@ -191,13 +195,16 @@ function selectOpponent(id: string) {
 }
 
 const build = computed(() => guideBuild(selectedId.value))
-const runeGroups = computed(() => guideRuneGroups(selectedId.value))
+
 const itemGroups = computed(() => [
   {
-    name: 'Início e botas',
-    ids: [...build.value.start, ...(build.value.boots ? [build.value.boots] : [])],
+    name: guideItemization ? 'Início' : 'Início e botas',
+    ids: [
+      ...build.value.start,
+      ...(!guideItemization && build.value.boots ? [build.value.boots] : []),
+    ],
   },
-  { name: 'Ordem de compra', ids: build.value.core },
+  ...(!guideItemization ? [{ name: 'Ordem de compra', ids: build.value.core }] : []),
 ])
 const selected = computed(() => roster.value.find(({ id }) => id === selectedId.value))
 const matchup = computed(() => guideMatchup(selectedId.value))
@@ -300,8 +307,8 @@ void loadPatch()
         </div>
         <p>
           <strong>Caminho Imortal é o que faz essa build de Riven Mid ser tão forte</strong>,
-          aumentando o dano acima de meia vida e amplificando a cura e o escudo do E abaixo desse
-          limiar.
+          aumentando o dano quando você está acima de 50% de HP e a cura e o escudo do E quando está
+          abaixo de 50%.
         </p>
         <dl class="riven-greaves-effects">
           <div>
@@ -316,7 +323,7 @@ void loadPatch()
         <p>
           A bota chega a 10% de Vampirismo Universal, fazendo ataques e habilidades recuperarem
           vida. Com Fome Eterna, Dança da Morte e Malmortius, esses status tornam a Riven
-          praticamente imortal em lutas prolongadas.
+          praticamente imortal em fights longas.
         </p>
       </div>
       <div class="riven-hot-tip-build">
@@ -378,146 +385,159 @@ void loadPatch()
       <p v-else-if="!roster.length" class="riven-feedback" role="status">
         Nenhum matchup disponível no momento.
       </p>
-      <div v-else-if="selected" class="riven-matchup riven-glass">
-        <div class="riven-controls">
-          <div
-            ref="opponentPicker"
-            class="riven-field riven-picker"
-            @focusout="onPickerFocusOut"
-            @keydown.esc="closePicker(true)"
-          >
-            <span id="riven-opponent-label">Oponente</span>
-            <button
-              id="riven-opponent-trigger"
-              ref="opponentTrigger"
-              class="riven-opponent-trigger"
-              type="button"
-              aria-labelledby="riven-opponent-label riven-opponent-name"
-              :aria-expanded="pickerOpen"
-              :aria-controls="pickerOpen ? 'riven-opponent-options' : undefined"
-              @click="togglePicker"
+      <div v-else-if="selected" class="riven-matchup">
+        <div class="riven-matchup-overview">
+          <div class="riven-controls">
+            <div
+              ref="opponentPicker"
+              class="riven-field riven-picker"
+              @focusout="onPickerFocusOut"
+              @keydown.esc="closePicker(true)"
             >
-              <img
-                :src="riotImage(version, 'champion', selected.image.full)"
-                alt=""
-                width="28"
-                height="28"
-              />
-              <span id="riven-opponent-name">{{ selected.name }}</span>
-              <ChevronDown :size="16" aria-hidden="true" />
-            </button>
-            <div v-if="pickerOpen" id="riven-opponent-options" class="riven-popover">
-              <label class="riven-search">
-                <Search :size="16" aria-hidden="true" />
-                <span class="sr-only">Buscar campeão</span>
-                <input
-                  ref="searchInput"
-                  v-model="query"
-                  type="search"
-                  placeholder="Buscar campeão"
-                  autocomplete="off"
-                  @keydown.enter.prevent="opponentList[0] && selectOpponent(opponentList[0].id)"
+              <span id="riven-opponent-label">Oponente</span>
+              <button
+                id="riven-opponent-trigger"
+                ref="opponentTrigger"
+                class="riven-opponent-trigger"
+                type="button"
+                aria-labelledby="riven-opponent-label riven-opponent-name"
+                :aria-expanded="pickerOpen"
+                :aria-controls="pickerOpen ? 'riven-opponent-options' : undefined"
+                @click="togglePicker"
+              >
+                <img
+                  :src="riotImage(version, 'champion', selected.image.full)"
+                  alt=""
+                  width="28"
+                  height="28"
                 />
-              </label>
-              <p v-if="!opponentList.length" class="riven-meta" role="status">
-                Nenhum campeão encontrado.
-              </p>
-              <ul v-else class="riven-roster-list" aria-label="Campeões">
-                <li v-for="champion in opponentList" :key="champion.id">
-                  <button
-                    type="button"
-                    :aria-pressed="champion.id === selectedId"
-                    @click="selectOpponent(champion.id)"
-                  >
-                    <img
-                      :src="riotImage(version, 'champion', champion.image.full)"
-                      alt=""
-                      width="28"
-                      height="28"
-                      loading="lazy"
-                    />
-                    {{ champion.name }}
-                  </button>
-                </li>
-              </ul>
+                <span id="riven-opponent-name">{{ selected.name }}</span>
+                <ChevronDown :size="16" aria-hidden="true" />
+              </button>
+              <div v-if="pickerOpen" id="riven-opponent-options" class="riven-popover">
+                <label class="riven-search">
+                  <Search :size="16" aria-hidden="true" />
+                  <span class="sr-only">Buscar campeão</span>
+                  <input
+                    ref="searchInput"
+                    v-model="query"
+                    type="search"
+                    placeholder="Buscar campeão"
+                    autocomplete="off"
+                    @keydown.enter.prevent="opponentList[0] && selectOpponent(opponentList[0].id)"
+                  />
+                </label>
+                <p v-if="!opponentList.length" class="riven-meta" role="status">
+                  Nenhum campeão encontrado.
+                </p>
+                <ul v-else class="riven-roster-list" aria-label="Campeões">
+                  <li v-for="champion in opponentList" :key="champion.id">
+                    <button
+                      type="button"
+                      :aria-pressed="champion.id === selectedId"
+                      @click="selectOpponent(champion.id)"
+                    >
+                      <img
+                        :src="riotImage(version, 'champion', champion.image.full)"
+                        alt=""
+                        width="28"
+                        height="28"
+                        loading="lazy"
+                      />
+                      {{ champion.name }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
+
+            <dl class="riven-assessment" aria-label="Avaliação do duelo para a Riven">
+              <div v-for="stage in assessment" :key="stage.label">
+                <dt>{{ stage.label }}</dt>
+                <dd
+                  :class="{
+                    favorable: stage.value === 'favorable',
+                    unfavorable: stage.value === 'unfavorable',
+                  }"
+                >
+                  {{
+                    stage.value === 'favorable'
+                      ? 'Favorável'
+                      : stage.value === 'unfavorable'
+                        ? 'Desfavorável'
+                        : stage.value === 'even'
+                          ? selectedId === 'Riven'
+                            ? 'Espelho'
+                            : 'Equilibrado'
+                          : 'A avaliar'
+                  }}
+                </dd>
+              </div>
+            </dl>
           </div>
 
-          <dl class="riven-assessment" aria-label="Avaliação do duelo para a Riven">
-            <div v-for="stage in assessment" :key="stage.label">
-              <dt>{{ stage.label }}</dt>
-              <dd
-                :class="{
-                  favorable: stage.value === 'favorable',
-                  unfavorable: stage.value === 'unfavorable',
-                }"
-              >
-                {{
-                  stage.value === 'favorable'
-                    ? 'Favorável'
-                    : stage.value === 'unfavorable'
-                      ? 'Desfavorável'
-                      : stage.value === 'even'
-                        ? selectedId === 'Riven'
-                          ? 'Espelho'
-                          : 'Equilibrado'
-                        : 'A avaliar'
-                }}
-              </dd>
+          <div class="riven-duel-stage">
+            <ChampionModel :key="selectedId" :champion="selected" />
+            <div class="riven-duel-copy">
+              <div class="riven-duel-heading">
+                <span>Riven × {{ selected.name }}</span>
+                <p>{{ selected.title }}</p>
+              </div>
+              <div class="riven-matchup-tips" aria-live="polite">
+                <ul v-if="matchup?.tips.some((tip) => tip.trim())" aria-label="Dicas do matchup">
+                  <li v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())" :key="index">
+                    {{ tip }}
+                  </li>
+                </ul>
+                <p v-else>Dicas de matchup em preparação.</p>
+              </div>
+              <section class="riven-enemy-panel" aria-labelledby="riven-enemy-title">
+                <div class="riven-title-line">
+                  <h2 id="riven-enemy-title">Habilidades de {{ selected.name }}</h2>
+                  <span class="riven-meta">Recarga base por nível</span>
+                </div>
+                <p v-if="enemyState === 'loading'" class="riven-feedback" role="status">
+                  Carregando habilidades…
+                </p>
+                <div v-else-if="enemyState === 'error'" class="riven-feedback" role="status">
+                  <p>As habilidades estão indisponíveis.</p>
+                  <button type="button" @click="enemyRetry++">Tentar novamente</button>
+                </div>
+                <ul v-else :key="selectedId" class="riven-enemy-spells">
+                  <li v-for="ability in enemyAbilities" :key="ability.key">
+                    <details>
+                      <summary>
+                        <img :src="ability.icon" alt="" width="32" height="32" loading="lazy" />
+                        <span class="riven-spell-name">
+                          <span class="riven-spell-key">{{
+                            ability.key === 'P' ? 'Passiva' : ability.key
+                          }}</span>
+                          {{ ability.name }}
+                        </span>
+                        <span v-if="ability.key !== 'P'" class="riven-cooldown">
+                          {{ ability.cooldown || 'Variável' }}
+                        </span>
+                        <ChevronDown :size="15" aria-hidden="true" />
+                      </summary>
+                      <p>{{ ability.description }}</p>
+                    </details>
+                  </li>
+                </ul>
+              </section>
             </div>
-          </dl>
+          </div>
         </div>
-
-        <div class="riven-matchup-tips" aria-live="polite">
-          <ul v-if="matchup?.tips.some((tip) => tip.trim())" aria-label="Dicas do matchup">
-            <li v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())" :key="index">
-              {{ tip }}
-            </li>
-          </ul>
-          <p v-else>Dicas de matchup em preparação.</p>
-        </div>
-
         <div class="riven-matchup-grid">
-          <section class="riven-matchup-column" aria-labelledby="riven-enemy-title">
+          <section class="riven-matchup-column build-panel" aria-labelledby="riven-build-title">
             <div class="riven-title-line">
-              <h2 id="riven-enemy-title">Habilidades de {{ selected.name }}</h2>
-              <span class="riven-meta">Recarga base por nível</span>
+              <h2 id="riven-build-title">
+                {{ guideItemization ? 'Itemização' : 'Build recomendada' }}
+              </h2>
+              <span v-if="build.isBase && !guideItemization" class="riven-meta">Padrão</span>
             </div>
-            <p v-if="enemyState === 'loading'" class="riven-feedback" role="status">
-              Carregando habilidades…
+            <p v-if="!guideItemization" class="riven-build-reason" aria-live="polite">
+              {{ build.reason }}
             </p>
-            <div v-else-if="enemyState === 'error'" class="riven-feedback" role="status">
-              <p>As habilidades estão indisponíveis.</p>
-              <button type="button" @click="enemyRetry++">Tentar novamente</button>
-            </div>
-            <ul v-else :key="selectedId" class="riven-enemy-spells">
-              <li v-for="ability in enemyAbilities" :key="ability.key">
-                <details>
-                  <summary>
-                    <img :src="ability.icon" alt="" width="32" height="32" loading="lazy" />
-                    <span class="riven-spell-name">
-                      <span class="riven-spell-key">{{
-                        ability.key === 'P' ? 'Passiva' : ability.key
-                      }}</span>
-                      {{ ability.name }}
-                    </span>
-                    <span v-if="ability.key !== 'P'" class="riven-cooldown">
-                      {{ ability.cooldown || 'Variável' }}
-                    </span>
-                    <ChevronDown :size="15" aria-hidden="true" />
-                  </summary>
-                  <p>{{ ability.description }}</p>
-                </details>
-              </li>
-            </ul>
-          </section>
-
-          <section class="riven-matchup-column" aria-labelledby="riven-build-title">
-            <div class="riven-title-line">
-              <h2 id="riven-build-title">Build recomendada</h2>
-              <span v-if="build.isBase" class="riven-meta">Padrão</span>
-            </div>
-            <p class="riven-build-reason" aria-live="polite">{{ build.reason }}</p>
             <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
               Carregando itens…
             </p>
@@ -544,6 +564,14 @@ void loadPatch()
                   </li>
                 </ul>
               </div>
+              <RivenItemization
+                v-if="guideItemization"
+                :content="guideItemization"
+                :plan="matchup?.lanePlan"
+                :opponent="selected?.name ?? selectedId"
+                :items="items"
+                :version="version"
+              />
               <div v-if="build.situational.length" class="riven-item-group">
                 <h3>Situacionais</h3>
                 <ul>
@@ -572,25 +600,19 @@ void loadPatch()
                 </ul>
               </div>
             </div>
-            <div class="riven-runes">
-              <h3>Runas</h3>
-              <div class="riven-rune-groups">
-                <ul v-for="group in runeGroups" :key="group.name" :aria-label="group.name">
-                  <li v-for="rune in group.runes" :key="rune.id" :title="rune.name">
-                    <img
-                      v-if="rune.icon"
-                      :src="rune.icon"
-                      :alt="rune.name"
-                      width="30"
-                      height="30"
-                      loading="lazy"
-                    />
-                    <span v-else>{{ rune.name }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </section>
+          <aside class="riven-matchup-aside" aria-label="Runas e botas">
+            <section class="riven-matchup-column" aria-labelledby="riven-runes-title">
+              <h2 id="riven-runes-title">Runas</h2>
+              <RivenRunePage :champion="selectedId" />
+            </section>
+            <RivenBootsGuide
+              v-if="guideItemization && itemsState === 'ready'"
+              :content="guideItemization"
+              :items="items"
+              :version="version"
+            />
+          </aside>
         </div>
       </div>
     </section>
@@ -602,23 +624,63 @@ void loadPatch()
       aria-labelledby="riven-habilidades-title"
     >
       <h2 id="riven-habilidades-title">Habilidades da Riven</h2>
-      <section class="riven-skill-order riven-glass" aria-labelledby="riven-skill-order-title">
-        <div class="riven-title-line">
-          <h3 id="riven-skill-order-title">Ordem de habilidades</h3>
-          <span class="riven-skill-priority">Q → E → W</span>
+      <section class="riven-skill-order" aria-labelledby="riven-skill-order-title">
+        <h3 id="riven-skill-order-title">Ordem de up das skills</h3>
+        <div class="riven-skill-openings">
+          <p class="riven-skill-order-intro">
+            O padrão é <strong>Q → E → W</strong>: upe E no level 2 para bloquear dano com o escudo
+            e sair da troca. Maximize <strong>Q → E → W</strong> e upe
+            <strong>R nos levels 6, 11 e 16</strong>.
+          </p>
+          <p class="riven-skill-order-intro">
+            Pegou <strong>level 2 antes do inimigo</strong> e dá para ir pra cima? Upe
+            <strong>W no 2 para buscar o all-in</strong> enquanto ele ainda está level 1. Nesse
+            caso, upe <strong>E no level 3</strong>.
+          </p>
         </div>
-        <ol>
-          <li
-            v-for="(skill, index) in skillProgression"
-            :key="index"
-            :class="{ 'riven-ultimate-level': skill.key === 'R' }"
-            :title="skill.name"
-          >
-            <span class="riven-skill-level">{{ index + 1 }}</span>
-            <img :src="'/media/riven/' + skill.image" alt="" width="24" height="24" />
-            <span>{{ skill.key }}</span>
-          </li>
-        </ol>
+        <p class="riven-skill-order-caption">
+          Up por level · padrão com E no 2; para o all-in, W no 2 e E no 3
+        </p>
+        <div
+          class="riven-skill-grid-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Up das skills por level"
+        >
+          <table class="riven-skill-grid">
+            <caption class="sr-only">
+              Sequência padrão de evolução das habilidades da Riven por nível
+            </caption>
+            <tbody>
+              <tr v-for="skill in skillRows" :key="skill.key">
+                <th scope="row">
+                  <span>{{ skill.key }}</span>
+                  <img
+                    :src="'/media/riven/' + skill.image"
+                    :alt="skill.name"
+                    width="24"
+                    height="24"
+                  />
+                </th>
+                <td
+                  v-for="(key, index) in rivenSkillOrder"
+                  :key="index"
+                  :class="{ 'is-learned': key === skill.key }"
+                  :title="
+                    'Level ' + (index + 1) + (key === skill.key ? ' · Upar ' + skill.key : '')
+                  "
+                >
+                  <span v-if="key === skill.key">{{ index + 1 }}</span>
+                  <span class="sr-only">{{
+                    key === skill.key
+                      ? ' · Upar ' + skill.key + ' no level ' + (index + 1)
+                      : 'Level ' + (index + 1) + ': sem ponto'
+                  }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
       <div class="riven-lesson riven-glass">
         <div class="riven-film">

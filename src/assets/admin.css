@@ -1289,3 +1289,63 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.admin-page .itemization-editor,
+.admin-page .route-editor-fields {
+  display: grid;
+  gap: 10px;
+}
+.admin-page .itemization-editor h3 {
+  margin-top: 12px;
+}
+.admin-page .itemization-editor label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.admin-page .itemization-editor input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--admin-text);
+  background: #0003;
+  border: 1px solid #d4eedc26;
+}
+.admin-page .route-editor {
+  border-block: 1px solid #d4eedc26;
+}
+.admin-page .route-editor summary {
+  cursor: pointer;
+  padding: 14px 0;
+  color: #b4eed0;
+}
+.admin-page .route-editor-fields {
+  padding-bottom: 16px;
+}
+.admin-page .sequence-editor {
+  display: grid;
+  gap: 6px;
+}
+.admin-page .sequence-editor li,
+.admin-page .choice-editor-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.admin-page .sequence-editor .secondary-button {
+  flex: 1;
+  justify-content: flex-start;
+  min-width: 0;
+}
+.admin-page .choices-editor {
+  display: grid;
+  gap: 16px;
+}
+.admin-page .choice-editor {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.admin-page .itemization-editor > .secondary-button {
+  justify-self: start;
+}

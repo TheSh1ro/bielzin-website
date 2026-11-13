@@ -14,6 +14,28 @@ export type GuideRunes = {
   secondary: number[]
   shards: number[]
 }
+export type ItemChoice = { item: number; condition: string }
+export type BuildRoute = {
+  id: string
+  title: string
+  when: string
+  reason: string
+  items: number[]
+  components: ItemChoice[]
+  followup: string
+}
+export type Itemization = {
+  intro: string
+  defaultRoute: string
+  routes: BuildRoute[]
+  boots: ItemChoice[]
+  bootsNote: string
+}
+export type LanePlan = {
+  route: string | null
+  reason: string
+  components: ItemChoice[]
+}
 export type GuideMatchup = {
   visible: boolean
   early: 'favorable' | 'even' | 'unfavorable' | null
@@ -21,17 +43,19 @@ export type GuideMatchup = {
   tips: string[]
   build: GuideBuild | null
   runes: GuideRunes | null
+  lanePlan?: LanePlan | null
 }
 type Rune = { id: number; name: string; icon: string }
 type RuneStyle = Rune & { slots: Rune[][] }
 type Guide = {
   version: number
-  defaults: { build: GuideBuild; runes: GuideRunes }
+  defaults: { build: GuideBuild; runes: GuideRunes; itemization?: Itemization | null }
   matchups: Partial<Record<string, GuideMatchup>>
   catalog: { version: string; styles: RuneStyle[]; shards: Record<string, Rune> }
 }
 
 const guide: Guide = snapshot as Guide
+export const guideItemization = guide.defaults.itemization
 
 export function guideMatchup(id: string) {
   return guide.matchups[id]
@@ -77,4 +101,19 @@ export function guideRuneGroups(id: string) {
       ),
     },
   ]
+}
+
+export function guideRunePage(id: string) {
+  const selection = guideMatchup(id)?.runes ?? guide.defaults.runes
+  return {
+    selection,
+    styles: guide.catalog.styles,
+    primary: guide.catalog.styles.find((s) => s.id === selection.primaryStyle),
+    secondary: guide.catalog.styles.find((s) => s.id === selection.secondaryStyle),
+    shards: [
+      [5008, 5005, 5007],
+      [5008, 5010, 5001],
+      [5011, 5013, 5001],
+    ].map((row) => row.flatMap((key) => guide.catalog.shards[key] ?? [])),
+  }
 }

@@ -90,8 +90,9 @@ const gameCatalog = {
   ),
 }
 
-async function setup(page) {
+async function setup(page, configure) {
   const state = { guide: structuredClone(seed), fail: false, saves: [] }
+  configure?.(state.guide)
   await page.route('**/api/guide**', async (route) => {
     const pathname = new URL(route.request().url()).pathname.replace(/^\/api/, '')
     if (pathname === '/guide/catalog') return route.fulfill({ json: gameCatalog })
@@ -317,4 +318,63 @@ test('adiciona, reordena e remove dicas com salvamento automático', async ({ pa
   await expect(page.getByRole('status')).toContainText('Salvo automaticamente')
   expect(state.guide.matchups.Ahri.tips).toEqual([])
   await expect(page.getByText('Nenhuma dica adicionada.')).toBeVisible()
+})
+
+test('edita rotas compartilhadas e plano de lane com recarga e herança independentes', async ({
+  page,
+}) => {
+  const state = await setup(page, (guide) => {
+    guide.defaults.itemization = {
+      intro: 'Introdução',
+      defaultRoute: 'base',
+      boots: [{ item: 3158, condition: 'Com vantagem' }],
+      bootsNote: 'Critérios',
+      routes: [
+        {
+          id: 'base',
+          title: 'Rota base',
+          when: 'Lane estável',
+          reason: 'Motivo',
+          items: [2517, 6333],
+          components: [],
+          followup: 'Continue pelo jogo',
+        },
+      ],
+    }
+  })
+  await page.getByText('1 · Rota base', { exact: true }).click()
+  await page.getByLabel('Por que funciona', { exact: true }).fill('Sinergia editada')
+  await page.getByLabel('Critérios gerais das botas').fill('Critério atualizado de botas')
+  await page.getByRole('button', { name: 'Adicionar item da rota 1', exact: true }).click()
+  await page.getByLabel('Buscar item').fill('Céu')
+  await page.getByRole('button', { name: 'Céu Dividido', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('Salvo automaticamente')
+  expect(state.guide.defaults.itemization.routes[0].items).toEqual([2517, 6333, 6610])
+  await page.reload()
+  await page.getByText('1 · Rota base', { exact: true }).click()
+  await expect(page.getByLabel('Por que funciona', { exact: true })).toHaveValue('Sinergia editada')
+  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await page.getByRole('button', { name: 'Definir plano da lane' }).click()
+  await page.getByLabel('Rota indicada para a lane').selectOption('base')
+  await page.getByLabel('Explicação para esta lane').fill('Antecipe defesa sem fechar o item')
+  await page.getByRole('button', { name: 'Adicionar componente da lane', exact: true }).click()
+  await page.getByLabel('Buscar item').fill('Carrasco')
+  await page.getByRole('button', { name: 'Chamado do Carrasco', exact: true }).click()
+  await page.getByLabel('componente da lane 1 · Quando e por quê').fill('Antes do núcleo')
+  await expect(page.getByRole('status')).toContainText('Salvo automaticamente')
+  expect(state.guide.matchups.Ahri.build).toBeNull()
+  expect(state.guide.matchups.Ahri.lanePlan.components[0]).toEqual({
+    item: 3123,
+    condition: 'Antes do núcleo',
+  })
+  await page.reload()
+  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await expect(page.getByLabel('Rota indicada para a lane')).toHaveValue('base')
+  await expect(page.getByLabel('Explicação para esta lane')).toHaveValue(
+    'Antecipe defesa sem fechar o item',
+  )
+  await page.getByRole('button', { name: 'Usar padrão da lane' }).click()
+  await expect(page.getByRole('status')).toContainText('Salvo automaticamente')
+  expect(state.guide.matchups.Ahri.lanePlan).toBeNull()
+  expect(state.guide.defaults.itemization.routes[0].reason).toBe('Sinergia editada')
 })

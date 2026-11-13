@@ -19,24 +19,20 @@
       "reason": "",
       "situational": [
         {
-          "item": 3071,
-          "condition": ""
+          "item": 6695,
+          "condition": "Contra escudos que impedem seus abates. Encaixe na rota quando essa defesa for a principal ameaça."
         },
         {
-          "item": 6692,
-          "condition": ""
+          "item": 3123,
+          "condition": "Contra cura que decide as trocas ou as lutas. Antecipe o componente de anti-cura e avalie quando completar o item."
         },
         {
           "item": 3156,
-          "condition": ""
+          "condition": "Contra ameaça mágica relevante. Fora do núcleo com Fome, ajuste a prioridade ao dano do time inimigo; um Hexdrinker cedo não obriga a fechar Malmortius na lane."
         },
         {
-          "item": 6695,
-          "condition": ""
-        },
-        {
-          "item": 3047,
-          "condition": ""
+          "item": 3026,
+          "condition": "Para preservar sua presença em lutas decisivas quando uma morte entrega muita vantagem."
         }
       ]
     },
@@ -58,6 +54,86 @@
       ],
       "primaryStyle": 8000,
       "secondaryStyle": 8300
+    },
+    "itemization": {
+      "boots": [
+        {
+          "item": 3158,
+          "condition": "Escolha geral quando pode priorizar aceleração, especialmente com vantagem. Ganham prioridade na rota Eclipse + Cutelo, que oferece menos aceleração que as alternativas com Fome Eterna."
+        },
+        {
+          "item": 3047,
+          "condition": "Contra dano físico concentrado em ataques básicos, seja do laner ou de boa parte do time inimigo. Ajudam a estabilizar uma lane perdida e também a proteger uma vantagem grande."
+        },
+        {
+          "item": 3111,
+          "condition": "Contra dano mágico e muito controle reduzível por tenacidade, principalmente se Fome Eterna ainda estiver longe. Considere a tenacidade que a Fome já vai oferecer."
+        }
+      ],
+      "intro": "O primeiro item responde à matchup. O restante da build responde ao jogo: vantagem, tipo de dano e lutas que você quer fazer.",
+      "routes": [
+        {
+          "id": "axioma",
+          "when": "Para pressionar cedo com AD, letalidade e aceleração desde os componentes.",
+          "items": [
+            6696,
+            6333,
+            2517
+          ],
+          "title": "Axioma · pressão cedo",
+          "reason": "O Brutalizador entrega AD, aceleração e letalidade antes do item fechado. O Axioma mantém essa pressão e recupera parte da recarga do R em abates dos quais você participou. Como não oferece vida nem resistências, Dança da Morte entra em seguida para sustentar as lutas. Fome Eterna converte AD adicional em aceleração e recompensa as participações em abates com mais vampirismo.",
+          "followup": "Depois do núcleo, ajuste os espaços restantes ao dano e às ameaças do time inimigo.",
+          "components": [
+            {
+              "item": 2020,
+              "condition": "Um pico de força durante a construção do Axioma: AD, aceleração e letalidade."
+            }
+          ]
+        },
+        {
+          "id": "cutelo",
+          "when": "Para trocas prolongadas, enfrentar armadura e ter uma lane mais estável.",
+          "items": [
+            3071,
+            2517,
+            6333
+          ],
+          "title": "Cutelo · trocas longas",
+          "reason": "O Cutelo reduz até 30% da armadura ao acumular a passiva. Vida e velocidade de movimento ao causar dano físico ajudam a prolongar a troca e sair sem ser punido. Fome Eterna acrescenta aceleração com base no AD adicional e força nas lutas; Dança da Morte completa um núcleo mais resistente.",
+          "followup": "Um caminho de estabilidade quando você precisa de vida e tempo para aplicar o combo. Ajuste os próximos itens à composição inimiga.",
+          "components": []
+        },
+        {
+          "id": "fome",
+          "when": "Lane estável ou favorável, com plano de chegar forte às lutas de três itens.",
+          "items": [
+            2517,
+            6333,
+            3156
+          ],
+          "title": "Fome · força em 3 itens",
+          "reason": "Fome Eterna, Dança da Morte e Malmortius combinam vampirismo, dano adiado, escudo mágico e aceleração. As passivas ganham muito valor quando você participa de abates e continua na luta. A rota também funciona no top, sem depender da bota aprimorada mostrada na build de mid.",
+          "followup": "Planeje o pico de três itens sem ignorar a lane. Reavalie a prioridade de resistência mágica se o time inimigo não oferecer essa ameaça.",
+          "components": []
+        },
+        {
+          "id": "eclipse",
+          "when": "Prioridade contra Jax ou para ampliar uma vantagem com trocas curtas e escudo.",
+          "items": [
+            6692,
+            3071,
+            6333,
+            3156,
+            3026
+          ],
+          "title": "Eclipse · trocas curtas",
+          "reason": "Duas ações distintas ativam o escudo e favorecem entrar, causar dano e sair com pouca resposta. Contra Jax, procure Q3 + ataque básico fora do E dele; quando ele saltar com o E ativo, use W para interromper a aproximação e recue até a esquiva acabar. Com vantagem, o escudo facilita punir repetidamente e preparar pressão sob a torre.",
+          "followup": "A continuação é Eclipse → Cutelo → Dança da Morte → Malmortius → Anjo Guardião. Encaixe anti-escudo ou anti-cura quando necessário e ajuste Malmortius à ameaça mágica. Aceleração merece atenção nesta rota.",
+          "components": []
+        }
+      ],
+      "bootsNote": "Perdendo a lane, priorize a defesa que resolve a ameaça. Ganhando, Ionianas aceleram o ritmo; muito à frente, botas defensivas também ajudam a preservar a vantagem. Reavalie a necessidade de aceleração conforme os dragões e o restante da build.",
+      "defaultRoute": "axioma"
     }
   },
   "matchups": {
@@ -90,7 +166,17 @@
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": {
+        "route": null,
+        "reason": "Se o dano mágico estiver impedindo trocas justas, antecipe Hexdrinker. Depois, retome seu primeiro item completo: Axioma, Cutelo ou Fome Eterna conforme a lane e o plano de jogo. Não é uma indicação de fechar Malmortius agora.",
+        "components": [
+          {
+            "item": 3155,
+            "condition": "Compre cedo para absorver parte da pressão mágica e conseguir disputar a lane. Segure o componente e siga para o primeiro item completo."
+          }
+        ]
+      }
     },
     "Akshan": {
       "late": "favorable",
@@ -580,7 +666,12 @@
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "Eclipse favorece o padrão de trocas curtas contra Jax. Busque Q3 + ataque básico com o E dele fora de ação; use W e recue quando ele saltar com a esquiva ativa. Repita as trocas com o escudo antes de buscar o abate.",
+        "components": []
+      }
     },
     "Jayce": {
       "late": "favorable",
@@ -700,7 +791,17 @@
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": {
+        "route": null,
+        "reason": "Se o dano mágico estiver impedindo trocas justas, antecipe Hexdrinker. Depois, retome seu primeiro item completo: Axioma, Cutelo ou Fome Eterna conforme a lane e o plano de jogo. Não é uma indicação de fechar Malmortius agora.",
+        "components": [
+          {
+            "item": 3155,
+            "condition": "Compre cedo para absorver parte da pressão mágica e conseguir disputar a lane. Segure o componente e siga para o primeiro item completo."
+          }
+        ]
+      }
     },
     "Khazix": {
       "late": "favorable",
@@ -1440,7 +1541,17 @@
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": {
+        "route": null,
+        "reason": "Se o dano mágico estiver impedindo trocas justas, antecipe Hexdrinker. Depois, retome seu primeiro item completo: Axioma, Cutelo ou Fome Eterna conforme a lane e o plano de jogo. Não é uma indicação de fechar Malmortius agora.",
+        "components": [
+          {
+            "item": 3155,
+            "condition": "Compre cedo para absorver parte da pressão mágica e conseguir disputar a lane. Segure o componente e siga para o primeiro item completo."
+          }
+        ]
+      }
     },
     "Thresh": {
       "late": "favorable",

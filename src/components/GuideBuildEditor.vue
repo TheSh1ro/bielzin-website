@@ -4,7 +4,7 @@ import type { GuideBuild } from '@/lib/riven-guide'
 import type { GuideCatalog } from '@/lib/guide-admin'
 
 const build = defineModel<GuideBuild>({ required: true })
-defineProps<{ catalog: GuideCatalog; disabled: boolean }>()
+defineProps<{ catalog: GuideCatalog; disabled: boolean; structured?: boolean }>()
 const emit = defineEmits<{ pick: [action: (id: number) => void, category?: 'boots'] }>()
 type Group = 'start' | 'boots' | 'core'
 const groups: { key: Group; title: string; limit: number }[] = [
@@ -28,7 +28,11 @@ function move(key: Group, index: number, offset: number) {
 
 <template>
   <div class="build-workspace" :class="{ inherited: disabled }">
-    <div v-for="group in groups" :key="group.key" class="build-group">
+    <div
+      v-for="group in groups.filter((g) => !structured || g.key === 'start')"
+      :key="group.key"
+      class="build-group"
+    >
       <div class="build-group-heading">
         <h3>{{ group.title }}</h3>
         <span>{{ ids(group.key).length }} / {{ group.limit }}</span>
@@ -179,7 +183,7 @@ function move(key: Group, index: number, offset: number) {
         <Plus :size="16" />Adicionar situacional
       </button>
     </div>
-    <div class="field-block">
+    <div v-if="!structured" class="field-block">
       <label for="build-reason">Explicação da build</label>
       <p class="field-help">Por que estes itens funcionam neste duelo?</p>
       <textarea

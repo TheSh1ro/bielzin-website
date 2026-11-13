@@ -6,6 +6,7 @@ type Ability = { name: string; description: string; image: GameImage }
 export type Spell = Ability & { cooldown: number[]; effect?: (number[] | null)[] }
 
 export type ChampionSummary = {
+  key?: string
   id: string
   name: string
   title: string

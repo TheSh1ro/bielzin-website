@@ -1,4 +1,4 @@
-import type { GuideBuild, GuideMatchup, GuideRunes } from './riven-guide'
+import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from './riven-guide'
 
 export type RuneChoice = { id: number; name: string; icon: string }
 export type GuideCatalog = {
@@ -14,7 +14,7 @@ export type GuideCatalog = {
   shardSlots: number[][]
 }
 export type GuideContent = {
-  defaults: { build: GuideBuild; runes: GuideRunes }
+  defaults: { build: GuideBuild; runes: GuideRunes; itemization?: Itemization | null }
   matchups: Partial<Record<string, GuideMatchup>>
 }
 export function clone<T>(value: T): T {

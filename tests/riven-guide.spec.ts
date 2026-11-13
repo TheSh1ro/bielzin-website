@@ -9,6 +9,7 @@ test('lê builds e avaliações exportadas, distingue pendências e mostra situa
   page,
 }) => {
   const data = structuredClone(snapshot)
+  delete data.defaults.itemization
   data.defaults.build.start = [1055, 2003]
   data.defaults.build.situational = [
     { item: 3123, condition: 'Quando precisar reduzir cura.' },

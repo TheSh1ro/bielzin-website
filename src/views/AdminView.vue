@@ -2,7 +2,9 @@
 import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import GuideBuildEditor from '@/components/GuideBuildEditor.vue'
 import GuideRuneEditor from '@/components/GuideRuneEditor.vue'
-import type { GuideBuild, GuideMatchup, GuideRunes } from '@/lib/riven-guide'
+import GuideItemizationEditor from '@/components/GuideItemizationEditor.vue'
+import GuideChoicesEditor from '@/components/GuideChoicesEditor.vue'
+import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from '@/lib/riven-guide'
 import {
   clone,
   normalized,
@@ -36,7 +38,7 @@ const empty = (): GuideMatchup => ({
   build: null,
   runes: null,
 })
-const draft = ref<GuideMatchup>(empty())
+const draft = ref<GuideMatchup & { itemization?: Itemization | null }>(empty())
 const baseline = ref('')
 const saving = ref(false)
 const refreshing = ref(false)
@@ -61,7 +63,13 @@ let saveTimer: ReturnType<typeof setTimeout> | undefined
 let saveTask: Promise<void> | undefined
 const isDefault = computed(() => selected.value === 'defaults')
 const payload = computed(() =>
-  isDefault.value ? { build: draft.value.build, runes: draft.value.runes } : draft.value,
+  isDefault.value
+    ? {
+        build: draft.value.build,
+        runes: draft.value.runes,
+        ...(draft.value.itemization !== undefined ? { itemization: draft.value.itemization } : {}),
+      }
+    : draft.value,
 )
 const dirty = computed(
   () => baseline.value !== '' && !!guide.value && JSON.stringify(payload.value) !== baseline.value,
@@ -102,6 +110,12 @@ const runes = computed<GuideRunes>({
   get: () => draft.value.runes ?? guide.value!.defaults.runes,
   set: (value) => {
     draft.value.runes = value
+  },
+})
+const itemization = computed<Itemization>({
+  get: () => draft.value.itemization!,
+  set: (value) => {
+    draft.value.itemization = value
   },
 })
 const stages = [
@@ -477,6 +491,82 @@ onBeforeUnmount(() => {
               </div>
             </section>
             <section
+              v-if="isDefault && draft.itemization"
+              class="editor-panel"
+              aria-labelledby="heading-itemization"
+            >
+              <div class="section-heading">
+                <div>
+                  <h2 id="heading-itemization">Rotas de itemização</h2>
+                  <p>
+                    Biblioteca compartilhada por todos os matchups. A lane indica uma rota; o
+                    jogador pode comparar as demais.
+                  </p>
+                </div>
+              </div>
+              <GuideItemizationEditor v-model="itemization" :catalog="catalog" @pick="pick" />
+            </section>
+            <section
+              v-if="!isDefault && guide.defaults.itemization"
+              class="editor-panel"
+              aria-labelledby="heading-lane-plan"
+            >
+              <div class="section-heading">
+                <div>
+                  <h2 id="heading-lane-plan">Plano de itens da lane</h2>
+                  <p>
+                    A indicação é independente dos itens iniciais e das runas. As outras rotas
+                    continuam disponíveis no guia.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="secondary-button"
+                  @click="
+                    draft.lanePlan = draft.lanePlan
+                      ? null
+                      : { route: null, reason: '', components: [] }
+                  "
+                >
+                  {{ draft.lanePlan ? 'Usar padrão da lane' : 'Definir plano da lane' }}
+                </button>
+              </div>
+              <div v-if="draft.lanePlan" class="itemization-editor">
+                <label for="lane-route">Rota indicada para a lane</label
+                ><select id="lane-route" v-model="draft.lanePlan.route">
+                  <option :value="null">Decidir pelo jogo</option>
+                  <option
+                    v-for="route in guide.defaults.itemization.routes"
+                    :key="route.id"
+                    :value="route.id"
+                  >
+                    {{ route.title }}
+                  </option>
+                </select>
+                <label for="lane-reason">Explicação para esta lane</label
+                ><textarea
+                  id="lane-reason"
+                  v-model="draft.lanePlan.reason"
+                  rows="4"
+                  maxlength="5000"
+                />
+                <h3>Compras antecipadas</h3>
+                <p class="field-help">
+                  Componentes para estabilizar o duelo, sem obrigar a fechar o item.
+                </p>
+                <GuideChoicesEditor
+                  v-model="draft.lanePlan.components"
+                  :catalog="catalog"
+                  prefix="lane-component"
+                  label="componente da lane"
+                  @pick="pick"
+                />
+              </div>
+              <p v-else class="field-help">
+                Sem indicação específica. O guia abre na rota inicial da biblioteca.
+              </p>
+            </section>
+            <section
               id="panel-build"
               class="editor-panel build-panel"
               aria-labelledby="heading-build"
@@ -487,7 +577,9 @@ onBeforeUnmount(() => {
                   <p>
                     {{
                       isDefault
-                        ? 'Monte a sequência de compra padrão da Riven.'
+                        ? guide.defaults.itemization
+                          ? 'Itens de saída e respostas situacionais. As rotas e botas ficam na biblioteca acima.'
+                          : 'Monte a sequência de compra padrão da Riven.'
                         : draft.build
                           ? 'Build personalizada para este matchup.'
                           : 'Este matchup herda os itens da configuração padrão.'
@@ -507,6 +599,7 @@ onBeforeUnmount(() => {
                 v-model="build"
                 :catalog="catalog"
                 :disabled="!draft.build"
+                :structured="!!guide.defaults.itemization"
                 @pick="pick"
               />
             </section>

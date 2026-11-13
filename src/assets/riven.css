@@ -403,51 +403,79 @@
 }
 
 .riven-skill-order {
-  margin-bottom: 12px;
-  padding: 12px clamp(12px, 2vw, 22px);
+  margin: 24px 0 32px;
 }
 
 .riven-skill-order h3 {
   font: 600 1rem/1.2 var(--display);
 }
 
-.riven-skill-priority,
-.riven-skill-level {
-  font: 0.75rem/1.2 var(--mono);
+.riven-skill-openings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 56px);
+  margin-top: 12px;
 }
-
-.riven-skill-priority,
-.riven-ultimate-level {
+.riven-skill-order-intro {
+  color: var(--riven-muted);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.riven-skill-order-intro strong {
   color: var(--riven-green);
+  font-weight: 500;
 }
-
-.riven-skill-order ol {
-  display: grid;
-  grid-template-columns: repeat(18, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.riven-skill-order li {
-  display: grid;
-  justify-items: center;
-  gap: 3px;
-  padding: 4px 0;
-  background: #ffffff06;
+.riven-skill-order-caption {
+  margin-top: 20px;
+  color: var(--riven-muted);
   font-size: 0.75rem;
 }
 
-.riven-skill-level {
-  color: var(--riven-muted);
+.riven-skill-grid-scroll {
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
-
-.riven-skill-order .riven-ultimate-level {
-  background: var(--riven-hover);
+.riven-skill-grid {
+  width: 100%;
+  max-width: 960px;
+  min-width: 600px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 4px;
+  font: 0.8125rem/1.2 var(--mono);
 }
-
-@media (max-width: 900px) {
-  .riven-skill-order ol {
-    grid-template-columns: repeat(9, minmax(0, 1fr));
+.riven-skill-grid th {
+  width: 60px;
+  padding: 0 8px 0 0;
+  white-space: nowrap;
+  text-align: left;
+  color: var(--riven-green);
+}
+.riven-skill-grid th span {
+  display: inline-block;
+  width: 18px;
+}
+.riven-skill-grid th img {
+  display: inline-block;
+  vertical-align: middle;
+}
+.riven-skill-grid td {
+  height: 28px;
+  padding: 0;
+  text-align: center;
+  border-radius: 3px;
+  background: #ffffff08;
+}
+.riven-skill-grid td.is-learned {
+  background: var(--riven-green);
+  color: #10251c;
+  font-weight: 600;
+}
+@media (max-width: 740px) {
+  .riven-skill-openings {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
 }
 
@@ -702,10 +730,6 @@
 }
 
 @media (max-width: 480px) {
-  .riven-skill-order ol {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-
   .riven-nav-sections {
     gap: 0;
   }
@@ -737,4 +761,120 @@
 }
 .riven-matchup-tips li::marker {
   color: var(--riven-green);
+}
+
+/* Open matchup composition, aligned with the profile sections. */
+.riven-matchup-grid {
+  grid-template-columns: minmax(0, 1.5fr) minmax(360px, 1fr);
+  align-items: start;
+  gap: clamp(28px, 4vw, 56px);
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--riven-line);
+}
+.riven-matchup-overview {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 1px;
+}
+.riven-matchup-aside {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.riven-matchup-column {
+  padding: 0;
+}
+.riven-matchup-column + .riven-matchup-column {
+  border-left: 1px solid var(--riven-line);
+}
+.riven-item-group:has(.riven-situational) ul {
+  display: grid;
+  gap: 14px;
+}
+.riven-item-group:has(.riven-situational) .riven-item {
+  align-items: start;
+}
+.riven-situational {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.6;
+}
+@media (max-width: 1050px) {
+  .riven-matchup-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .riven-matchup-aside {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+}
+@media (max-width: 740px) {
+  .riven-matchup-aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .riven-matchup-grid,
+  .riven-matchup-aside {
+    gap: 16px;
+  }
+}
+
+.riven-duel-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  margin-top: 32px;
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+.riven-duel-copy {
+  min-width: 0;
+  padding: 8px 0 0;
+}
+.riven-duel-heading > span {
+  display: block;
+  font: 600 clamp(1.5rem, 2.7vw, 2.25rem)/1.15 var(--display);
+  letter-spacing: -0.04em;
+}
+.riven-duel-heading > p {
+  margin-top: 6px;
+  color: var(--riven-muted);
+  font-size: 0.875rem;
+}
+.riven-duel-copy .riven-matchup-tips {
+  margin: 22px 0 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.riven-enemy-panel .riven-title-line > h2 {
+  font: 600 1rem var(--display);
+}
+.riven-enemy-panel .riven-enemy-spells summary {
+  min-height: 52px;
+}
+@media (max-width: 740px) {
+  .riven-duel-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .riven-duel-copy {
+    padding: 0;
+  }
+}
+
+.riven-matchup-overview > .riven-controls {
+  padding: 0 0 22px;
+  border-bottom: 1px solid var(--riven-line);
+}
+.riven-matchup-overview .riven-opponent-trigger {
+  border: 0;
+  background: none;
+  padding-left: 0;
+}
+.riven-matchup-overview .riven-opponent-trigger:hover {
+  color: var(--riven-green);
+}
+.riven-matchup-overview .riven-assessment {
+  border-left: 0;
 }
