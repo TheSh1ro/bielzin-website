@@ -335,7 +335,7 @@ header {
     height: 27px;
   }
   .keystone .rune-choice {
-    width: 28px;
+    width: min(28px, 8cqw);
   }
   .shards {
     padding-left: 27px;

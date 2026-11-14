@@ -22,12 +22,12 @@ const localSource = computed(() => (modelFiles as Record<string, string>)[props.
 <style scoped>
 .champion-stage {
   min-width: 0;
-  min-height: 480px;
+  min-height: var(--champion-model-height, 480px);
   overflow: clip;
 }
 @media (max-width: 740px) {
   .champion-stage {
-    min-height: 380px;
+    min-height: var(--champion-model-height, 380px);
   }
 }
 </style>

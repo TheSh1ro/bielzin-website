@@ -1528,10 +1528,14 @@ body:has(.site--riven) {
 }
 
 .riven-page {
+  --riven-green: #e0b8e5;
+  --riven-muted: #c4bcc9;
   position: fixed;
   z-index: 30;
   inset: 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   overscroll-behavior: contain;
   background:
     radial-gradient(ellipse 70% 650px at 90% 0, #38203d38, transparent 80%),
@@ -1539,9 +1543,10 @@ body:has(.site--riven) {
 }
 
 .riven-page-inner {
-  width: min(100% - 2 * clamp(12px, 3.4vw, 60px), 1480px);
+  width: min(100% - 2 * clamp(16px, 3.4vw, 80px), 1840px);
   margin-inline: auto;
-  padding-block: max(12px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-bottom));
+  flex: 1;
+  min-height: 0;
 }
 
 .riven-page-enter-active,

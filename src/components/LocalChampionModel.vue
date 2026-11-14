@@ -14,6 +14,7 @@ let model: THREE.Group | undefined
 let observer: ResizeObserver | undefined
 const championId = props.source.split('/').pop()?.replace('.glb', '') ?? ''
 const framing: Record<string, { zoom: number; targetY: number }> = {
+  'riven-pacto-quebrado': { zoom: 1.1, targetY: 0 },
   kled: { zoom: 1.75, targetY: -0.18 },
   kayle: { zoom: 1.15, targetY: 0 },
 }
@@ -64,10 +65,9 @@ onMounted(async () => {
       if (silhouette.y <= 0) return
       const { width, height } = element.getBoundingClientRect()
       const aspect = Math.max(width, 1) / Math.max(height, 1)
+      const zoom = framing[championId]?.zoom ?? 1
       // Identical silhouette margins, including broad champions and their weapons.
-      const halfHeight =
-        Math.max(silhouette.y / 0.84, silhouette.x / (aspect * 0.88)) /
-        (2 * (framing[championId]?.zoom ?? 1))
+      const halfHeight = Math.max(silhouette.y / 0.84, silhouette.x / (aspect * 0.88)) / (2 * zoom)
       camera.left = -halfHeight * aspect
       camera.right = halfHeight * aspect
       camera.top = halfHeight
@@ -191,7 +191,7 @@ onUnmounted(() => {
 }
 .canvas-host {
   width: 100%;
-  height: 480px;
+  height: var(--champion-model-height, 480px);
 }
 .local-model[aria-busy='true'] .canvas-host {
   visibility: hidden;
@@ -201,7 +201,7 @@ onUnmounted(() => {
 }
 @media (max-width: 740px) {
   .canvas-host {
-    height: 380px;
+    height: var(--champion-model-height, 380px);
   }
 }
 </style>

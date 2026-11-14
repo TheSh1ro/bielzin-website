@@ -9,9 +9,16 @@ import {
   shallowRef,
   watch,
 } from 'vue'
-import { ArrowUpRight, ChevronDown, Clock3, Search, Sword, Swords } from 'lucide-vue-next'
+import {
+  ArrowUpRight,
+  ChevronDown,
+  CircleHelp,
+  Minus,
+  Search,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-vue-next'
 import { profile } from '@/profile'
-import { rivenLessons, rivenSkillOrder } from '@/data/riven'
 import { guideBuild, guideMatchup, guideVisible, guideItemization } from '@/lib/riven-guide'
 import RivenItemization from './RivenItemization.vue'
 import RivenBootsGuide from './RivenBootsGuide.vue'
@@ -31,27 +38,29 @@ import {
 } from '@/lib/data-dragon'
 
 const activeSection = ref('riven-destaque')
+const steps = ref<HTMLElement>()
 const guideLinks = [
-  { id: 'riven-destaque', name: 'Em destaque', icon: Sword },
-  { id: 'riven-matchups', name: 'Matchups', icon: Swords },
-  { id: 'riven-habilidades', name: 'Habilidades', icon: Sword },
+  { id: 'riven-destaque', name: 'Em destaque' },
+  { id: 'riven-matchups', name: 'Matchups' },
 ]
 
 function jumpTo(id: string) {
+  const index = guideLinks.findIndex((link) => link.id === id)
+  const root = steps.value
   const section = document.getElementById(id)
-  const root = navigationRoot
-  if (!section || !root) return
-  const sectionTop = section.getBoundingClientRect().top - root.getBoundingClientRect().top
-  const goingUp = sectionTop < 0
-  const navHeight = document.querySelector<HTMLElement>('.riven-nav')?.offsetHeight ?? 0
-  // Upward scrolling reveals the sticky header; downward scrolling tucks it away.
-  const offset = goingUp ? navHeight + 16 : 16
-  activeSection.value = id
+  if (index < 0 || !root || !section) return
   section.focus({ preventScroll: true })
   root.scrollTo({
-    top: root.scrollTop + sectionTop - offset,
+    top: index * root.clientHeight,
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
   })
+}
+
+function updateNavigation() {
+  const root = steps.value
+  if (!root?.clientHeight) return
+  const index = Math.round(root.scrollTop / root.clientHeight)
+  activeSection.value = guideLinks[Math.min(index, guideLinks.length - 1)]!.id
 }
 
 onMounted(() => {
@@ -64,40 +73,6 @@ onMounted(() => {
   }
 })
 
-const headerHidden = ref(false)
-let scrollAnchor = 0
-let navigationRoot: HTMLElement | null = null
-function updateNavigation() {
-  const nav = document.querySelector<HTMLElement>('.riven-nav')
-  const top = Math.max(0, navigationRoot?.scrollTop ?? 0)
-  const height = nav?.offsetHeight ?? 84
-  if (top <= height) {
-    headerHidden.value = false
-    scrollAnchor = top
-  } else if (Math.abs(top - scrollAnchor) >= 8) {
-    headerHidden.value = top > scrollAnchor
-    scrollAnchor = top
-  }
-  const edge = Math.max(height + 36, (navigationRoot?.clientHeight ?? 0) * 0.35)
-  let current = guideLinks[0]!.id
-  for (const link of guideLinks) {
-    const section = document.getElementById(link.id)
-    if (section && section.getBoundingClientRect().top <= edge) current = link.id
-  }
-  if (
-    navigationRoot &&
-    navigationRoot.scrollTop + navigationRoot.clientHeight >= navigationRoot.scrollHeight - 2
-  ) {
-    current = guideLinks[guideLinks.length - 1]!.id
-  }
-  activeSection.value = current
-}
-onMounted(() => {
-  navigationRoot = document.querySelector<HTMLElement>('.riven-page')
-  navigationRoot?.addEventListener('scroll', updateNavigation, { passive: true })
-})
-onUnmounted(() => navigationRoot?.removeEventListener('scroll', updateNavigation))
-
 const goldFormat = new Intl.NumberFormat('pt-BR')
 const greavesSynergies = [
   { id: 2517, summary: 'Dá CDR com base no AD extra e mais omnivamp após participar de um abate.' },
@@ -106,73 +81,6 @@ const greavesSynergies = [
 ]
 
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
-
-const lessonIndex = ref(0)
-const aggressiveOpening = ref(false)
-const displayedSkillOrder = computed(() =>
-  rivenSkillOrder.map((skill, index) => {
-    if (!aggressiveOpening.value) return skill
-    return index === 1 ? 'W' : index === 2 ? 'E' : skill
-  }),
-)
-const skillRows = (['Q', 'W', 'E', 'R'] as const).map((key) => ({
-  key,
-  ...rivenLessons[spellKeys.indexOf(key)]!,
-}))
-const lesson = computed(() => rivenLessons[lessonIndex.value]!)
-const lessonKey = computed(() => spellKeys[lessonIndex.value]!)
-const videoBase = computed(
-  () =>
-    'https://lol.dyn.riotcdn.net/x/videos/champion-abilities/0092/ability_0092_' +
-    lessonKey.value +
-    '1',
-)
-const riven = shallowRef<Champion>()
-const lessonSpell = computed(() => riven.value?.spells[lessonIndex.value - 1])
-const lessonCooldown = computed(() =>
-  lessonSpell.value ? cooldownText(lessonSpell.value.cooldown) : '',
-)
-function lessonEffect(slot: number) {
-  const values = lessonSpell.value?.effect?.[slot]
-  if (!values?.length || !values.every((value) => Number.isFinite(value) && value > 0)) {
-    return ''
-  }
-  return [...new Set(values)].map((value) => goldFormat.format(value)).join(' / ')
-}
-
-const lessonStats = computed(() => {
-  if (lessonKey.value === 'P') {
-    // Data Dragon omits the passive ratio documented in patch 26.3.
-    return [
-      { label: 'Dano físico extra por carga', value: '30% a 45% do AD total (níveis 1 a 18)' },
-    ]
-  }
-  const labels: Partial<Record<(typeof spellKeys)[number], string>> = {
-    Q: 'Dano base por golpe',
-    W: 'Dano base',
-    E: 'Escudo base',
-  }
-  const label = labels[lessonKey.value]
-  const base = lessonEffect(1)
-  if (lessonKey.value === 'R') {
-    const bonus = lessonEffect(3)
-    const maximum = lessonEffect(2)
-    // The patch 26.15 notes provide the R2 ratios missing from Data Dragon's tooltip.
-    return [
-      { label: 'R1 · AD extra', value: bonus && `+${bonus}% do AD extra` },
-      { label: 'R2 · Dano físico mínimo', value: base && `${base} (+55% do AD extra)` },
-      { label: 'R2 · Dano físico máximo', value: maximum && `${maximum} (+165% do AD extra)` },
-    ].filter(({ value }) => value)
-  }
-  return label && base ? [{ label, value: base }] : []
-})
-const videoError = ref(false)
-
-function selectLesson(index: number) {
-  if (lessonIndex.value === index) return
-  lessonIndex.value = index
-  videoError.value = false
-}
 
 const version = ref('')
 const roster = shallowRef<ChampionSummary[]>([])
@@ -188,11 +96,6 @@ async function loadPatch() {
     if (!/^\d+\.\d+\.\d+$/.test(v)) throw new Error('Versão inválida')
     version.value = v
     void loadItems()
-    void riotData<Champion>(v, 'champion/Riven')
-      .then(({ data }) => {
-        riven.value = data.Riven
-      })
-      .catch(() => {})
     const { data } = await riotData<ChampionSummary>(v, 'champion')
     roster.value = Object.values(data)
       .filter(({ id }) => guideVisible(id))
@@ -338,543 +241,423 @@ void loadPatch()
 
 <template>
   <div class="riven">
-    <nav
-      class="riven-nav"
-      :class="{ 'is-hidden': headerHidden }"
-      aria-label="Guia da Riven"
-      @focusin="headerHidden = false"
-    >
-      <div class="riven-nav-identity" aria-label="Riven">
-        <span class="riven-nav-sigil" aria-hidden="true"
-          ><Sword :size="20" :stroke-width="1.25"
-        /></span>
-        <strong>RIVEN GUIDE</strong>
-      </div>
-      <div class="riven-nav-sections">
-        <button
-          v-for="link in guideLinks"
-          type="button"
-          :key="link.id"
-          :aria-current="activeSection === link.id ? 'location' : undefined"
-          @click="jumpTo(link.id)"
-        >
-          {{ link.name }}
-        </button>
-      </div>
-      <div class="riven-nav-return"><slot name="back" /></div>
+    <div class="riven-return"><slot name="back" /></div>
+    <nav class="riven-step-nav" aria-label="Guia da Riven">
+      <button
+        v-for="(link, index) in guideLinks"
+        type="button"
+        :key="link.id"
+        :aria-label="link.name"
+        :title="link.name"
+        :aria-current="activeSection === link.id ? 'location' : undefined"
+        @click="jumpTo(link.id)"
+      >
+        <span aria-hidden="true">0{{ index + 1 }}</span>
+      </button>
     </nav>
 
-    <section
-      id="riven-destaque"
-      tabindex="-1"
-      class="riven-section riven-hot-tip riven-feature"
-      aria-labelledby="riven-greaves-title"
-    >
-      <div class="riven-hot-tip-copy">
-        <h2 id="riven-greaves-title" class="riven-mid-title">RIVEN <span>MID</span></h2>
-        <div class="riven-hot-tip-title">
-          <img
-            v-if="version"
-            :src="riotImage(version, 'item', '3168.png')"
-            alt=""
-            width="40"
-            height="40"
-            loading="lazy"
-          />
-          <div class="riven-synergy-name">
-            <h3>Caminho Imortal</h3>
-          </div>
-        </div>
-        <p>
-          <strong>O upgrade da missão do mid faz a diferença nas fights longas.</strong>
-          Com HP alto, Caminho Imortal dá mais dano. Abaixo de 50%, aumenta a cura e o shield do E.
-          Com Fome Eterna e Dança da Morte, você tem sustain para continuar fightando e recuperar
-          muito HP enquanto bate.
-        </p>
-        <dl class="riven-greaves-effects">
-          <div>
-            <dt>Acima de 50% de vida</dt>
-            <dd>+4% de dano causado</dd>
-          </div>
-          <div>
-            <dt>Abaixo de 50% de vida</dt>
-            <dd>+12% de cura e escudo</dd>
-          </div>
-        </dl>
-        <p>
-          <strong>O primeiro abate é o que vira a fight.</strong> Participar de um abate ativa o
-          omnivamp extra da Fome Eterna e faz a Dança da Morte limpar o dano acumulado e curar.
-          Contra burst AP, Malmortius ajuda a sobreviver com o escudo mágico e mais omnivamp. É essa
-          combinação que permite continuar batendo mesmo com pouco HP.
-        </p>
-      </div>
-      <div class="riven-feature-art" aria-hidden="true">
-        <FeaturedRivenModel
-          source="/models/riven-pacto-quebrado.glb"
-          champion="Riven Pacto Quebrado"
-        />
-      </div>
-      <div class="riven-hot-tip-build">
-        <h3>Como os itens se completam</h3>
-        <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
-          Carregando itens…
-        </p>
-        <div v-else-if="itemsState === 'error'" class="riven-feedback" role="status">
-          <p>As descrições dos itens estão indisponíveis.</p>
-          <button type="button" @click="version ? loadItems() : loadPatch()">
-            Tentar novamente
-          </button>
-        </div>
-        <ul v-else>
-          <li v-for="{ id, summary } in greavesSynergies" :key="id">
-            <div v-if="items[id]" class="riven-synergy-item">
+    <div ref="steps" class="riven-steps" @scroll.passive="updateNavigation">
+      <div class="riven-step">
+        <section
+          id="riven-destaque"
+          tabindex="-1"
+          class="riven-section riven-hot-tip riven-feature"
+          aria-labelledby="riven-greaves-title"
+        >
+          <header class="riven-feature-heading">
+            <h2 id="riven-greaves-title" class="riven-mid-title">RIVEN <span>MID</span></h2>
+            <div class="riven-hot-tip-title">
               <img
-                :src="riotImage(version, 'item', items[id].image.full)"
+                v-if="version"
+                :src="riotImage(version, 'item', '3168.png')"
                 alt=""
-                width="36"
-                height="36"
+                width="40"
+                height="40"
                 loading="lazy"
               />
-              <span>
-                <span class="riven-synergy-name">
-                  <strong>{{ items[id].name }}</strong>
-                  <span class="riven-item-price"
-                    >{{ goldFormat.format(items[id].gold.total) }} ouro</span
-                  >
-                </span>
-                <span class="riven-item-preview">{{ summary }}</span>
-              </span>
-            </div>
-            <p v-else>Item indisponível neste patch.</p>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <section
-      id="riven-matchups"
-      class="riven-section"
-      tabindex="-1"
-      aria-labelledby="riven-matchups-title"
-    >
-      <div class="riven-title-line riven-section-heading">
-        <h1 id="riven-matchups-title">
-          Matchups da Riven <span class="riven-lane-label">Top</span>
-        </h1>
-        <span v-if="version" class="riven-patch">Patch BR · {{ version }}</span>
-      </div>
-      <p v-if="dataState === 'loading'" class="riven-feedback" role="status">
-        Carregando campeões…
-      </p>
-      <div v-else-if="dataState === 'error'" class="riven-feedback" role="status">
-        <p>O catálogo de campeões está indisponível.</p>
-        <button type="button" @click="loadPatch">Tentar novamente</button>
-      </div>
-      <p v-else-if="!roster.length" class="riven-feedback" role="status">
-        Nenhum matchup disponível no momento.
-      </p>
-      <div v-else-if="selected" class="riven-matchup">
-        <div class="riven-matchup-overview">
-          <div class="riven-controls">
-            <div
-              ref="opponentPicker"
-              class="riven-field riven-picker"
-              @focusout="onPickerFocusOut"
-              @keydown.esc="closePicker(true)"
-            >
-              <span id="riven-opponent-label">Oponente</span>
-              <button
-                id="riven-opponent-trigger"
-                ref="opponentTrigger"
-                class="riven-opponent-trigger"
-                type="button"
-                aria-labelledby="riven-opponent-label riven-opponent-name"
-                :aria-expanded="pickerOpen"
-                :aria-controls="pickerOpen ? 'riven-opponent-options' : undefined"
-                @click="togglePicker"
-              >
-                <img
-                  :src="riotImage(version, 'champion', selected.image.full)"
-                  alt=""
-                  width="28"
-                  height="28"
-                />
-                <span id="riven-opponent-name">{{ selected.name }}</span>
-                <ChevronDown :size="16" aria-hidden="true" />
-              </button>
-              <div v-if="pickerOpen" id="riven-opponent-options" class="riven-popover">
-                <label class="riven-search">
-                  <Search :size="16" aria-hidden="true" />
-                  <span class="sr-only">Buscar campeão</span>
-                  <input
-                    ref="searchInput"
-                    v-model="query"
-                    type="search"
-                    placeholder="Buscar campeão"
-                    autocomplete="off"
-                    @keydown.enter.prevent="opponentList[0] && selectOpponent(opponentList[0].id)"
-                  />
-                </label>
-                <p v-if="!opponentList.length" class="riven-meta" role="status">
-                  Nenhum campeão encontrado.
-                </p>
-                <ul v-else class="riven-roster-list" aria-label="Campeões">
-                  <li v-for="champion in opponentList" :key="champion.id">
-                    <button
-                      type="button"
-                      :aria-pressed="champion.id === selectedId"
-                      @click="selectOpponent(champion.id)"
-                    >
-                      <img
-                        :src="riotImage(version, 'champion', champion.image.full)"
-                        alt=""
-                        width="28"
-                        height="28"
-                        loading="lazy"
-                      />
-                      {{ champion.name }}
-                    </button>
-                  </li>
-                </ul>
+              <div class="riven-synergy-name">
+                <h3>Caminho Imortal</h3>
               </div>
             </div>
-
-            <dl class="riven-assessment" aria-label="Como é a matchup para a Riven">
-              <div v-for="stage in assessment" :key="stage.label">
-                <dt>{{ stage.label }}</dt>
-                <dd
-                  :class="{
-                    favorable: stage.value === 'favorable',
-                    unfavorable: stage.value === 'unfavorable',
-                  }"
-                >
-                  {{
-                    stage.value === 'favorable'
-                      ? 'Favorável'
-                      : stage.value === 'unfavorable'
-                        ? 'Desfavorável'
-                        : stage.value === 'even'
-                          ? selectedId === 'Riven'
-                            ? 'Espelho'
-                            : 'Equilibrado'
-                          : 'A avaliar'
-                  }}
-                </dd>
+          </header>
+          <div class="riven-hot-tip-copy">
+            <p class="riven-feature-lead">
+              <strong>O upgrade da missão do mid faz a diferença nas fights longas.</strong>
+              Combine Caminho Imortal, Fome Eterna e Dança da Morte para continuar fightando e
+              recuperar HP enquanto bate.
+            </p>
+            <dl class="riven-greaves-effects" aria-label="Efeitos do Caminho Imortal por vida">
+              <div>
+                <dt>Acima de 50% de vida</dt>
+                <dd><strong>+4%</strong> de dano causado</dd>
+              </div>
+              <div>
+                <dt>Abaixo de 50% de vida</dt>
+                <dd><strong>+12%</strong> de cura e escudo</dd>
               </div>
             </dl>
-          </div>
-
-          <div class="riven-duel-stage">
-            <ChampionModel :champion="selected" />
-            <div class="riven-duel-copy">
-              <div class="riven-duel-heading">
-                <span>Riven × {{ selected.name }}</span>
-                <p>{{ selected.title }}</p>
-              </div>
-              <div class="riven-matchup-tips" aria-live="polite">
-                <ul v-if="matchup?.tips.some((tip) => tip.trim())" aria-label="Dicas do matchup">
-                  <li v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())" :key="index">
-                    {{ tip }}
-                  </li>
-                </ul>
-                <p v-else>Dicas de matchup em preparação.</p>
-              </div>
-              <section class="riven-enemy-panel" aria-labelledby="riven-enemy-title">
-                <div class="riven-title-line">
-                  <h2 id="riven-enemy-title">Habilidades de {{ selected.name }}</h2>
-                  <span class="riven-meta">Cooldown por level</span>
-                </div>
-                <p v-if="enemyState === 'loading'" class="riven-feedback" role="status">
-                  Carregando habilidades…
-                </p>
-                <div v-else-if="enemyState === 'error'" class="riven-feedback" role="status">
-                  <p>As habilidades estão indisponíveis.</p>
-                  <button type="button" @click="enemyRetry++">Tentar novamente</button>
-                </div>
-                <ul v-else :key="selectedId" class="riven-enemy-spells">
-                  <li v-for="ability in enemyAbilities" :key="ability.key">
-                    <details>
-                      <summary>
-                        <img :src="ability.icon" alt="" width="32" height="32" loading="lazy" />
-                        <span class="riven-spell-name">
-                          <span class="riven-spell-key">{{
-                            ability.key === 'P' ? 'Passiva' : ability.key
-                          }}</span>
-                          {{ ability.name }}
-                        </span>
-                        <span v-if="ability.key !== 'P'" class="riven-cooldown">
-                          {{ ability.cooldown || 'Variável' }}
-                        </span>
-                        <ChevronDown :size="15" aria-hidden="true" />
-                      </summary>
-                      <p>{{ ability.description }}</p>
-                    </details>
-                  </li>
-                </ul>
-              </section>
-            </div>
-          </div>
-        </div>
-        <div class="riven-matchup-grid">
-          <section class="riven-matchup-column build-panel" aria-labelledby="riven-build-title">
-            <div class="riven-title-line">
-              <h2 id="riven-build-title">
-                {{ guideItemization ? 'Itemização' : 'Build recomendada' }}
-              </h2>
-              <span v-if="build.isBase && !guideItemization" class="riven-meta">Padrão</span>
-            </div>
-            <p v-if="!guideItemization" class="riven-build-reason" aria-live="polite">
-              {{ build.reason }}
+            <h3 class="riven-feature-followup">O primeiro abate é o que vira a fight.</h3>
+            <p>
+              Participar de um abate ativa o omnivamp extra da Fome Eterna e faz a Dança da Morte
+              limpar o dano acumulado e curar. Contra burst AP, Malmortius ajuda a sobreviver com o
+              escudo mágico e mais omnivamp. É essa combinação que permite continuar batendo mesmo
+              com pouco HP.
             </p>
+          </div>
+          <div class="riven-feature-art" aria-hidden="true">
+            <FeaturedRivenModel
+              source="/models/riven-pacto-quebrado.glb"
+              champion="Riven Pacto Quebrado"
+            />
+          </div>
+          <div class="riven-hot-tip-build">
+            <h3>Como os itens se completam</h3>
             <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
               Carregando itens…
             </p>
             <div v-else-if="itemsState === 'error'" class="riven-feedback" role="status">
-              <p>O catálogo de itens está indisponível.</p>
-              <button type="button" @click="loadItems">Tentar novamente</button>
+              <p>As descrições dos itens estão indisponíveis.</p>
+              <button type="button" @click="version ? loadItems() : loadPatch()">
+                Tentar novamente
+              </button>
             </div>
-            <div v-else class="riven-item-groups">
-              <div v-for="group in itemGroups" :key="group.name" class="riven-item-group">
-                <h3>{{ group.name }}</h3>
-                <ul>
-                  <li v-for="id in group.ids" :key="id" class="riven-item">
-                    <template v-if="items[id]">
-                      <img
-                        :src="riotImage(version, 'item', items[id].image.full)"
-                        alt=""
-                        width="28"
-                        height="28"
-                        loading="lazy"
-                      />
-                      {{ items[id].name }}
-                    </template>
-                    <span v-else>Item {{ id }} indisponível neste patch</span>
-                  </li>
-                </ul>
-              </div>
-              <RivenItemization
-                v-if="guideItemization"
-                :content="guideItemization"
-                :plan="matchup?.lanePlan"
-                :opponent="selected?.name ?? selectedId"
-                :items="items"
-                :version="version"
-              />
-              <div v-if="build.situational.length" class="riven-item-group riven-situational-group">
-                <h3>Situacionais</h3>
-                <ul>
-                  <li v-for="(choice, index) in build.situational" :key="index" class="riven-item">
-                    <template v-if="items[choice.item]">
-                      <img
-                        :src="riotImage(version, 'item', items[choice.item]!.image.full)"
-                        alt=""
-                        width="28"
-                        height="28"
-                        loading="lazy"
-                      />
-                      <span
-                        ><strong>{{ items[choice.item]?.name }}</strong
-                        ><span v-if="choice.condition" class="riven-meta riven-situational">
-                          {{ choice.condition }}</span
-                        ></span
+            <ul v-else>
+              <li v-for="{ id, summary } in greavesSynergies" :key="id">
+                <div v-if="items[id]" class="riven-synergy-item">
+                  <img
+                    :src="riotImage(version, 'item', items[id].image.full)"
+                    alt=""
+                    width="36"
+                    height="36"
+                    loading="lazy"
+                  />
+                  <span>
+                    <span class="riven-synergy-name">
+                      <strong>{{ items[id].name }}</strong>
+                      <span class="riven-item-price"
+                        >{{ goldFormat.format(items[id].gold.total) }} ouro</span
                       >
-                    </template>
-                    <span v-else
-                      >Item {{ choice.item }} indisponível neste patch<span v-if="choice.condition">
-                        — {{ choice.condition }}</span
-                      ></span
+                    </span>
+                    <span class="riven-item-preview">{{ summary }}</span>
+                  </span>
+                </div>
+                <p v-else>Item indisponível neste patch.</p>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <button class="riven-next-step" type="button" @click="jumpTo('riven-matchups')">
+          Explorar matchups <ChevronDown :size="18" aria-hidden="true" />
+        </button>
+      </div>
+      <div class="riven-step">
+        <section
+          id="riven-matchups"
+          class="riven-section"
+          tabindex="-1"
+          aria-labelledby="riven-matchups-title"
+        >
+          <div class="riven-title-line riven-section-heading">
+            <h1 id="riven-matchups-title">
+              Matchups da Riven <span class="riven-lane-label">Top</span>
+            </h1>
+            <span v-if="version" class="riven-patch">Patch BR · {{ version }}</span>
+          </div>
+          <p v-if="dataState === 'loading'" class="riven-feedback" role="status">
+            Carregando campeões…
+          </p>
+          <div v-else-if="dataState === 'error'" class="riven-feedback" role="status">
+            <p>O catálogo de campeões está indisponível.</p>
+            <button type="button" @click="loadPatch">Tentar novamente</button>
+          </div>
+          <p v-else-if="!roster.length" class="riven-feedback" role="status">
+            Nenhum matchup disponível no momento.
+          </p>
+          <div v-else-if="selected" class="riven-matchup">
+            <div class="riven-matchup-overview">
+              <div class="riven-controls">
+                <div
+                  ref="opponentPicker"
+                  class="riven-field riven-picker"
+                  @focusout="onPickerFocusOut"
+                  @keydown.esc="closePicker(true)"
+                >
+                  <span id="riven-opponent-label">Oponente</span>
+                  <button
+                    id="riven-opponent-trigger"
+                    ref="opponentTrigger"
+                    class="riven-opponent-trigger"
+                    type="button"
+                    aria-labelledby="riven-opponent-label riven-opponent-name"
+                    :aria-expanded="pickerOpen"
+                    :aria-controls="pickerOpen ? 'riven-opponent-options' : undefined"
+                    @click="togglePicker"
+                  >
+                    <img
+                      :src="riotImage(version, 'champion', selected.image.full)"
+                      alt=""
+                      width="28"
+                      height="28"
+                    />
+                    <span id="riven-opponent-name">{{ selected.name }}</span>
+                    <ChevronDown :size="16" aria-hidden="true" />
+                  </button>
+                  <div v-if="pickerOpen" id="riven-opponent-options" class="riven-popover">
+                    <label class="riven-search">
+                      <Search :size="16" aria-hidden="true" />
+                      <span class="sr-only">Buscar campeão</span>
+                      <input
+                        ref="searchInput"
+                        v-model="query"
+                        type="search"
+                        placeholder="Buscar campeão"
+                        autocomplete="off"
+                        @keydown.enter.prevent="
+                          opponentList[0] && selectOpponent(opponentList[0].id)
+                        "
+                      />
+                    </label>
+                    <p v-if="!opponentList.length" class="riven-meta" role="status">
+                      Nenhum campeão encontrado.
+                    </p>
+                    <ul v-else class="riven-roster-list" aria-label="Campeões">
+                      <li v-for="champion in opponentList" :key="champion.id">
+                        <button
+                          type="button"
+                          :aria-pressed="champion.id === selectedId"
+                          @click="selectOpponent(champion.id)"
+                        >
+                          <img
+                            :src="riotImage(version, 'champion', champion.image.full)"
+                            alt=""
+                            width="28"
+                            height="28"
+                            loading="lazy"
+                          />
+                          {{ champion.name }}
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <dl class="riven-assessment" aria-label="Como é a matchup para a Riven">
+                  <div v-for="stage in assessment" :key="stage.label">
+                    <dt>{{ stage.label }}</dt>
+                    <dd
+                      :class="{
+                        favorable: stage.value === 'favorable',
+                        unfavorable: stage.value === 'unfavorable',
+                      }"
                     >
-                  </li>
-                </ul>
+                      <component
+                        :is="
+                          stage.value === 'favorable'
+                            ? TrendingUp
+                            : stage.value === 'unfavorable'
+                              ? TrendingDown
+                              : stage.value === 'even'
+                                ? Minus
+                                : CircleHelp
+                        "
+                        :size="15"
+                        aria-hidden="true"
+                      />
+                      {{
+                        stage.value === 'favorable'
+                          ? 'Favorável'
+                          : stage.value === 'unfavorable'
+                            ? 'Desfavorável'
+                            : stage.value === 'even'
+                              ? selectedId === 'Riven'
+                                ? 'Espelho'
+                                : 'Equilibrado'
+                              : 'A avaliar'
+                      }}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="riven-duel-stage">
+                <ChampionModel :champion="selected" />
+                <div class="riven-duel-copy">
+                  <div class="riven-duel-heading">
+                    <span>Riven × {{ selected.name }}</span>
+                    <p>{{ selected.title }}</p>
+                  </div>
+                  <div class="riven-matchup-tips" aria-live="polite">
+                    <ul
+                      v-if="matchup?.tips.some((tip) => tip.trim())"
+                      aria-label="Dicas do matchup"
+                    >
+                      <li
+                        v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())"
+                        :key="index"
+                      >
+                        {{ tip }}
+                      </li>
+                    </ul>
+                    <p v-else>Dicas de matchup em preparação.</p>
+                  </div>
+                  <section class="riven-enemy-panel" aria-labelledby="riven-enemy-title">
+                    <div class="riven-title-line">
+                      <h2 id="riven-enemy-title">Habilidades de {{ selected.name }}</h2>
+                      <span class="riven-meta">Cooldown por level</span>
+                    </div>
+                    <p v-if="enemyState === 'loading'" class="riven-feedback" role="status">
+                      Carregando habilidades…
+                    </p>
+                    <div v-else-if="enemyState === 'error'" class="riven-feedback" role="status">
+                      <p>As habilidades estão indisponíveis.</p>
+                      <button type="button" @click="enemyRetry++">Tentar novamente</button>
+                    </div>
+                    <ul v-else :key="selectedId" class="riven-enemy-spells">
+                      <li v-for="ability in enemyAbilities" :key="ability.key">
+                        <details>
+                          <summary>
+                            <img :src="ability.icon" alt="" width="32" height="32" loading="lazy" />
+                            <span class="riven-spell-name">
+                              <span class="riven-spell-key">{{
+                                ability.key === 'P' ? 'Passiva' : ability.key
+                              }}</span>
+                              {{ ability.name }}
+                            </span>
+                            <span v-if="ability.key !== 'P'" class="riven-cooldown">
+                              {{ ability.cooldown || 'Variável' }}
+                            </span>
+                            <ChevronDown :size="15" aria-hidden="true" />
+                          </summary>
+                          <p>{{ ability.description }}</p>
+                        </details>
+                      </li>
+                    </ul>
+                  </section>
+                </div>
               </div>
             </div>
-          </section>
-          <aside class="riven-matchup-aside" aria-label="Runas e botas">
-            <section class="riven-matchup-column" aria-labelledby="riven-runes-title">
-              <h2 id="riven-runes-title">Runas</h2>
-              <RivenRunePage :champion="selectedId" />
-            </section>
-            <RivenBootsGuide
-              v-if="guideItemization && itemsState === 'ready'"
-              :content="guideItemization"
-              :items="items"
-              :version="version"
-            />
-          </aside>
-        </div>
-      </div>
-    </section>
+            <div class="riven-matchup-grid">
+              <section class="riven-matchup-column build-panel" aria-labelledby="riven-build-title">
+                <div class="riven-title-line">
+                  <h2 id="riven-build-title">
+                    {{ guideItemization ? 'Itemização' : 'Build recomendada' }}
+                  </h2>
+                  <span v-if="build.isBase && !guideItemization" class="riven-meta">Padrão</span>
+                </div>
+                <p v-if="!guideItemization" class="riven-build-reason" aria-live="polite">
+                  {{ build.reason }}
+                </p>
+                <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
+                  Carregando itens…
+                </p>
+                <div v-else-if="itemsState === 'error'" class="riven-feedback" role="status">
+                  <p>O catálogo de itens está indisponível.</p>
+                  <button type="button" @click="loadItems">Tentar novamente</button>
+                </div>
+                <div v-else class="riven-item-groups">
+                  <div v-for="group in itemGroups" :key="group.name" class="riven-item-group">
+                    <h3>{{ group.name }}</h3>
+                    <ul>
+                      <li v-for="id in group.ids" :key="id" class="riven-item">
+                        <template v-if="items[id]">
+                          <img
+                            :src="riotImage(version, 'item', items[id].image.full)"
+                            alt=""
+                            width="28"
+                            height="28"
+                            loading="lazy"
+                          />
+                          {{ items[id].name }}
+                        </template>
+                        <span v-else>Item {{ id }} indisponível neste patch</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <RivenItemization
+                    v-if="guideItemization"
+                    :content="guideItemization"
+                    :plan="matchup?.lanePlan"
+                    :opponent="selected?.name ?? selectedId"
+                    :items="items"
+                    :version="version"
+                  />
+                  <div
+                    v-if="build.situational.length"
+                    class="riven-item-group riven-situational-group"
+                  >
+                    <h3>Situacionais</h3>
+                    <ul>
+                      <li
+                        v-for="(choice, index) in build.situational"
+                        :key="index"
+                        class="riven-item"
+                      >
+                        <template v-if="items[choice.item]">
+                          <img
+                            :src="riotImage(version, 'item', items[choice.item]!.image.full)"
+                            alt=""
+                            width="28"
+                            height="28"
+                            loading="lazy"
+                          />
+                          <span
+                            ><strong>{{ items[choice.item]?.name }}</strong
+                            ><span v-if="choice.condition" class="riven-meta riven-situational">
+                              {{ choice.condition }}</span
+                            ></span
+                          >
+                        </template>
+                        <span v-else
+                          >Item {{ choice.item }} indisponível neste patch<span
+                            v-if="choice.condition"
+                          >
+                            — {{ choice.condition }}</span
+                          ></span
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+              <aside class="riven-matchup-aside" aria-label="Runas e botas">
+                <section class="riven-matchup-column" aria-labelledby="riven-runes-title">
+                  <h2 id="riven-runes-title">Runas</h2>
+                  <RivenRunePage :champion="selectedId" />
+                </section>
+                <RivenBootsGuide
+                  v-if="guideItemization && itemsState === 'ready'"
+                  :content="guideItemization"
+                  :items="items"
+                  :version="version"
+                />
+              </aside>
+            </div>
+          </div>
+        </section>
 
-    <section
-      id="riven-habilidades"
-      class="riven-section"
-      tabindex="-1"
-      aria-labelledby="riven-kit-label"
-    >
-      <h2 id="riven-kit-label">Habilidades da Riven</h2>
-      <div class="riven-lesson">
-        <div class="riven-film">
-          <video
-            v-if="!videoError"
-            :key="videoBase"
-            :src="videoBase + '.webm'"
-            :poster="videoBase + '.jpg'"
-            preload="none"
-            controls
-            muted
-            loop
-            playsinline
-            :aria-label="'Demonstração de ' + lesson.name"
-            @error="videoError = true"
-          ></video>
+        <footer class="riven-footer">
           <a
-            v-else
+            href="https://developer.riotgames.com/docs/lol#data-dragon"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Data Dragon <ArrowUpRight :size="14"
+          /></a>
+          <a
             href="https://www.leagueoflegends.com/pt-br/champions/riven/"
             target="_blank"
             rel="noopener noreferrer"
-          >
-            Ver demonstração na Riot <ArrowUpRight :size="16" />
-          </a>
-        </div>
-        <div class="riven-skill-list" role="group" aria-label="Habilidade da Riven">
-          <button
-            v-for="(skill, index) in rivenLessons"
-            :key="skill.name"
-            type="button"
-            :aria-pressed="index === lessonIndex"
-            :aria-label="(index === 0 ? 'Passiva' : spellKeys[index]) + ' · ' + skill.name"
-            @click="selectLesson(index)"
-          >
-            <img :src="'/media/riven/' + skill.image" alt="" width="44" height="44" />
-            <span class="riven-skill-button-copy"
-              ><strong>{{ index === 0 ? 'P' : spellKeys[index] }}</strong
-              ><span>{{ skill.name }}</span></span
-            >
-          </button>
-        </div>
-        <div class="riven-lesson-copy" aria-live="polite">
-          <span class="riven-lesson-letter" aria-hidden="true">{{ lessonKey }}</span>
-          <span class="riven-chapter">{{
-            lessonKey === 'P' ? 'Passiva' : 'Habilidade ' + lessonKey
-          }}</span>
-          <div class="riven-title-line">
-            <h3>{{ lesson.name }}</h3>
-            <span v-if="lessonCooldown" class="riven-cooldown">
-              <Clock3 :size="14" aria-hidden="true" /> {{ lessonCooldown }}
-            </span>
-          </div>
-          <p>{{ lesson.description }}</p>
-          <p v-for="stat in lessonStats" :key="stat.label" class="riven-lesson-stat">
-            {{ stat.label }} <strong>{{ stat.value }}</strong>
+            >Riven na Riot <ArrowUpRight :size="14"
+          /></a>
+          <a :href="profile.favoriteGame.guide" target="_blank" rel="noopener noreferrer"
+            >Guia anterior <ArrowUpRight :size="14"
+          /></a>
+          <p>
+            Projeto de fãs independente. League of Legends, imagens e dados pertencem à Riot Games.
           </p>
-          <div class="riven-practice">
-            <span class="riven-chapter">Na prática</span>
-            <p class="riven-tip">{{ lesson.tip }}</p>
-          </div>
-        </div>
+        </footer>
       </div>
-      <section class="riven-skill-order" aria-labelledby="riven-skill-order-title">
-        <div class="riven-progression-heading">
-          <div>
-            <h3 id="riven-skill-order-title">Ordem das habilidades</h3>
-          </div>
-        </div>
-        <div class="riven-skill-openings">
-          <button
-            type="button"
-            class="riven-skill-order-intro"
-            :aria-pressed="!aggressiveOpening"
-            @click="aggressiveOpening = false"
-          >
-            <span class="riven-opening-label">01 · Troca segura <span>Q → E → W</span></span> Comece
-            de <strong>Q → E → W</strong>. No level 2, o E serve para segurar o dano e sair da
-            troca. Maximize <strong>Q → E → W</strong> e upe
-            <strong>R nos levels 6, 11 e 16</strong>.
-          </button>
-          <button
-            type="button"
-            class="riven-skill-order-intro"
-            :aria-pressed="aggressiveOpening"
-            @click="aggressiveOpening = true"
-          >
-            <span class="riven-opening-label">02 · All-in no level 2 <span>Q → W → E</span></span>
-            Pegou <strong>level 2 antes do inimigo</strong> e dá para ir pra cima? Upe
-            <strong>W no 2 para buscar o all-in</strong> enquanto ele ainda está level 1. Nesse
-            caso, upe <strong>E no level 3</strong>.
-          </button>
-        </div>
-        <p class="riven-skill-order-caption" aria-live="polite">
-          {{
-            aggressiveOpening
-              ? 'All-in · W no level 2 e E no level 3'
-              : 'Troca segura · E no level 2 e W no level 3'
-          }}
-        </p>
-        <div
-          class="riven-skill-grid-scroll"
-          tabindex="0"
-          role="region"
-          aria-label="Up das skills por level"
-        >
-          <table class="riven-skill-grid">
-            <caption class="sr-only">
-              {{
-                aggressiveOpening
-                  ? 'Ordem para all-in no level 2'
-                  : 'Ordem padrão para upar as skills da Riven'
-              }}
-            </caption>
-            <tbody>
-              <tr v-for="skill in skillRows" :key="skill.key">
-                <th scope="row">
-                  <span>{{ skill.key }}</span>
-                  <img
-                    :src="'/media/riven/' + skill.image"
-                    :alt="skill.name"
-                    width="24"
-                    height="24"
-                  />
-                </th>
-                <td
-                  v-for="(key, index) in displayedSkillOrder"
-                  :key="index"
-                  :class="{ 'is-learned': key === skill.key }"
-                  :title="
-                    'Level ' + (index + 1) + (key === skill.key ? ' · Upar ' + skill.key : '')
-                  "
-                >
-                  <span v-if="key === skill.key">{{ index + 1 }}</span>
-                  <span class="sr-only">{{
-                    key === skill.key
-                      ? ' · Upar ' + skill.key + ' no level ' + (index + 1)
-                      : 'Level ' + (index + 1) + ': sem ponto'
-                  }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-
-    <footer class="riven-footer">
-      <a
-        href="https://developer.riotgames.com/docs/lol#data-dragon"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Data Dragon <ArrowUpRight :size="14"
-      /></a>
-      <a
-        href="https://www.leagueoflegends.com/pt-br/champions/riven/"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Riven na Riot <ArrowUpRight :size="14"
-      /></a>
-      <a :href="profile.favoriteGame.guide" target="_blank" rel="noopener noreferrer"
-        >Guia anterior <ArrowUpRight :size="14"
-      /></a>
-      <p>Projeto de fãs independente. League of Legends, imagens e dados pertencem à Riot Games.</p>
-    </footer>
+    </div>
   </div>
 </template>
 

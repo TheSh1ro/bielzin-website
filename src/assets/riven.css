@@ -1,156 +1,105 @@
 .riven {
-  --riven-green: #e0b8e5;
   --focus-color: var(--riven-green);
-  --riven-muted: #c4bcc9;
   --riven-line: #eee0f01c;
   --riven-hover: #edb2f70c;
   --riven-warm: #f4b9ad;
   color: #f8f4f9;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
+.riven-steps {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: max(80px, calc(64px + env(safe-area-inset-bottom)));
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+.riven-steps,
+.riven-step {
+  scrollbar-width: none;
+}
+.riven-steps::-webkit-scrollbar,
+.riven-step::-webkit-scrollbar {
+  display: none;
+}
+.riven-step {
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  padding-bottom: 24px;
+}
+.riven-step > .riven-section {
+  margin-top: 24px;
+}
+.riven-next-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 16px auto 0;
+  color: var(--riven-green);
+  font-size: 0.875rem;
+}
+.riven-next-step:hover {
+  color: #f8f4f9;
+}
 .riven-glass {
   border: 1px solid var(--riven-line);
   background: linear-gradient(135deg, #f1fff50d, #f1fff504 70%);
   backdrop-filter: blur(10px);
 }
 
-.riven-nav {
-  position: sticky;
-  z-index: 3;
-  top: 0;
-  display: grid;
-  grid-template-columns: minmax(190px, 1fr) auto minmax(120px, 1fr);
-  align-items: center;
-  gap: 32px;
-  min-height: 84px;
-  background: #0b090ef2;
-  backdrop-filter: blur(20px);
-  transition: transform 220ms ease;
-}
-.riven-nav.is-hidden {
-  transition: transform 120ms ease-out;
-  transform: translateY(calc(-100% - 16px));
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .riven-nav,
-  .riven-nav.is-hidden {
-    transition: none;
-  }
-}
-.riven-nav::after {
-  content: '';
+.riven-return,
+.riven-step-nav {
   position: absolute;
-  inset: auto 0 0;
-  height: 1px;
-  background: linear-gradient(90deg, #bf82b326, #f2c5e552 45%, #bf82b326);
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 3;
+  background: #0b090ef2;
+  border-radius: 28px;
 }
-.riven-nav-identity {
+.riven-return {
+  left: 0;
+}
+.riven-step-nav {
+  right: 16px;
   display: flex;
-  align-items: center;
-  gap: 14px;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--riven-line);
 }
-.riven-nav-identity strong {
-  display: block;
-  font: 600 1.5rem/1 var(--display);
-  letter-spacing: 0.2em;
-}
-
-.riven-nav-sigil {
-  position: relative;
+.riven-step-nav button {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 42px;
-  color: #edbedf;
-  background: linear-gradient(140deg, #d39acb20, #d39acb00 70%);
-  clip-path: polygon(50% 0, 100% 22%, 100% 65%, 50% 100%, 0 78%, 0 35%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--riven-muted);
+  font: 500 0.8125rem var(--mono);
+  transition:
+    color 160ms ease,
+    background 160ms ease;
 }
-.riven-nav-sigil::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 1px;
-  background: linear-gradient(transparent, #edbedf, transparent);
+.riven-step-nav button[aria-current] {
+  background: var(--riven-green);
+  color: #25152e;
 }
-.riven-nav-sections {
-  display: flex;
-  align-self: stretch;
-  align-items: stretch;
-  gap: 32px;
+.riven-step-nav button:hover {
+  box-shadow: inset 0 0 0 1px var(--riven-green);
 }
-.riven-nav-sections button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: #a69baa;
-  font: 500 0.875rem/1.25 var(--display);
-  text-decoration: none;
-  transition: color 160ms ease;
-}
-.riven-nav-sections button::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 -1px;
-  height: 2px;
-  background: linear-gradient(90deg, #c16c9f, #f0c7e4, #c16c9f);
-  opacity: 0;
-  transition: opacity 160ms ease;
-}
-.riven-nav-sections button[aria-current] {
-  color: #f4d7ee;
-}
-.riven-nav-sections button[aria-current]::after {
-  opacity: 1;
-}
-.riven-nav-sections button:is(:hover, :focus-visible) {
-  color: #f4d7ee;
-}
-.riven-nav-return {
-  justify-self: end;
-}
-.riven-nav-return .riven-back {
-  padding-inline: 16px 0;
-  border-left: 1px solid var(--riven-line);
-  gap: 10px;
-}
-.riven-nav-return .riven-back-mark {
-  width: 22px;
-  height: 22px;
-  background: none;
-}
-.riven-nav-return .riven-back-mark::before {
-  display: none;
-}
-@media (max-width: 740px) {
-  .riven-nav {
-    grid-template-columns: 1fr auto;
-    gap: 0 12px;
-    padding-top: 12px;
-  }
-  .riven-nav-identity {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .riven-nav-return {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .riven-nav-sections {
-    grid-column: 1 / -1;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 8px;
-  }
-  .riven-nav-identity strong {
-    font-size: 1.125rem;
+@media (prefers-reduced-motion: reduce) {
+  .riven-step-nav button {
+    transition: none;
   }
 }
 
 .riven-section {
   margin-top: clamp(26px, 4vw, 48px);
-  scroll-margin-top: 68px;
 }
 
 .riven-hot-tip {
@@ -310,6 +259,9 @@
 }
 
 .riven-assessment dd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.875rem;
   font-weight: 650;
 }
@@ -320,6 +272,10 @@
 
 .riven-assessment .unfavorable {
   color: var(--riven-warm);
+}
+
+.riven-assessment dd svg {
+  flex: none;
 }
 
 .riven-matchup-tips {
@@ -348,8 +304,7 @@
 }
 
 .riven-matchup-column > h2,
-.riven-matchup-column > .riven-title-line > h2,
-.riven-lesson-copy h3 {
+.riven-matchup-column > .riven-title-line > h2 {
   font: 600 clamp(1.0625rem, 2.2vw, 1.375rem)/1.2 var(--display);
   letter-spacing: -0.025em;
 }
@@ -418,8 +373,7 @@
   line-height: 1.55;
 }
 
-.riven-build-reason,
-.riven-lesson-copy > p {
+.riven-build-reason {
   margin-top: 8px;
   color: var(--riven-muted);
   font-size: 0.875rem;
@@ -489,268 +443,6 @@
 .riven-rune-groups img {
   width: clamp(24px, 2.4vw, 30px);
   height: auto;
-}
-
-.riven-chapter {
-  display: block;
-  color: var(--riven-green);
-  font: 500 0.8125rem/1.5 var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.riven-lesson {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  border-block: 1px solid var(--riven-line);
-  background: radial-gradient(ellipse at 90% 20%, #b97ad512, transparent 55%), #100c1460;
-}
-.riven-skill-list {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  border-bottom: 1px solid var(--riven-line);
-}
-.riven-skill-list button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 18px 12px;
-  border-bottom: 2px solid transparent;
-  color: var(--riven-muted);
-  text-align: left;
-  transition:
-    background 180ms,
-    border-color 180ms;
-}
-.riven-skill-list button + button {
-  border-left: 1px solid var(--riven-line);
-}
-.riven-skill-list button:hover {
-  background: var(--riven-hover);
-}
-.riven-skill-list button[aria-pressed='true'] {
-  color: #fff3ff;
-  border-bottom-color: var(--riven-green);
-  background: linear-gradient(0deg, #dfade81a, transparent);
-}
-.riven-skill-list img {
-  width: 36px;
-  height: 36px;
-  flex: none;
-  border: 1px solid #edc8f045;
-}
-.riven-skill-button-copy {
-  display: grid;
-  gap: 3px;
-}
-.riven-skill-button-copy strong {
-  font: 500 0.875rem var(--mono);
-  color: var(--riven-green);
-}
-.riven-skill-button-copy > span {
-  font-size: 0.8125rem;
-  line-height: 1.4;
-}
-.riven-film {
-  display: grid;
-  align-items: center;
-  min-width: 0;
-  background: #08070b;
-}
-.riven-film video {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
-}
-.riven-film a {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  padding: 48px 24px;
-  color: var(--riven-green);
-}
-.riven-lesson-copy {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  padding: clamp(24px, 3vw, 40px);
-  border-left: 1px solid var(--riven-line);
-}
-.riven-lesson-letter {
-  position: absolute;
-  z-index: -1;
-  top: -28px;
-  right: 8px;
-  color: #e9b6f009;
-  font: 600 15rem/1 var(--display);
-  pointer-events: none;
-}
-.riven-lesson-copy .riven-title-line {
-  margin: 12px 0 18px;
-  align-items: start;
-}
-.riven-lesson-copy .riven-title-line h3 {
-  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
-  letter-spacing: -0.045em;
-}
-.riven-lesson-copy > p {
-  color: var(--riven-muted);
-  font-size: 0.875rem;
-  line-height: 1.75;
-}
-.riven-lesson-stat {
-  margin-top: 18px;
-}
-.riven-lesson-stat strong {
-  display: block;
-  color: #f6e1f8;
-  font-weight: 500;
-}
-.riven-practice {
-  margin-top: 28px;
-  padding-top: 18px;
-  border-top: 1px solid var(--riven-line);
-}
-.riven-practice .riven-tip {
-  margin-top: 8px;
-  font-size: 0.875rem;
-  line-height: 1.75;
-  color: #e4c7e5;
-}
-.riven-skill-order {
-  margin-top: 56px;
-}
-.riven-progression-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 20px;
-  margin-bottom: 24px;
-}
-.riven-skill-order h3 {
-  margin-top: 10px;
-  font: 600 clamp(1.5rem, 3vw, 2.5rem)/1.15 var(--display);
-  letter-spacing: -0.05em;
-}
-.riven-skill-openings {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.riven-skill-order-intro {
-  padding: 22px;
-  text-align: left;
-  color: var(--riven-muted);
-  font-size: 0.8125rem;
-  line-height: 1.8;
-  border: 1px solid var(--riven-line);
-  transition:
-    border-color 180ms,
-    background 180ms;
-}
-.riven-opening-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-  color: #f7eaf8;
-  font: 500 0.8125rem var(--display);
-}
-.riven-opening-label > span {
-  color: var(--riven-green);
-  font-family: var(--mono);
-  white-space: nowrap;
-}
-.riven-skill-order-intro[aria-pressed='true'] {
-  border-color: #d8aad67a;
-  background: linear-gradient(120deg, #d7a1df12, transparent);
-  box-shadow: inset 2px 0 var(--riven-green);
-}
-.riven-skill-order-intro:hover {
-  background-color: var(--riven-hover);
-}
-.riven-skill-order-intro strong {
-  color: #e3c5e6;
-  font-weight: 500;
-}
-.riven-skill-order-caption {
-  margin-top: 24px;
-  color: var(--riven-muted);
-  font-size: 0.75rem;
-}
-.riven-skill-grid-scroll {
-  position: relative;
-  margin-top: 14px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  scrollbar-color: #987a9c #211c25;
-}
-.riven-skill-grid {
-  width: 100%;
-  min-width: 600px;
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 4px;
-  font: 0.8125rem/1.2 var(--mono);
-}
-.riven-skill-grid th {
-  width: 60px;
-  padding-right: 8px;
-  white-space: nowrap;
-  text-align: left;
-  color: var(--riven-green);
-}
-.riven-skill-grid th span {
-  display: inline-block;
-  width: 18px;
-}
-.riven-skill-grid th img {
-  display: inline-block;
-  vertical-align: middle;
-}
-.riven-skill-grid td {
-  height: 32px;
-  padding: 0;
-  text-align: center;
-  background: #ffffff05;
-  border: 1px solid #ffffff04;
-}
-.riven-skill-grid td.is-learned {
-  background: linear-gradient(135deg, #e1b8e6, #b48ac4);
-  border-color: #e5c0eb;
-  color: #25152e;
-  font-weight: 600;
-}
-@media (max-width: 740px) {
-  .riven-lesson {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .riven-skill-list button {
-    flex-direction: column;
-    justify-content: start;
-    padding: 14px 4px;
-    gap: 8px;
-    text-align: center;
-  }
-  .riven-skill-button-copy > span {
-    display: none;
-  }
-  .riven-lesson-copy {
-    border-left: 0;
-    border-top: 1px solid var(--riven-line);
-  }
-  .riven-skill-openings {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-  }
-  .riven-progression-heading {
-    align-items: start;
-  }
-  .riven-skill-order {
-    margin-top: 36px;
-  }
 }
 
 .riven-feedback {
@@ -923,8 +615,7 @@
     border-left: none;
   }
 
-  .riven-matchup-grid,
-  .riven-lesson {
+  .riven-matchup-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -932,27 +623,9 @@
     border-left: none;
     border-top: 1px solid var(--riven-line);
   }
-
-  .riven-film {
-    grid-row: auto;
-  }
 }
 
 @media (max-width: 480px) {
-  .riven-nav-sections {
-    gap: 0;
-  }
-
-  .riven-nav-sections button {
-    gap: 5px;
-    padding-right: 5px;
-    font-size: 0.75rem;
-  }
-
-  .riven-nav-sections button > svg {
-    display: none;
-  }
-
   .riven-spell-name {
     overflow-wrap: anywhere;
   }
@@ -1068,12 +741,36 @@
 .riven-enemy-panel .riven-title-line > h2 {
   font: 600 1rem var(--display);
 }
+.riven-enemy-panel {
+  container-type: inline-size;
+}
 .riven-enemy-panel .riven-enemy-spells summary {
   min-height: 52px;
 }
+@container (max-width: 420px) {
+  .riven-enemy-spells summary:has(.riven-cooldown) {
+    grid-template-columns: 32px minmax(0, 1fr) 15px;
+    gap: 4px 8px;
+    padding-block: 10px;
+  }
+  .riven-enemy-spells summary:has(.riven-cooldown) > img {
+    grid-row: 1 / 3;
+  }
+  .riven-enemy-spells summary:has(.riven-cooldown) > svg {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+  .riven-enemy-spells summary:has(.riven-cooldown) .riven-cooldown {
+    grid-column: 2;
+    grid-row: 2;
+    white-space: normal;
+  }
+}
 @media (max-width: 740px) {
   .riven-duel-stage {
+    --champion-model-height: clamp(240px, 72vw, 320px);
     grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
   }
   .riven-duel-copy {
     padding: 0;
@@ -1081,140 +778,72 @@
 }
 
 .riven-matchup-overview > .riven-controls {
+  grid-template-columns: minmax(220px, 340px) auto;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-top: 24px;
   padding: 0 0 22px;
   border-bottom: 1px solid var(--riven-line);
 }
 .riven-matchup-overview .riven-opponent-trigger {
-  border: 0;
-  background: none;
-  padding-left: 0;
+  border: 1px solid var(--riven-line);
+  background: var(--riven-hover);
+  padding: 8px 12px;
 }
 .riven-matchup-overview .riven-opponent-trigger:hover {
   color: var(--riven-green);
 }
 .riven-matchup-overview .riven-assessment {
-  border-left: 0;
+  min-height: 48px;
+  padding-left: 32px;
+  border-left: 1px solid var(--riven-line);
+}
+@media (max-width: 740px) {
+  .riven-matchup-overview > .riven-controls {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .riven-matchup-overview .riven-assessment {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-left: 0;
+    border-left: 0;
+    gap: 12px;
+    min-height: 0;
+  }
 }
 
-/* The mid feature is a cover composition, distinct from matchup model stages. */
+/* The cover uses the available height; longer screens retain normal inner scrolling. */
+.riven-step:first-child {
+  display: flex;
+  flex-direction: column;
+  padding-top: 24px;
+}
+.riven-step > .riven-feature {
+  flex: none;
+  margin-top: auto;
+}
+.riven-next-step {
+  flex: none;
+  margin-bottom: auto;
+}
 .riven-feature {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
   background: radial-gradient(ellipse at 80% 35%, #9f74cf1f, transparent 55%);
   border-top: 1px solid #c8a7e045;
   border-bottom: 1px solid var(--riven-line);
 }
-.riven-feature .riven-hot-tip-copy {
-  position: relative;
-  z-index: 1;
-  padding: 36px 0 32px;
-}
-.riven-feature .riven-hot-tip-heading {
-  font-size: 0.8125rem;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  color: #d5b8ed;
-}
-.riven-feature .riven-hot-tip-title {
-  margin-block: 20px;
-}
-.riven-feature .riven-hot-tip-title h3 {
-  font: 600 clamp(1.25rem, 2vw, 1.75rem)/1.15 var(--display);
-  letter-spacing: -0.055em;
-}
-.riven-feature .riven-hot-tip-copy > p {
-  max-width: none;
-  line-height: 1.75;
-}
-.riven-feature-art {
-  position: relative;
+.riven-feature-heading {
   min-width: 0;
-  align-self: stretch;
-  pointer-events: none;
-  mask-image: linear-gradient(to bottom, black 85%, transparent);
+  padding: 32px clamp(24px, 3vw, 48px) 0 0;
 }
-.riven-feature-art .local-model {
-  position: absolute;
-  inset: 0;
-}
-.riven-feature-art .canvas-host {
-  height: 100%;
-  min-height: 420px;
-}
-.riven-feature .riven-hot-tip-build {
-  grid-column: 1 / -1;
-  padding: 22px 0;
-  border-left: 0;
-  border-top: 1px solid var(--riven-line);
-}
-.riven-feature .riven-hot-tip-build > h3 {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--riven-muted);
-}
-.riven-feature .riven-hot-tip-build ul {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
-  margin-top: 12px;
-}
-.riven-feature .riven-hot-tip-build li {
-  border-bottom: 0;
-  align-items: start;
-}
-@media (max-width: 740px) {
-  .riven-feature {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .riven-feature .riven-hot-tip-copy {
-    padding-block: 28px 0;
-  }
-  .riven-feature-art {
-    height: 320px;
-    margin-top: -8px;
-  }
-  .riven-feature-art .canvas-host {
-    min-height: 0;
-  }
-  .riven-feature .riven-hot-tip-build ul {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-}
-
-@media (max-width: 740px) {
-  .riven-section {
-    scroll-margin-top: 114px;
-  }
-}
-
-.riven-feature .riven-hot-tip-copy {
-  padding-right: clamp(24px, 3vw, 48px);
-  min-height: 420px;
-}
-.riven-feature .riven-hot-tip-title {
-  margin-top: 0;
-}
-.riven-feature .riven-greaves-effects {
-  grid-template-columns: repeat(2, max-content);
-  gap: clamp(24px, 4vw, 56px);
-}
-@media (max-width: 740px) {
-  .riven-feature .riven-hot-tip-copy {
-    padding-right: 0;
-    min-height: 0;
-  }
-  .riven-feature .riven-greaves-effects {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-}
-
 .riven-mid-title {
   margin: 0 0 24px;
-  font: 750 clamp(3.5rem, 6vw, 6.5rem)/0.95 var(--display);
+  font: 750 clamp(3.5rem, 6vw, 8rem)/0.95 var(--display);
   letter-spacing: -0.065em;
 }
 .riven-mid-title span {
@@ -1223,11 +852,215 @@
 }
 .riven-feature .riven-hot-tip-title {
   gap: 12px;
-  margin-bottom: 18px;
+  margin-block: 0 18px;
 }
 .riven-feature .riven-hot-tip-title img {
   width: 32px;
   height: 32px;
+}
+.riven-feature .riven-hot-tip-title h3 {
+  font: 600 clamp(1.25rem, 2vw, 1.75rem)/1.15 var(--display);
+  letter-spacing: -0.055em;
+}
+.riven-feature .riven-hot-tip-copy {
+  grid-column: 1;
+  grid-row: 2;
+  position: relative;
+  z-index: 1;
+  padding: 0 clamp(24px, 3vw, 48px) 32px 0;
+}
+.riven-feature .riven-hot-tip-copy > p {
+  font-size: clamp(0.9375rem, 0.7rem + 0.3vw, 1.125rem);
+  line-height: 1.7;
+}
+.riven-feature-lead > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #f8f4f9;
+  font-size: clamp(1rem, 0.8rem + 0.3vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.riven-feature-followup {
+  margin-bottom: 8px;
+  font-size: clamp(1rem, 0.8rem + 0.3vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.riven-feature-art {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  pointer-events: none;
+}
+.riven-feature-art .local-model {
+  position: absolute;
+  inset: 0;
+}
+.riven-feature-art :deep(.canvas-host) {
+  height: 100%;
+}
+.riven-feature .riven-hot-tip-build {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  padding: 22px 0;
+  border-left: 0;
+  border-top: 1px solid var(--riven-line);
+}
+.riven-feature .riven-hot-tip-build > h3 {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--riven-muted);
+}
+.riven-feature .riven-hot-tip-build ul {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: clamp(20px, 3vw, 40px);
+  margin-top: 24px;
+}
+.riven-feature .riven-hot-tip-build li {
+  padding-block: 0;
+  border-bottom: 0;
+  align-items: start;
+}
+.riven-feature .riven-synergy-item {
+  align-items: center;
+}
+.riven-feature .riven-synergy-item > span {
+  min-width: 0;
+}
+.riven-feature .riven-synergy-name {
+  gap: 2px 8px;
+}
+.riven-feature .riven-synergy-name > strong {
+  font-size: clamp(0.9375rem, 0.75rem + 0.25vw, 1.0625rem);
+  line-height: 1.4;
+}
+.riven-feature .riven-item-preview {
+  margin-top: 4px;
+  font-size: clamp(0.875rem, 0.7rem + 0.25vw, 1rem);
+  line-height: 1.6;
+}
+.riven-feature .riven-greaves-effects {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin-block: 24px;
+  padding-block: 18px;
+  background: linear-gradient(90deg, #e0b8e508, transparent);
+}
+.riven-feature .riven-greaves-effects > div {
+  padding-inline: 16px;
+}
+.riven-feature .riven-greaves-effects > div + div {
+  border-left: 1px solid var(--riven-line);
+}
+.riven-feature .riven-greaves-effects dt {
+  font-size: 0.8125rem;
+}
+.riven-feature .riven-greaves-effects dd {
+  margin-top: 6px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.riven-feature .riven-greaves-effects dd strong {
+  font-size: 1.5rem;
+  font-weight: 650;
+  margin-right: 3px;
+}
+@media (min-width: 901px) and (max-height: 850px) {
+  .riven-feature-heading {
+    padding-top: 20px;
+  }
+  .riven-mid-title {
+    font-size: clamp(3.5rem, 5.5vw, 6rem);
+    margin-bottom: 18px;
+  }
+  .riven-feature .riven-greaves-effects {
+    margin-block: 18px;
+    padding-block: 12px;
+  }
+  .riven-feature .riven-hot-tip-copy {
+    padding-bottom: 24px;
+  }
+  .riven-feature .riven-hot-tip-build {
+    padding-block: 16px;
+  }
+  .riven-feature .riven-hot-tip-build ul {
+    margin-top: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .riven-feature {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    background: radial-gradient(ellipse at 75% 20%, #9f74cf1f, transparent 50%);
+  }
+  .riven-feature-heading {
+    padding: 24px 0 0;
+  }
+  .riven-mid-title {
+    font-size: clamp(3.25rem, 9vw, 5rem);
+    margin-bottom: 20px;
+  }
+  .riven-feature-art {
+    grid-column: 1;
+    grid-row: 2;
+    height: clamp(280px, 65vw, 420px);
+    margin-bottom: 24px;
+  }
+  .riven-feature .riven-hot-tip-copy {
+    grid-row: 3;
+    padding: 0 0 24px;
+  }
+  .riven-feature .riven-hot-tip-build {
+    grid-row: 4;
+  }
+  .riven-feature .riven-hot-tip-build ul {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .riven-feature .riven-hot-tip-build li + li {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--riven-line);
+  }
+  .riven-feature .riven-greaves-effects {
+    margin-block: 20px;
+  }
+  .riven-feature .riven-greaves-effects > div {
+    padding-inline: 12px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1100px) and (max-height: 500px) {
+  .riven-feature {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+  }
+  .riven-feature-heading {
+    padding: 16px 24px 0 0;
+  }
+  .riven-mid-title {
+    font-size: clamp(2.5rem, 7vw, 3.5rem);
+    margin-bottom: 16px;
+  }
+  .riven-feature-art {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: start;
+    height: clamp(200px, calc(100dvh - 132px), 320px);
+    margin-top: 12px;
+    margin-bottom: 0;
+  }
+  .riven-feature .riven-hot-tip-copy {
+    grid-row: 2;
+    padding-right: 24px;
+  }
+  .riven-feature .riven-hot-tip-build {
+    grid-row: 3;
+  }
 }
 
 .riven-lane-label {

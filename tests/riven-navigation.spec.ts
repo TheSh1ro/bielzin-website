@@ -54,13 +54,13 @@ test('abre o guia pelo banner e volta para Jogos preservando o histórico', asyn
   await expect(page.getByRole('heading', { name: 'Matchups da Riven Top', level: 1 })).toBeVisible()
   await expect(page.getByRole('tablist')).toHaveCount(0)
 
-  await page.getByRole('button', { name: 'Habilidades', exact: true }).click()
+  await page.getByRole('button', { name: 'Matchups', exact: true }).click()
   await expect(page).toHaveURL(/\/riven$/)
-  await expect(page.getByRole('button', { name: 'Habilidades', exact: true })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: 'Matchups', exact: true })).toHaveAttribute(
     'aria-current',
     'location',
   )
-  await expect(page.getByRole('region', { name: 'Habilidades da Riven' })).toBeFocused()
+  await expect(page.getByRole('region', { name: 'Matchups da Riven Top' })).toBeFocused()
   await page.reload()
   await expect(page).toHaveURL(/\/riven$/)
   await expect(page.getByRole('navigation', { name: 'Guia da Riven' })).toBeVisible()
@@ -70,62 +70,145 @@ test('abre o guia pelo banner e volta para Jogos preservando o histórico', asyn
   await expect(shortcut).toBeFocused()
 
   await page.goForward()
-  await expect(page.getByRole('region', { name: 'Habilidades da Riven' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Matchups da Riven Top' })).toBeVisible()
   await page.goBack()
   await expect(shortcut).toBeFocused()
 })
 
-test('esconde o header ao descer e revela ao subir', async ({ page }) => {
-  await page.goto('/riven')
-  const nav = page.getByRole('navigation', { name: 'Guia da Riven' })
-  await expect(page.getByRole('heading', { name: 'Matchups da Riven Top', level: 1 })).toBeVisible()
-  await page.locator('.riven-page').evaluate((element) => {
-    element.scrollTop = 500
-  })
-  await expect(nav).toHaveClass(/is-hidden/)
-  await page.locator('.riven-page').evaluate((element) => {
-    element.scrollTop = 400
-  })
-  await expect(nav).not.toHaveClass(/is-hidden/)
-  await page.locator('.riven-page').evaluate((element) => {
-    element.scrollTop = 0
-  })
-  await expect(nav).not.toHaveClass(/is-hidden/)
-})
-
 for (const width of [1280, 390]) {
-  test(`compensa o header ao navegar para cima em ${width}px`, async ({ page }) => {
+  test(`navega por degraus e preserva a leitura do matchup em ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/riven')
     const nav = page.getByRole('navigation', { name: 'Guia da Riven' })
-    const root = page.locator('.riven-page')
-    await page.getByRole('button', { name: 'Habilidades', exact: true }).click()
-    await expect(nav).toHaveClass(/is-hidden/)
+    const matchupButton = nav.getByRole('button', { name: 'Matchups', exact: true })
+    const featuredButton = nav.getByRole('button', { name: 'Em destaque', exact: true })
+    const panels = page.locator('.riven-step')
+    const root = page.locator('.riven-steps')
+    await expect(page.getByRole('button', { name: 'Oponente Renekton' })).toBeVisible({
+      timeout: 20000,
+    })
+
+    await matchupButton.click()
+    await expect(matchupButton).toHaveAttribute('aria-current', 'location')
+    await expect(page.getByRole('region', { name: 'Matchups da Riven Top' })).toBeFocused()
+    await expect
+      .poll(() => root.evaluate((element) => Math.abs(element.scrollTop - element.clientHeight)))
+      .toBeLessThan(2)
+
+    await panels.nth(1).evaluate((element) => {
+      element.scrollTop = 350
+    })
+    await expect(nav).toBeInViewport()
+    await expect(matchupButton).toHaveAttribute('aria-current', 'location')
+    await featuredButton.click()
+    await expect(featuredButton).toHaveAttribute('aria-current', 'location')
+    await expect.poll(() => root.evaluate((element) => element.scrollTop)).toBe(0)
+    await matchupButton.click()
+    await expect.poll(() => panels.nth(1).evaluate((element) => element.scrollTop)).toBe(350)
+    await expect(matchupButton).toHaveAttribute('aria-current', 'location')
+    expect(
+      await page
+        .locator('.riven-page')
+        .evaluate((element) => element.scrollWidth <= element.clientWidth),
+    ).toBe(true)
+  })
+
+  test(`o scroll troca de degrau apenas no limite do conteúdo em ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/riven')
+    const panels = page.locator('.riven-step')
+    const nav = page.getByRole('navigation', { name: 'Guia da Riven' })
+    const featuredButton = nav.getByRole('button', { name: 'Em destaque', exact: true })
+    const matchupButton = nav.getByRole('button', { name: 'Matchups', exact: true })
+    await expect(page.getByText('Fome Eterna', { exact: true }).first()).toBeVisible()
+    await panels.first().evaluate((element) => {
+      element.scrollTop = element.scrollHeight
+    })
+    await page.mouse.move(width / 2, 450)
+    await page.mouse.wheel(0, 700)
+    await expect(matchupButton).toHaveAttribute('aria-current', 'location')
     await expect
       .poll(() =>
         page
-          .locator('#riven-habilidades')
-          .evaluate((element) => Math.round(element.getBoundingClientRect().top)),
+          .locator('.riven-steps')
+          .evaluate((element) => Math.abs(element.scrollTop - element.clientHeight)),
       )
-      .toBe(16)
-
-    // A short manual scroll up exposes the menu before navigating to an earlier section.
-    await root.evaluate((element) => {
-      element.scrollTop -= 40
+      .toBeLessThan(2)
+    await panels.nth(1).evaluate((element) => {
+      element.scrollTop = 0
     })
-    await expect(nav).not.toHaveClass(/is-hidden/)
-    await page.getByRole('button', { name: 'Matchups', exact: true }).click()
+    await page.mouse.wheel(0, -700)
+    await expect(featuredButton).toHaveAttribute('aria-current', 'location')
+  })
+}
+
+test('mantém o canvas no enquadramento e os controles fora da leitura de Quad HD a mobile', async ({
+  page,
+}) => {
+  await page.goto('/riven')
+  const art = page.locator('.riven-feature-art')
+  await expect(art.locator('.local-model')).toHaveAttribute('aria-busy', 'false')
+
+  for (const [width, height] of [
+    [2560, 1440],
+    [1920, 1080],
+    [1440, 900],
+    [1366, 768],
+    [1280, 720],
+    [1024, 1366],
+    [901, 900],
+    [900, 900],
+    [768, 1024],
+    [430, 932],
+    [390, 844],
+    [360, 800],
+    [320, 568],
+    [844, 390],
+  ] as const) {
+    await page.setViewportSize({ width, height })
     await expect
       .poll(() =>
-        page.locator('#riven-matchups').evaluate((element) => {
-          const header = document.querySelector('.riven-nav')!
-          return Math.round(
-            element.getBoundingClientRect().top - header.getBoundingClientRect().bottom,
+        art.evaluate((element) => {
+          const stage = element.getBoundingClientRect()
+          const canvas = element.querySelector('canvas')!.getBoundingClientRect()
+          return Math.max(
+            Math.abs(stage.height - canvas.height),
+            Math.abs(stage.width - canvas.width),
           )
         }),
       )
-      .toBe(16)
-    await expect(nav).not.toHaveClass(/is-hidden/)
-    await expect(page.getByRole('region', { name: 'Matchups da Riven Top' })).toBeFocused()
-  })
-}
+      .toBeLessThan(1)
+
+    const layout = await page.locator('.riven').evaluate((element) => {
+      const reading = element.querySelector('.riven-steps')!.getBoundingClientRect()
+      const nav = element.querySelector('.riven-step-nav')!.getBoundingClientRect()
+      const back = element.querySelector('.riven-return')!.getBoundingClientRect()
+      return {
+        clearance: Math.min(nav.top, back.top) - reading.bottom,
+        controlsOverlap: back.right > nav.left,
+      }
+    })
+    expect(
+      layout.clearance,
+      `${width}×${height}: controles sobre a leitura`,
+    ).toBeGreaterThanOrEqual(8)
+    expect(layout.controlsOverlap, `${width}×${height}: controles sobrepostos`).toBe(false)
+    await expect
+      .poll(
+        () =>
+          page
+            .locator('.riven-feature, .riven-step, .riven-enemy-panel, .primary-tree')
+            .evaluateAll((elements) =>
+              elements
+                .filter((el) => el.scrollWidth > el.clientWidth + 2)
+                .map((el) => ({
+                  class: el.className,
+                  width: el.clientWidth,
+                  content: el.scrollWidth,
+                })),
+            ),
+        { message: `${width}×${height}: conteúdo excede a largura` },
+      )
+      .toEqual([])
+  }
+})

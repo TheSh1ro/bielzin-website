@@ -3,7 +3,7 @@ export const spellKeys = ['P', 'Q', 'W', 'E', 'R'] as const
 
 type GameImage = { full: string }
 type Ability = { name: string; description: string; image: GameImage }
-export type Spell = Ability & { cooldown: number[]; effect?: (number[] | null)[] }
+export type Spell = Ability & { cooldown: number[] }
 
 export type ChampionSummary = {
   key?: string

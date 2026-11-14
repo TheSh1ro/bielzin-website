@@ -125,6 +125,8 @@ for (const width of [1280, 390]) {
     await expect(
       page.getByRole('list', { name: 'Sequência da rota' }).getByRole('listitem'),
     ).toHaveText(['1Cutelo', '2Fome', '3Dança'])
+    await expect(page.getByText('Motivo de Cutelo', { exact: true })).toBeHidden()
+    await page.getByText('Explicação da build', { exact: true }).click()
     await expect(page.getByText('Motivo de Cutelo', { exact: true })).toBeVisible()
     await page.getByRole('button', { name: 'Oponente Renekton' }).click()
     await page.evaluate(() => {
