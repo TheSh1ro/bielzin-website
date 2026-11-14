@@ -68,9 +68,10 @@ function removeRoute(index: number) {
               {{ usage[route.id]?.length === 1 ? 'indicação' : 'indicações' }}</span
             ><span class="route-summary-icons" aria-hidden="true"
               ><img
-                v-for="(id, position) in route.items.slice(0, 3)"
+                v-for="(id, position) in route.items"
                 :key="position"
                 :src="catalog.items[id]?.icon"
+                :title="catalog.items[id]?.name"
                 alt=""
                 width="28"
                 height="28" /></span

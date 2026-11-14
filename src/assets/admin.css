@@ -1435,6 +1435,8 @@
 }
 .admin-page .route-summary-meta {
   display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
   align-items: center;
   gap: 16px;
   color: var(--admin-muted);
@@ -1442,9 +1444,11 @@
 }
 .admin-page .route-summary-icons {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
 }
 .admin-page .route-summary-icons img {
+  flex: none;
   border-radius: 3px;
 }
 .admin-page .route-editor-fields .scope-note {

@@ -75,12 +75,6 @@ const paths = computed(() => [
             />
           </span>
         </div>
-        <span class="selected-rune-name">{{
-          slot
-            .filter((rune) => path.selected.includes(rune.id))
-            .map((rune) => rune.name)
-            .join(' · ')
-        }}</span>
       </div>
     </section>
     <section class="shards" aria-label="Fragmentos">
@@ -190,13 +184,6 @@ header {
   gap: 7px;
   align-items: center;
   border-bottom: 1px solid color-mix(in srgb, var(--tree-color) 18%, transparent);
-}
-.selected-rune-name {
-  color: var(--tree-color);
-  font-size: 0.8125rem;
-  line-height: 1.2;
-  text-align: center;
-  min-height: 1.2em;
 }
 .primary-tree .rune-row {
   min-height: 0;
