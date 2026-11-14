@@ -80,7 +80,7 @@
             6333,
             2517
           ],
-          "title": "Axioma · forte cedo",
+          "title": "Axioma · forte cedo / barato",
           "reason": "O Brutalizador já dá AD, CDR e letalidade. Ao fechar Axioma, você mantém esse dano e recupera parte do cooldown do R ao participar de abates. Como ele não dá HP nem resistência, faça Dança da Morte para aguentar mais dano. Fome Eterna dá CDR com base no AD extra e mais omnivamp ao participar de um abate.",
           "followup": "Depois desses três itens, faça o que precisar contra o time inimigo: penetração, defesa, corta-cura ou quebra-escudo.",
           "components": [
@@ -98,7 +98,7 @@
             2517,
             6333
           ],
-          "title": "Cutelo · trocas longas",
+          "title": "Cutelo · trocas longas / all-in",
           "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e o move speed ajuda a grudar ou sair sem tomar dano de graça. Fome Eterna entra pelo CDR e sustain; Dança da Morte deixa você mais difícil de matar.",
           "followup": "Boa opção quando você precisa aguentar mais dano para conseguir combar. Depois, adapte os itens ao time inimigo.",
           "components": []
@@ -111,7 +111,7 @@
             6333,
             3156
           ],
-          "title": "Fome · spike em 3 itens",
+          "title": "Fome · spike em 3 itens / tenacidade",
           "reason": "Fome Eterna + Dança da Morte + Malmortius dão sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha mais omnivamp e limpa o dano acumulado da Dança. Dá para continuar fightando mesmo com pouco HP. Também funciona no top, sem o upgrade da bota do mid.",
           "followup": "Você quer chegar forte nos três itens, mas precisa conseguir jogar a lane até lá. Se o time inimigo não tiver dano AP que justifique Malmortius, troque por outro item.",
           "components": []
@@ -126,7 +126,7 @@
             3156,
             3026
           ],
-          "title": "Eclipse · trocas curtas",
+          "title": "Eclipse · trocas curtas / poke",
           "reason": "O escudo do Eclipse permite trocar e sair tomando pouco dano. Contra Jax, procure Q3 + AA quando o E dele não estiver ativo. Se ele pular em você de E ligado, dê W e recue até acabar. Vá ganhando essas trocas até ter dano para matar. Com vantagem, o escudo também ajuda a bater nele debaixo da torre.",
           "followup": "Siga com Cutelo → Dança da Morte → Malmortius → Anjo Guardião. Encaixe corta-cura ou quebra-escudo se precisar e só faça Malmortius se o dano AP justificar. Como essa build tem menos CDR, Ionianas ajudam bastante.",
           "components": []

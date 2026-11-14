@@ -27,7 +27,7 @@ function move(key: Group, index: number, offset: number) {
 </script>
 
 <template>
-  <div class="build-workspace" :class="{ inherited: disabled }">
+  <div class="build-workspace" :class="{ inherited: disabled, structured }">
     <div
       v-for="group in groups.filter((g) => !structured || g.key === 'start')"
       :key="group.key"
@@ -163,15 +163,19 @@ function move(key: Group, index: number, offset: number) {
               <X :size="16" />
             </button>
           </div>
-          <label :for="`condition-${index}`">Quando usar</label
-          ><textarea
-            :id="`condition-${index}`"
-            v-model="choice.condition"
-            rows="2"
-            maxlength="1000"
-            :disabled="disabled"
-            placeholder="Ex.: contra composições com muita cura…"
-          />
+          <p v-if="disabled" class="inherited-condition">
+            {{ choice.condition || 'Sem explicação adicionada.' }}
+          </p>
+          <template v-else
+            ><label :for="`condition-${index}`">Quando usar</label
+            ><textarea
+              :id="`condition-${index}`"
+              v-model="choice.condition"
+              rows="2"
+              maxlength="1000"
+              placeholder="Ex.: contra composições com muita cura…"
+            />
+          </template>
         </div>
       </div>
       <button
