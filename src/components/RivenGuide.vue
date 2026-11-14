@@ -9,7 +9,7 @@ import {
   shallowRef,
   watch,
 } from 'vue'
-import { ArrowUpRight, ChevronDown, Search } from 'lucide-vue-next'
+import { ArrowUpRight, ChevronDown, Search, Swords } from 'lucide-vue-next'
 import { profile } from '@/profile'
 import {
   guideBuild,
@@ -227,6 +227,36 @@ async function loadItems() {
   }
 }
 
+const contentCategories = [
+  { id: 'abilities', name: 'Cooldowns' },
+  { id: 'build', name: 'Itemização' },
+  { id: 'tips', name: 'Dicas' },
+  { id: 'runes', name: 'Runas' },
+] as const
+type ContentCategory = (typeof contentCategories)[number]['id']
+const activeCategory = ref<ContentCategory>('abilities')
+
+function chooseCategory(id: ContentCategory) {
+  activeCategory.value = id
+  const panel = steps.value?.children[1] as HTMLElement | undefined
+  // Changing subjects always starts at the beginning of the new content.
+  if (panel) panel.scrollTop = 0
+}
+
+function onCategoryKey(event: KeyboardEvent, index: number) {
+  let next = index
+  if (event.key === 'ArrowRight') next = (index + 1) % contentCategories.length
+  else if (event.key === 'ArrowLeft')
+    next = (index + contentCategories.length - 1) % contentCategories.length
+  else if (event.key === 'Home') next = 0
+  else if (event.key === 'End') next = contentCategories.length - 1
+  else return
+  event.preventDefault()
+  const category = contentCategories[next]!
+  chooseCategory(category.id)
+  document.getElementById(`matchup-tab-${category.id}`)?.focus({ preventScroll: true })
+}
+
 const selectedId = ref('Renekton')
 const query = ref('')
 const pickerOpen = ref(false)
@@ -344,7 +374,7 @@ void loadPatch()
 </script>
 
 <template>
-  <div class="riven">
+  <div class="riven" :data-section="activeSection">
     <div class="riven-toolbar">
       <div class="riven-return"><slot name="back" /></div>
       <nav class="riven-step-nav" aria-label="Guia da Riven">
@@ -499,7 +529,7 @@ void loadPatch()
             Nenhum matchup disponível no momento.
           </p>
           <div v-else-if="selected" class="riven-matchup">
-            <div class="riven-matchup-overview">
+            <aside class="riven-matchup-identity" aria-label="Oponente e avaliação">
               <div class="riven-controls">
                 <div
                   ref="opponentPicker"
@@ -590,28 +620,67 @@ void loadPatch()
                   </div>
                 </dl>
               </div>
-
-              <div class="riven-duel-stage">
-                <ChampionModel :champion="selected" />
-                <div class="riven-duel-copy">
-                  <div class="riven-duel-heading">
-                    <span>Riven × {{ selected.name }}</span>
-                    <p>{{ selected.title }}</p>
-                  </div>
-                  <div class="riven-matchup-tips" aria-live="polite">
-                    <ul
-                      v-if="matchup?.tips.some((tip) => tip.trim())"
-                      aria-label="Dicas do matchup"
-                    >
-                      <li
-                        v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())"
-                        :key="index"
-                      >
-                        {{ tip }}
-                      </li>
-                    </ul>
-                    <p v-else>Dicas de matchup em preparação.</p>
-                  </div>
+              <ChampionModel :champion="selected" />
+            </aside>
+            <div class="riven-matchup-content">
+              <div class="riven-content-tabs" role="tablist" aria-label="Conteúdo do matchup">
+                <button
+                  v-for="(category, index) in contentCategories"
+                  :id="`matchup-tab-${category.id}`"
+                  :key="category.id"
+                  type="button"
+                  role="tab"
+                  :aria-selected="activeCategory === category.id"
+                  :aria-controls="`matchup-panel-${category.id}`"
+                  :tabindex="activeCategory === category.id ? 0 : -1"
+                  @click="chooseCategory(category.id)"
+                  @keydown="onCategoryKey($event, index)"
+                >
+                  <span
+                    class="riven-category-icon"
+                    :class="`category-icon-${category.id}`"
+                    aria-hidden="true"
+                  >
+                    <img
+                      v-if="category.id === 'abilities'"
+                      src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/StatModsCDRScalingIcon.png"
+                      alt=""
+                      width="40"
+                      height="40"
+                    />
+                    <img
+                      v-else-if="category.id === 'build' && version"
+                      :src="riotImage(version, 'item', '3071.png')"
+                      alt=""
+                      width="40"
+                      height="40"
+                    />
+                    <Swords v-else-if="category.id === 'tips'" :size="40" :stroke-width="1.5" />
+                    <img
+                      v-else-if="category.id === 'runes'"
+                      src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Conqueror/Conqueror.png"
+                      alt=""
+                      width="40"
+                      height="40"
+                    />
+                  </span>
+                  <span class="riven-category-copy">
+                    <span class="riven-category-number" aria-hidden="true">0{{ index + 1 }}</span>
+                    <span>{{ category.name }}</span>
+                  </span>
+                </button>
+              </div>
+              <div
+                v-for="category in contentCategories"
+                v-show="activeCategory === category.id"
+                :id="`matchup-panel-${category.id}`"
+                :key="category.id"
+                class="riven-content-panel"
+                role="tabpanel"
+                :aria-labelledby="`matchup-tab-${category.id}`"
+                tabindex="0"
+              >
+                <template v-if="category.id === 'abilities'">
                   <section class="riven-enemy-panel" aria-labelledby="riven-enemy-title">
                     <div class="riven-title-line">
                       <h2 id="riven-enemy-title">Habilidades de {{ selected.name }}</h2>
@@ -645,114 +714,144 @@ void loadPatch()
                       </li>
                     </ul>
                   </section>
-                </div>
-              </div>
-            </div>
-            <div class="riven-matchup-grid">
-              <section class="riven-matchup-column build-panel" aria-labelledby="riven-build-title">
-                <div class="riven-title-line">
-                  <h2 id="riven-build-title">
-                    {{ guideItemization ? 'Itemização' : 'Build recomendada' }}
-                  </h2>
-                  <span v-if="build.isBase && !guideItemization" class="riven-meta">Padrão</span>
-                </div>
-                <p v-if="!guideItemization" class="riven-build-reason" aria-live="polite">
-                  {{ build.reason }}
-                </p>
-                <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
-                  Carregando itens…
-                </p>
-                <div v-else-if="itemsState === 'error'" class="riven-feedback" role="status">
-                  <p>O catálogo de itens está indisponível.</p>
-                  <button type="button" @click="loadItems">Tentar novamente</button>
-                </div>
-                <div v-else class="riven-item-groups">
-                  <div v-for="group in itemGroups" :key="group.name" class="riven-item-group">
-                    <h3>{{ group.name }}</h3>
-                    <ul>
-                      <li v-for="id in group.ids" :key="id" class="riven-item">
-                        <template v-if="items[id]">
-                          <img
-                            :src="riotImage(version, 'item', items[id].image.full)"
-                            alt=""
-                            width="28"
-                            height="28"
-                            loading="lazy"
-                          />
-                          {{ items[id].name }}
-                        </template>
-                        <span v-else>Item {{ id }} indisponível neste patch</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <RivenItemization
-                    v-if="guideItemization"
-                    section="primary"
-                    :content="guideItemization"
-                    :plan="matchup?.lanePlan"
-                    :opponent="selected?.name ?? selectedId"
-                    :items="items"
-                    :version="version"
-                  />
-                  <div
-                    v-if="build.situational.length"
-                    class="riven-item-group riven-situational-group"
+                </template>
+                <template v-else-if="category.id === 'build'">
+                  <section
+                    class="riven-matchup-column build-panel"
+                    aria-labelledby="riven-build-title"
                   >
-                    <h3>Situacionais</h3>
-                    <ul>
-                      <li
-                        v-for="(choice, index) in build.situational"
-                        :key="index"
-                        class="riven-item"
+                    <div class="riven-title-line">
+                      <h2 id="riven-build-title">Build recomendada</h2>
+                      <span v-if="build.isBase && !guideItemization" class="riven-meta"
+                        >Padrão</span
                       >
-                        <template v-if="items[choice.item]">
-                          <img
-                            :src="riotImage(version, 'item', items[choice.item]!.image.full)"
-                            alt=""
-                            width="28"
-                            height="28"
-                            loading="lazy"
-                          />
-                          <span
-                            ><strong>{{ items[choice.item]?.name }}</strong
-                            ><span v-if="choice.condition" class="riven-meta riven-situational">
-                              {{ choice.condition }}</span
-                            ></span
+                    </div>
+                    <p v-if="!guideItemization" class="riven-build-reason" aria-live="polite">
+                      {{ build.reason }}
+                    </p>
+                    <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
+                      Carregando itens…
+                    </p>
+                    <div v-else-if="itemsState === 'error'" class="riven-feedback" role="status">
+                      <p>O catálogo de itens está indisponível.</p>
+                      <button type="button" @click="loadItems">Tentar novamente</button>
+                    </div>
+                    <div v-else class="riven-item-groups">
+                      <div
+                        v-for="(group, index) in itemGroups"
+                        :key="group.name"
+                        class="riven-item-group"
+                        :class="{ 'riven-opening-group': index === 0 }"
+                      >
+                        <span v-if="index === 0" class="riven-opening-label">{{ group.name }}</span>
+                        <h3 v-else>{{ group.name }}</h3>
+                        <ul :aria-label="group.name">
+                          <li v-for="id in group.ids" :key="id" class="riven-item">
+                            <template v-if="items[id]">
+                              <img
+                                :src="riotImage(version, 'item', items[id].image.full)"
+                                alt=""
+                                width="28"
+                                height="28"
+                                loading="lazy"
+                              />
+                              {{ items[id].name }}
+                            </template>
+                            <span v-else>Item {{ id }} indisponível neste patch</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <RivenItemization
+                        v-if="guideItemization"
+                        section="primary"
+                        :content="guideItemization"
+                        :plan="matchup?.lanePlan"
+                        :opponent="selected?.name ?? selectedId"
+                        :items="items"
+                        :version="version"
+                      />
+                      <div
+                        v-if="build.situational.length"
+                        class="riven-item-group riven-situational-group"
+                      >
+                        <h3>Situacionais</h3>
+                        <ul>
+                          <li
+                            v-for="(choice, index) in build.situational"
+                            :key="index"
+                            class="riven-item"
                           >
-                        </template>
-                        <span v-else
-                          >Item {{ choice.item }} indisponível neste patch<span
-                            v-if="choice.condition"
-                          >
-                            — {{ choice.condition }}</span
-                          ></span
-                        >
+                            <template v-if="items[choice.item]">
+                              <img
+                                :src="riotImage(version, 'item', items[choice.item]!.image.full)"
+                                alt=""
+                                width="28"
+                                height="28"
+                                loading="lazy"
+                              />
+                              <span
+                                ><strong>{{ items[choice.item]?.name }}</strong
+                                ><span v-if="choice.condition" class="riven-meta riven-situational">
+                                  {{ choice.condition }}</span
+                                ></span
+                              >
+                            </template>
+                            <span v-else
+                              >Item {{ choice.item }} indisponível neste patch<span
+                                v-if="choice.condition"
+                              >
+                                — {{ choice.condition }}</span
+                              ></span
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <RivenBootsGuide
+                      v-if="guideItemization && itemsState === 'ready'"
+                      :content="guideItemization"
+                      :items="items"
+                      :version="version"
+                    />
+                    <RivenItemization
+                      v-if="guideItemization && itemsState === 'ready'"
+                      section="alternatives"
+                      :content="guideItemization"
+                      :plan="matchup?.lanePlan"
+                      :opponent="selected?.name ?? selectedId"
+                      :items="items"
+                      :version="version"
+                    />
+                  </section>
+                </template>
+                <section
+                  v-else-if="category.id === 'tips'"
+                  class="riven-tips-panel"
+                  aria-labelledby="riven-tips-title"
+                >
+                  <h2 id="riven-tips-title">Como jogar contra {{ selected.name }}</h2>
+                  <div class="riven-matchup-tips" aria-live="polite">
+                    <ul
+                      v-if="matchup?.tips.some((tip) => tip.trim())"
+                      aria-label="Dicas do matchup"
+                    >
+                      <li
+                        v-for="(tip, index) in matchup.tips.filter((tip) => tip.trim())"
+                        :key="index"
+                      >
+                        {{ tip }}
                       </li>
                     </ul>
+                    <p v-else>Dicas de matchup em preparação.</p>
                   </div>
-                  <RivenItemization
-                    v-if="guideItemization"
-                    section="alternatives"
-                    :content="guideItemization"
-                    :plan="matchup?.lanePlan"
-                    :opponent="selected?.name ?? selectedId"
-                    :items="items"
-                    :version="version"
-                  />
-                </div>
-              </section>
-              <aside class="riven-matchup-aside" aria-label="Runas e botas">
-                <section class="riven-matchup-column" aria-labelledby="riven-runes-title">
-                  <h2 id="riven-runes-title">Runas</h2>
-                  <RivenRunePage :champion="selectedId" />
                 </section>
-                <RivenBootsGuide
-                  v-if="guideItemization && itemsState === 'ready'"
-                  :content="guideItemization"
-                  :items="items"
-                  :version="version"
-                />
-              </aside>
+                <template v-else>
+                  <section class="riven-matchup-column" aria-labelledby="riven-runes-title">
+                    <h2 id="riven-runes-title">Runas</h2>
+                    <RivenRunePage :champion="selectedId" />
+                  </section>
+                </template>
+              </div>
             </div>
           </div>
         </section>

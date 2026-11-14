@@ -115,9 +115,11 @@ for (const width of [1280, 390]) {
       },
     )
     await expect(page.locator('.champion-stage select, .champion-stage button')).toHaveCount(0)
+    await page.getByRole('tab', { name: 'Runas', exact: true }).click()
     await expect(page.getByRole('region', { name: 'Árvore primária', exact: true })).toBeVisible()
     await expect(page.locator('.rune-tree').first().locator('.rune-row')).toHaveCount(4)
     await expect(page.locator('.rune-tree').nth(1).locator('.rune-row')).toHaveCount(3)
+    await page.getByRole('tab', { name: 'Itemização', exact: true }).click()
     const recommended = page.getByRole('region', { name: 'Build indicada', exact: true })
     await expect(recommended.getByRole('heading', { name: 'Axioma', exact: true })).toBeVisible()
     const cutelo = page

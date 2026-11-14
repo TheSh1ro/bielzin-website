@@ -50,6 +50,15 @@ body:has(.riven-page) {
   background:
     radial-gradient(ellipse 55% 70% at 78% 28%, #6823301a, transparent 85%),
     radial-gradient(ellipse 75% 90% at 10% 100%, #ffffff03, transparent 80%);
+  transition: opacity 300ms ease;
+}
+.riven-page:has(.riven[data-section='riven-matchups'])::before {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .riven-page::before {
+    transition: none;
+  }
 }
 .riven-page-inner {
   position: relative;
@@ -217,6 +226,24 @@ body:has(.riven-page) {
   }
   .riven-page .riven .riven-feature-art {
     margin-top: -24px;
+  }
+}
+@media (min-width: 1200px) and (max-height: 1000px) {
+  .riven-page .riven .riven-mid-title {
+    font-size: clamp(4rem, min(6.5vw, 12dvh), 7.5rem);
+    margin-bottom: 16px;
+  }
+  .riven-page .riven .riven-feature .riven-hot-tip-copy {
+    padding-bottom: 16px;
+  }
+  .riven-page .riven .riven-feature .riven-hot-tip-build {
+    padding-block: 16px;
+  }
+  .riven-page .riven .riven-feature .riven-hot-tip-build ul {
+    margin-top: 12px;
+  }
+  .riven-page .riven .riven-feature .riven-greaves-effects {
+    margin-block: 16px;
   }
 }
 @media (max-width: 900px) {

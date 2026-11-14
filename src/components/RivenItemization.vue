@@ -35,7 +35,7 @@ const visibleRoutes = computed(() =>
 )
 </script>
 <template>
-  <div class="itemization">
+  <div class="itemization" :class="{ 'itemization-alternatives': section === 'alternatives' }">
     <section
       v-if="section !== 'alternatives' && plan?.components.length"
       class="lane-plan"
@@ -105,6 +105,14 @@ const visibleRoutes = computed(() =>
 .itemization {
   font-size: 0.9375rem;
   line-height: 1.7;
+}
+.itemization-alternatives {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--riven-line);
+}
+.itemization-alternatives .alternatives-heading {
+  margin-top: 0;
 }
 p {
   white-space: pre-line;

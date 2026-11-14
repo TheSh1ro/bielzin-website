@@ -52,7 +52,7 @@ test('abre o guia pelo banner e volta para Jogos preservando o histórico', asyn
   await shortcut.click()
   await expect(page).toHaveURL(/\/riven$/)
   await expect(page.getByRole('heading', { name: 'Matchups da Riven Top', level: 1 })).toBeVisible()
-  await expect(page.getByRole('tablist')).toHaveCount(0)
+  await expect(page.getByRole('tablist', { name: 'Conteúdo do matchup' })).toBeAttached()
 
   await page.getByRole('button', { name: 'Matchups', exact: true }).click()
   await expect(page).toHaveURL(/\/riven$/)
@@ -95,6 +95,7 @@ for (const width of [1280, 390]) {
       .poll(() => root.evaluate((element) => Math.abs(element.scrollTop - element.clientHeight)))
       .toBeLessThan(2)
 
+    await page.getByRole('tab', { name: 'Itemização', exact: true }).click()
     await panels.nth(1).evaluate((element) => {
       element.scrollTop = 350
     })
@@ -210,5 +211,80 @@ test('mantém o canvas no enquadramento e os controles fora da leitura de Quad H
         { message: `${width}×${height}: conteúdo excede a largura` },
       )
       .toEqual([])
+  }
+})
+
+test('evita rolagem vazia em Full HD e Quad HD com e sem barras do navegador', async ({ page }) => {
+  await page.goto('/riven')
+  await expect(page.locator('.riven-feature-art .local-model')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  )
+  const panels = page.locator('.riven-step')
+  for (const [width, height] of [
+    [1920, 1080],
+    [1920, 929],
+    [1920, 900],
+    [2560, 1440],
+    [2560, 1290],
+  ]) {
+    await page.setViewportSize({ width: width!, height: height! })
+    await expect
+      .poll(() => panels.nth(0).evaluate((el) => el.scrollHeight - el.clientHeight))
+      .toBeLessThanOrEqual(1)
+    await page.getByRole('button', { name: 'Matchups', exact: true }).click()
+    for (const name of ['Cooldowns', 'Dicas', 'Runas']) {
+      await page.getByRole('tab', { name, exact: true }).click()
+      await expect
+        .poll(() => panels.nth(1).evaluate((el) => el.scrollHeight - el.clientHeight), {
+          message: `${width}×${height}: ${name}`,
+        })
+        .toBeLessThanOrEqual(1)
+    }
+    await page.getByRole('tab', { name: 'Itemização', exact: true }).click()
+    await expect
+      .poll(() => panels.nth(1).evaluate((el) => el.scrollHeight - el.clientHeight))
+      .toBeGreaterThan(100)
+  }
+})
+
+test('categorias preservam o oponente e permitem navegação por teclado', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 1080 })
+  await page.goto('/riven')
+  await page.getByRole('button', { name: 'Matchups', exact: true }).click()
+  const tabs = page.getByRole('tablist', { name: 'Conteúdo do matchup' })
+  const abilities = tabs.getByRole('tab', { name: 'Cooldowns', exact: true })
+  await expect(abilities).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('tabpanel', { name: 'Cooldowns', exact: true })).toBeVisible()
+  await abilities.press('ArrowRight')
+  const build = tabs.getByRole('tab', { name: 'Itemização', exact: true })
+  await expect(build).toBeFocused()
+  await expect(build).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('tabpanel', { name: 'Cooldowns', exact: true })).toBeHidden()
+  await page.getByRole('button', { name: 'Oponente Renekton' }).click()
+  await page.getByRole('searchbox', { name: 'Buscar campeão' }).fill('Jax')
+  await page.getByRole('button', { name: 'Jax', exact: true }).click()
+  await expect(build).toHaveAttribute('aria-selected', 'true')
+  await build.press('ArrowRight')
+  await expect(page.getByRole('heading', { name: 'Como jogar contra Jax' })).toBeVisible()
+  await tabs.getByRole('tab', { name: 'Dicas', exact: true }).press('End')
+  await expect(tabs.getByRole('tab', { name: 'Runas', exact: true })).toBeFocused()
+  await expect(page.getByRole('region', { name: 'Árvore primária', exact: true })).toBeVisible()
+  for (const width of [1440, 1024, 820, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 })
+    for (const name of ['Cooldowns', 'Itemização', 'Dicas', 'Runas']) {
+      await tabs.getByRole('tab', { name, exact: true }).click()
+      await expect(page.getByRole('tabpanel', { name, exact: true })).toBeVisible()
+      await expect
+        .poll(
+          () =>
+            page
+              .locator('.riven-step')
+              .nth(1)
+              .evaluate((el) => el.scrollWidth - el.clientWidth),
+          { message: `${width}px: ${name}` },
+        )
+        .toBeLessThanOrEqual(1)
+    }
   }
 })

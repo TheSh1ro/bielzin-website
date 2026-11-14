@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { guideRunePage } from '@/lib/riven-guide'
 const colors: Record<number, string> = {
   8000: '#d9bd76',
@@ -9,6 +9,34 @@ const colors: Record<number, string> = {
   8300: '#83cdd6',
 }
 const props = defineProps<{ champion: string }>()
+const root = ref<HTMLElement>()
+const availableHeight = ref(442)
+let layoutObserver: ResizeObserver | undefined
+onMounted(() => {
+  const element = root.value
+  const step = element?.closest<HTMLElement>('.riven-step')
+  const footer = step?.querySelector<HTMLElement>('.riven-footer')
+  if (!element || !step || !footer) return
+  layoutObserver = new ResizeObserver(() => {
+    if (!element.getClientRects().length) return
+    const style = getComputedStyle(element)
+    const top =
+      element.getBoundingClientRect().top - step.getBoundingClientRect().top + step.scrollTop
+    const reserved =
+      footer.offsetHeight +
+      (parseFloat(getComputedStyle(step).rowGap) || 0) +
+      parseFloat(getComputedStyle(step).paddingBottom) +
+      parseFloat(style.paddingTop) +
+      parseFloat(style.paddingBottom) +
+      parseFloat(style.borderTopWidth) +
+      parseFloat(style.borderBottomWidth)
+    availableHeight.value = Math.max(442, Math.floor(step.clientHeight - top - reserved - 2))
+  })
+  layoutObserver.observe(step)
+  layoutObserver.observe(element)
+  layoutObserver.observe(footer)
+})
+onBeforeUnmount(() => layoutObserver?.disconnect())
 const page = computed(() => guideRunePage(props.champion))
 const paths = computed(() => [
   {
@@ -26,7 +54,7 @@ const paths = computed(() => [
 ])
 </script>
 <template>
-  <div class="rune-page">
+  <div ref="root" class="rune-page" :style="{ '--rune-available': `${availableHeight}px` }">
     <section
       v-for="path in paths"
       :key="path.label"
@@ -101,9 +129,12 @@ const paths = computed(() => [
 </template>
 <style scoped>
 .rune-page {
+  --rune-height: 442px;
   display: grid;
+  width: 100%;
+  max-width: 760px;
   grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
-  grid-template-rows: 302px 140px;
+  grid-template-rows: calc(var(--rune-height) * 0.683) calc(var(--rune-height) * 0.317);
   align-items: start;
   gap: 0 18px;
   margin-top: 22px;
@@ -121,12 +152,14 @@ const paths = computed(() => [
   grid-column: 1;
   grid-row: 1 / 3;
   display: grid;
-  grid-template-rows: 58px 108px repeat(3, 92px);
+  height: 100%;
+  grid-template-rows: 58px 1.17fr repeat(3, 1fr);
 }
 .secondary-tree {
   grid-column: 2;
   display: grid;
-  grid-template-rows: 50px repeat(3, 84px);
+  height: 100%;
+  grid-template-rows: 50px repeat(3, 1fr);
 }
 .rune-tree::before {
   content: '';
@@ -242,14 +275,8 @@ header {
   min-height: 0;
 }
 .keystone .rune-choice {
-  border: 0;
-  background: none;
   width: 38px;
-  height: 44px;
-}
-.keystone .rune-choice.chosen {
-  box-shadow: none;
-  filter: drop-shadow(0 0 5px #d9bd7655);
+  height: 38px;
 }
 .shards {
   --tree-color: #d9bd76;
@@ -257,6 +284,9 @@ header {
   align-self: start;
   padding: 0 0 0 34px;
   position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
 }
 .shards::before {
   content: '';
@@ -276,7 +306,7 @@ header {
 }
 .shard-row {
   position: relative;
-  height: 42px;
+  min-height: 42px;
 }
 .shard-row::before {
   content: '';
@@ -292,6 +322,25 @@ header {
 .shard-row .rune-choice {
   width: 27px;
   height: 27px;
+}
+@media (min-width: 1200px) {
+  .rune-page {
+    --rune-height: var(--rune-available, 442px);
+    gap: 0 32px;
+    padding-inline: 12px;
+  }
+  .rune-choice {
+    width: 42px;
+    height: 42px;
+  }
+  .keystone .rune-choice {
+    width: 48px;
+    height: 48px;
+  }
+  .shard-row .rune-choice {
+    width: 30px;
+    height: 30px;
+  }
 }
 @container (max-width: 370px) {
   .rune-tree {
@@ -323,6 +372,7 @@ header {
   }
   .keystone .rune-choice {
     width: min(28px, 8cqw);
+    height: min(28px, 8cqw);
   }
   .shards {
     padding-left: 27px;
