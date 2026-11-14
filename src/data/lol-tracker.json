@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "accounts": [
     {
-      "level": 742,
+      "level": 743,
       "puuid": "gtHzpzRnP6RGFD7SwCzZVOX0lVEN5zTZ8d1-MA3QCUkctySDrUy33JCXzg_LQRXtXXO0qPKmNHnBQw",
       "ranks": [
         {
@@ -16,17 +16,17 @@
         {
           "tier": "MASTER",
           "wins": 146,
-          "losses": 107,
+          "losses": 108,
           "division": "I",
           "queueType": "RANKED_SOLO_5x5",
-          "leaguePoints": 1357
+          "leaguePoints": 1325
         }
       ],
       "region": "BR",
       "tagLine": "sh1ro",
       "gameName": "bielzin",
       "platform": "BR1",
-      "collectedAt": "2026-11-13T05:37:36.429Z",
+      "collectedAt": "2026-11-14T02:22:59.221Z",
       "profileIconId": 3867,
       "matchSampleLimit": 40,
       "dataDragonVersion": "16.22.1",
@@ -177,20 +177,38 @@
           "losses": 24,
           "division": "I",
           "queueType": "RANKED_FLEX_SR",
-          "recordedAt": "2026-11-13T05:37:36.429Z",
+          "recordedAt": "2026-11-14T02:22:59.221Z",
           "leaguePoints": 65
         },
         {
           "tier": "MASTER",
           "wins": 146,
-          "losses": 107,
+          "losses": 108,
           "division": "I",
           "queueType": "RANKED_SOLO_5x5",
-          "recordedAt": "2026-11-13T05:37:36.429Z",
-          "leaguePoints": 1357
+          "recordedAt": "2026-11-14T02:22:59.221Z",
+          "leaguePoints": 1325
         }
       ],
       "matches": [
+        {
+          "cs": 13,
+          "id": "BR1_3303906099",
+          "win": false,
+          "role": "UTILITY",
+          "kills": 1,
+          "damage": 6429,
+          "deaths": 8,
+          "remake": false,
+          "assists": 13,
+          "queueId": 420,
+          "startedAt": "2026-11-14T01:49:40.559Z",
+          "championId": 267,
+          "visionScore": 79,
+          "championIcon": "Nami.png",
+          "championName": "Nami",
+          "durationSeconds": 1734
+        },
         {
           "cs": 11,
           "id": "BR1_3303593861",
@@ -892,24 +910,6 @@
           "championIcon": "Kennen.png",
           "championName": "Kennen",
           "durationSeconds": 1266
-        },
-        {
-          "cs": 215,
-          "id": "BR1_3292524680",
-          "win": false,
-          "role": "TOP",
-          "kills": 3,
-          "damage": 22688,
-          "deaths": 8,
-          "remake": false,
-          "assists": 7,
-          "queueId": 440,
-          "startedAt": "2026-10-12T21:02:36.310Z",
-          "championId": 92,
-          "visionScore": 18,
-          "championIcon": "Riven.png",
-          "championName": "Riven",
-          "durationSeconds": 1762
         }
       ]
     }
