@@ -75,6 +75,12 @@ const paths = computed(() => [
             />
           </span>
         </div>
+        <span class="selected-rune-name">{{
+          slot
+            .filter((rune) => path.selected.includes(rune.id))
+            .map((rune) => rune.name)
+            .join(' · ')
+        }}</span>
       </div>
     </section>
     <section class="shards" aria-label="Fragmentos">
@@ -103,10 +109,13 @@ const paths = computed(() => [
 .rune-page {
   display: grid;
   grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
-  grid-template-rows: 278px 140px;
+  grid-template-rows: 302px 140px;
   align-items: start;
   gap: 0 18px;
   margin-top: 22px;
+  padding: 16px 10px 10px;
+  border-block: 1px solid var(--riven-line);
+  background: radial-gradient(ellipse at 20% 20%, #d9bd7609, transparent 65%);
   container-type: inline-size;
 }
 .rune-tree {
@@ -118,12 +127,12 @@ const paths = computed(() => [
   grid-column: 1;
   grid-row: 1 / 3;
   display: grid;
-  grid-template-rows: 58px 108px repeat(3, 84px);
+  grid-template-rows: 58px 108px repeat(3, 92px);
 }
 .secondary-tree {
   grid-column: 2;
   display: grid;
-  grid-template-rows: 50px repeat(3, 76px);
+  grid-template-rows: 50px repeat(3, 84px);
 }
 .rune-tree::before {
   content: '';
@@ -165,7 +174,7 @@ header {
 .tree-heading small {
   display: block;
   color: var(--riven-muted);
-  font-size: 0.625rem;
+  font-size: 0.8125rem;
 }
 .tree-heading h3 {
   color: var(--tree-color);
@@ -176,8 +185,18 @@ header {
   position: relative;
   min-height: 68px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
   align-items: center;
   border-bottom: 1px solid color-mix(in srgb, var(--tree-color) 18%, transparent);
+}
+.selected-rune-name {
+  color: var(--tree-color);
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  text-align: center;
+  min-height: 1.2em;
 }
 .primary-tree .rune-row {
   min-height: 0;

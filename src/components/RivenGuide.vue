@@ -39,10 +39,19 @@ const guideLinks = [
 
 function jumpTo(id: string) {
   const section = document.getElementById(id)
-  if (!section) return
+  const root = navigationRoot
+  if (!section || !root) return
+  const sectionTop = section.getBoundingClientRect().top - root.getBoundingClientRect().top
+  const goingUp = sectionTop < 0
+  const navHeight = document.querySelector<HTMLElement>('.riven-nav')?.offsetHeight ?? 0
+  // Upward scrolling reveals the sticky header; downward scrolling tucks it away.
+  const offset = goingUp ? navHeight + 16 : 16
   activeSection.value = id
   section.focus({ preventScroll: true })
-  section.scrollIntoView({ block: 'start', behavior: 'smooth' })
+  root.scrollTo({
+    top: root.scrollTop + sectionTop - offset,
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+  })
 }
 
 onMounted(() => {
@@ -57,7 +66,7 @@ onMounted(() => {
 
 const headerHidden = ref(false)
 let scrollAnchor = 0
-let navigationRoot: Element | null = null
+let navigationRoot: HTMLElement | null = null
 function updateNavigation() {
   const nav = document.querySelector<HTMLElement>('.riven-nav')
   const top = Math.max(0, navigationRoot?.scrollTop ?? 0)
@@ -84,7 +93,7 @@ function updateNavigation() {
   activeSection.value = current
 }
 onMounted(() => {
-  navigationRoot = document.querySelector('.riven-page')
+  navigationRoot = document.querySelector<HTMLElement>('.riven-page')
   navigationRoot?.addEventListener('scroll', updateNavigation, { passive: true })
 })
 onUnmounted(() => navigationRoot?.removeEventListener('scroll', updateNavigation))
@@ -99,6 +108,13 @@ const greavesSynergies = [
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
 
 const lessonIndex = ref(0)
+const aggressiveOpening = ref(false)
+const displayedSkillOrder = computed(() =>
+  rivenSkillOrder.map((skill, index) => {
+    if (!aggressiveOpening.value) return skill
+    return index === 1 ? 'W' : index === 2 ? 'E' : skill
+  }),
+)
 const skillRows = (['Q', 'W', 'E', 'R'] as const).map((key) => ({
   key,
   ...rivenLessons[spellKeys.indexOf(key)]!,
@@ -332,7 +348,7 @@ void loadPatch()
         <span class="riven-nav-sigil" aria-hidden="true"
           ><Sword :size="20" :stroke-width="1.25"
         /></span>
-        <strong>RIVEN</strong>
+        <strong>RIVEN GUIDE</strong>
       </div>
       <div class="riven-nav-sections">
         <button
@@ -644,7 +660,7 @@ void loadPatch()
                 :items="items"
                 :version="version"
               />
-              <div v-if="build.situational.length" class="riven-item-group">
+              <div v-if="build.situational.length" class="riven-item-group riven-situational-group">
                 <h3>Situacionais</h3>
                 <ul>
                   <li v-for="(choice, index) in build.situational" :key="index" class="riven-item">
@@ -693,68 +709,10 @@ void loadPatch()
       id="riven-habilidades"
       class="riven-section"
       tabindex="-1"
-      aria-labelledby="riven-habilidades-title"
+      aria-labelledby="riven-kit-label"
     >
-      <h2 id="riven-habilidades-title">Habilidades da Riven</h2>
-      <section class="riven-skill-order" aria-labelledby="riven-skill-order-title">
-        <h3 id="riven-skill-order-title">Ordem de up das skills</h3>
-        <div class="riven-skill-openings">
-          <p class="riven-skill-order-intro">
-            Comece de <strong>Q → E → W</strong>. No level 2, o E serve para segurar o dano e sair
-            da troca. Maximize <strong>Q → E → W</strong> e upe
-            <strong>R nos levels 6, 11 e 16</strong>.
-          </p>
-          <p class="riven-skill-order-intro">
-            Pegou <strong>level 2 antes do inimigo</strong> e dá para ir pra cima? Upe
-            <strong>W no 2 para buscar o all-in</strong> enquanto ele ainda está level 1. Nesse
-            caso, upe <strong>E no level 3</strong>.
-          </p>
-        </div>
-        <p class="riven-skill-order-caption">
-          Up por level · padrão com E no 2; para o all-in, W no 2 e E no 3
-        </p>
-        <div
-          class="riven-skill-grid-scroll"
-          tabindex="0"
-          role="region"
-          aria-label="Up das skills por level"
-        >
-          <table class="riven-skill-grid">
-            <caption class="sr-only">
-              Ordem padrão para upar as skills da Riven
-            </caption>
-            <tbody>
-              <tr v-for="skill in skillRows" :key="skill.key">
-                <th scope="row">
-                  <span>{{ skill.key }}</span>
-                  <img
-                    :src="'/media/riven/' + skill.image"
-                    :alt="skill.name"
-                    width="24"
-                    height="24"
-                  />
-                </th>
-                <td
-                  v-for="(key, index) in rivenSkillOrder"
-                  :key="index"
-                  :class="{ 'is-learned': key === skill.key }"
-                  :title="
-                    'Level ' + (index + 1) + (key === skill.key ? ' · Upar ' + skill.key : '')
-                  "
-                >
-                  <span v-if="key === skill.key">{{ index + 1 }}</span>
-                  <span class="sr-only">{{
-                    key === skill.key
-                      ? ' · Upar ' + skill.key + ' no level ' + (index + 1)
-                      : 'Level ' + (index + 1) + ': sem ponto'
-                  }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-      <div class="riven-lesson riven-glass">
+      <h2 id="riven-kit-label">Habilidades da Riven</h2>
+      <div class="riven-lesson">
         <div class="riven-film">
           <video
             v-if="!videoError"
@@ -784,14 +742,21 @@ void loadPatch()
             :key="skill.name"
             type="button"
             :aria-pressed="index === lessonIndex"
+            :aria-label="(index === 0 ? 'Passiva' : spellKeys[index]) + ' · ' + skill.name"
             @click="selectLesson(index)"
           >
             <img :src="'/media/riven/' + skill.image" alt="" width="44" height="44" />
-            <span>{{ index === 0 ? 'Passiva' : spellKeys[index] }}</span>
-            <span class="sr-only">{{ skill.name }}</span>
+            <span class="riven-skill-button-copy"
+              ><strong>{{ index === 0 ? 'P' : spellKeys[index] }}</strong
+              ><span>{{ skill.name }}</span></span
+            >
           </button>
         </div>
         <div class="riven-lesson-copy" aria-live="polite">
+          <span class="riven-lesson-letter" aria-hidden="true">{{ lessonKey }}</span>
+          <span class="riven-chapter">{{
+            lessonKey === 'P' ? 'Passiva' : 'Habilidade ' + lessonKey
+          }}</span>
           <div class="riven-title-line">
             <h3>{{ lesson.name }}</h3>
             <span v-if="lessonCooldown" class="riven-cooldown">
@@ -802,9 +767,94 @@ void loadPatch()
           <p v-for="stat in lessonStats" :key="stat.label" class="riven-lesson-stat">
             {{ stat.label }} <strong>{{ stat.value }}</strong>
           </p>
-          <p class="riven-tip">{{ lesson.tip }}</p>
+          <div class="riven-practice">
+            <span class="riven-chapter">Na prática</span>
+            <p class="riven-tip">{{ lesson.tip }}</p>
+          </div>
         </div>
       </div>
+      <section class="riven-skill-order" aria-labelledby="riven-skill-order-title">
+        <div class="riven-progression-heading">
+          <div>
+            <h3 id="riven-skill-order-title">Ordem das habilidades</h3>
+          </div>
+        </div>
+        <div class="riven-skill-openings">
+          <button
+            type="button"
+            class="riven-skill-order-intro"
+            :aria-pressed="!aggressiveOpening"
+            @click="aggressiveOpening = false"
+          >
+            <span class="riven-opening-label">01 · Troca segura <span>Q → E → W</span></span> Comece
+            de <strong>Q → E → W</strong>. No level 2, o E serve para segurar o dano e sair da
+            troca. Maximize <strong>Q → E → W</strong> e upe
+            <strong>R nos levels 6, 11 e 16</strong>.
+          </button>
+          <button
+            type="button"
+            class="riven-skill-order-intro"
+            :aria-pressed="aggressiveOpening"
+            @click="aggressiveOpening = true"
+          >
+            <span class="riven-opening-label">02 · All-in no level 2 <span>Q → W → E</span></span>
+            Pegou <strong>level 2 antes do inimigo</strong> e dá para ir pra cima? Upe
+            <strong>W no 2 para buscar o all-in</strong> enquanto ele ainda está level 1. Nesse
+            caso, upe <strong>E no level 3</strong>.
+          </button>
+        </div>
+        <p class="riven-skill-order-caption" aria-live="polite">
+          {{
+            aggressiveOpening
+              ? 'All-in · W no level 2 e E no level 3'
+              : 'Troca segura · E no level 2 e W no level 3'
+          }}
+        </p>
+        <div
+          class="riven-skill-grid-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Up das skills por level"
+        >
+          <table class="riven-skill-grid">
+            <caption class="sr-only">
+              {{
+                aggressiveOpening
+                  ? 'Ordem para all-in no level 2'
+                  : 'Ordem padrão para upar as skills da Riven'
+              }}
+            </caption>
+            <tbody>
+              <tr v-for="skill in skillRows" :key="skill.key">
+                <th scope="row">
+                  <span>{{ skill.key }}</span>
+                  <img
+                    :src="'/media/riven/' + skill.image"
+                    :alt="skill.name"
+                    width="24"
+                    height="24"
+                  />
+                </th>
+                <td
+                  v-for="(key, index) in displayedSkillOrder"
+                  :key="index"
+                  :class="{ 'is-learned': key === skill.key }"
+                  :title="
+                    'Level ' + (index + 1) + (key === skill.key ? ' · Upar ' + skill.key : '')
+                  "
+                >
+                  <span v-if="key === skill.key">{{ index + 1 }}</span>
+                  <span class="sr-only">{{
+                    key === skill.key
+                      ? ' · Upar ' + skill.key + ' no level ' + (index + 1)
+                      : 'Level ' + (index + 1) + ': sem ponto'
+                  }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </section>
 
     <footer class="riven-footer">

@@ -92,3 +92,40 @@ test('esconde o header ao descer e revela ao subir', async ({ page }) => {
   })
   await expect(nav).not.toHaveClass(/is-hidden/)
 })
+
+for (const width of [1280, 390]) {
+  test(`compensa o header ao navegar para cima em ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/riven')
+    const nav = page.getByRole('navigation', { name: 'Guia da Riven' })
+    const root = page.locator('.riven-page')
+    await page.getByRole('button', { name: 'Habilidades', exact: true }).click()
+    await expect(nav).toHaveClass(/is-hidden/)
+    await expect
+      .poll(() =>
+        page
+          .locator('#riven-habilidades')
+          .evaluate((element) => Math.round(element.getBoundingClientRect().top)),
+      )
+      .toBe(16)
+
+    // A short manual scroll up exposes the menu before navigating to an earlier section.
+    await root.evaluate((element) => {
+      element.scrollTop -= 40
+    })
+    await expect(nav).not.toHaveClass(/is-hidden/)
+    await page.getByRole('button', { name: 'Matchups', exact: true }).click()
+    await expect
+      .poll(() =>
+        page.locator('#riven-matchups').evaluate((element) => {
+          const header = document.querySelector('.riven-nav')!
+          return Math.round(
+            element.getBoundingClientRect().top - header.getBoundingClientRect().bottom,
+          )
+        }),
+      )
+      .toBe(16)
+    await expect(nav).not.toHaveClass(/is-hidden/)
+    await expect(page.getByRole('region', { name: 'Matchups da Riven Top' })).toBeFocused()
+  })
+}
