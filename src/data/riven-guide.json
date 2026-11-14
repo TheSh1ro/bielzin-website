@@ -20,19 +20,19 @@
       "situational": [
         {
           "item": 6695,
-          "condition": "Faça quebra-escudo se os escudos estiverem impedindo você de matar."
+          "condition": "Se você tem dúvidas se precisa fazer corta shield é porque deve fazer."
         },
         {
           "item": 3123,
-          "condition": "Se a cura estiver decidindo as trocas, compre corta-cura cedo. Não precisa fechar o item completo na hora."
+          "condition": "Se precisar de corta cura compre apenas carrasco, deixe para fechar de último item."
         },
         {
           "item": 3156,
-          "condition": "Contra muito dano AP. Você pode comprar Hexdrinker para aguentar a lane e deixar para fechar Malmortius depois."
+          "condition": "Contra muito dano AP. Se o laner inimigo e o JG forem AP pode valer a pena fechar de primeiro item."
         },
         {
           "item": 3026,
-          "condition": "Se você está carregando e morrer pode entregar o jogo, GA dá uma segunda chance na fight."
+          "condition": "Sempre compre anjo guardião quando achar que está por vir a play que vai decidir a partida, pra melhorar seu engage."
         }
       ]
     },
@@ -59,7 +59,7 @@
       "boots": [
         {
           "item": 3158,
-          "condition": "Para ter mais CDR, principalmente se estiver ganhando a lane. Com Eclipse + Cutelo, fazem mais falta porque você tem menos CDR do que nas builds com Fome Eterna."
+          "condition": "Para ter mais CDR e os feitiços voltarem mais rápido, principalmente se estiver ganhando a lane."
         },
         {
           "item": 3047,
@@ -67,7 +67,7 @@
         },
         {
           "item": 3111,
-          "condition": "Contra dano AP e muito CC que a tenacidade reduz, principalmente se você ainda vai demorar para fechar Fome Eterna. Lembre que a Fome também dá tenacidade."
+          "condition": "Contra dano AP e muito CC que a tenacidade reduz, principalmente se você ainda vai demorar para fechar Fome Eterna. Não esqueça que Fome Eterna também dá tenacidade."
         }
       ],
       "intro": "Escolha o primeiro item pela matchup. Depois, adapte a build ao time inimigo e a como o jogo está indo.",
@@ -78,25 +78,24 @@
           "items": [
             6696,
             6333,
-            2517
+            2517,
+            6694,
+            3026
           ],
           "title": "Axioma · forte cedo / barato",
           "reason": "O Brutalizador já dá AD, CDR e letalidade. Ao fechar Axioma, você mantém esse dano e recupera parte do cooldown do R ao participar de abates. Como ele não dá HP nem resistência, faça Dança da Morte para aguentar mais dano. Fome Eterna dá CDR com base no AD extra e mais omnivamp ao participar de um abate.",
           "followup": "Depois desses três itens, faça o que precisar contra o time inimigo: penetração, defesa, corta-cura ou quebra-escudo.",
-          "components": [
-            {
-              "item": 2020,
-              "condition": "Brutalizador já dá um spike antes de fechar Axioma: AD, CDR e letalidade."
-            }
-          ]
+          "components": []
         },
         {
           "id": "cutelo",
           "when": "Para trocar por mais tempo, bater em quem está fazendo armadura e ter mais HP na lane.",
           "items": [
             3071,
+            6333,
             2517,
-            6333
+            3156,
+            3026
           ],
           "title": "Cutelo · trocas longas / all-in",
           "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e o move speed ajuda a grudar ou sair sem tomar dano de graça. Fome Eterna entra pelo CDR e sustain; Dança da Morte deixa você mais difícil de matar.",
@@ -109,7 +108,9 @@
           "items": [
             2517,
             6333,
-            3156
+            3156,
+            6694,
+            3026
           ],
           "title": "Fome · spike em 3 itens / tenacidade",
           "reason": "Fome Eterna + Dança da Morte + Malmortius dão sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha mais omnivamp e limpa o dano acumulado da Dança. Dá para continuar fightando mesmo com pouco HP. Também funciona no top, sem o upgrade da bota do mid.",
@@ -121,10 +122,10 @@
           "when": "Principalmente contra Jax, ou para abusar de uma lane que você já está ganhando.",
           "items": [
             6692,
-            3071,
             6333,
-            3156,
-            3026
+            2517,
+            6694,
+            3156
           ],
           "title": "Eclipse · trocas curtas / poke",
           "reason": "O escudo do Eclipse permite trocar e sair tomando pouco dano. Contra Jax, procure Q3 + AA quando o E dele não estiver ativo. Se ele pular em você de E ligado, dê W e recue até acabar. Vá ganhando essas trocas até ter dano para matar. Com vantagem, o escudo também ajuda a bater nele debaixo da torre.",
@@ -132,7 +133,7 @@
           "components": []
         }
       ],
-      "bootsNote": "Se estiver perdendo a lane, faça bota defensiva. Se estiver ganhando, Ionianas dão mais CDR; muito na frente, bota defensiva também ajuda a não entregar a vantagem. Considere o CDR dos dragões e dos seus itens.",
+      "bootsNote": "Se estiver perdendo a lane, faça bota defensiva. Se estiver ganhando, Ionianas dão mais CDR e fazem suas spells voltarem mais rápido, possibilitando criar mais jogadas ao longo da partida; estando muito na frente bota defensiva também ajuda a não entregar a vantagem.",
       "defaultRoute": "axioma"
     }
   },
@@ -140,8 +141,10 @@
     "Aatrox": {
       "late": "favorable",
       "tips": [
-        "Entre na parte de dentro do Q1 e do Q2 para não tomar a borda. Guarde E para desviar do centro do Q3. Se ele ultar, espere o R acabar antes de continuar a troca.",
-        ""
+        "Use Q e E para sair das bordas do Q1 e do Q2. No Q3, saia do centro: é ali que ele quer acertar.",
+        "Se ele gastar E para acertar um Q, troque antes que o dash volte. Guarde pelo menos um Q ou E para sair do próximo golpe.",
+        "Espaçar os Qs ajuda a continuar desviando enquanto troca. Não solte tudo de uma vez e fique parado batendo.",
+        "Evite alongar a fight durante o R dele. Se ele fechar armadura cedo e ficar difícil matar, use a pressão para farmar e buscar barricadas."
       ],
       "build": null,
       "early": "even",
@@ -163,7 +166,10 @@
     "Akali": {
       "late": "even",
       "tips": [
-        "Troque antes do level 6. Se ela usar a fumaça, recue. Guarde E para desviar do E dela ou segurar o dano quando ela voltar."
+        "Pressione nos primeiros níveis se conseguir chegar sem gastar todos os Qs. Guarde E para desviar do Q ou segurar o AA da passiva.",
+        "Quando ela usar W, recue em vez de gastar o combo procurando a Akali na fumaça. Volte a trocar quando ela estiver sem W.",
+        "Na saída da troca, desvie do E. Se ele acertar, ela pode te seguir mesmo depois do seu dash.",
+        "Depois do 6, tire HP em trocas curtas antes do all-in. Entrar com W e E dela disponíveis dá espaço para ela desviar do seu dano."
       ],
       "build": null,
       "early": "even",
@@ -204,7 +210,10 @@
     "Ambessa": {
       "late": "even",
       "tips": [
-        "Troque depois que ela gastar o Q2 e guarde W para quando ela terminar o dash. Se estiver sem E ou Flash, fique fora da range do R."
+        "Tire o Osso Revestido com uma troca curta antes de gastar o combo inteiro.",
+        "Use seus dashes para desviar das skills dela e guarde W para quando ela terminar um dash. Entrar no meio da sequência facilita a resposta dela.",
+        "Se estiver sem E e sem Flash, respeite a range do R. Perto da torre dela, a ult pode te colocar numa posição ruim para sair.",
+        "Não continue batendo depois de gastar toda a mobilidade. Saia da troca e espere seus cooldowns antes de voltar."
       ],
       "build": null,
       "early": "even",
@@ -378,7 +387,10 @@
     "Camille": {
       "late": "even",
       "tips": [
-        "Troque longe das paredes e recue quando ela preparar o Q2. Espere o escudo da passiva acabar antes de gastar seu combo."
+        "Faça uma troca curta para tirar Osso Revestido e o escudo da passiva. Use E para segurar o AA e volte a bater depois que o escudo acabar.",
+        "Fique longe das paredes enquanto ela tiver E. Se ela errar o pulo, aproveite para trocar antes que a skill volte.",
+        "Se conseguir reagir ao E2, W ou Q3 podem interromper a entrada. Guarde mobilidade para sair da parte externa do W dela.",
+        "Ela pode usar R para desviar do seu R2. Evite soltar R2 de longe com a ult dela disponível; procure acertar enquanto ela estiver no ar pelo Q3."
       ],
       "build": null,
       "early": "favorable",
@@ -389,7 +401,10 @@
     "Cassiopeia": {
       "late": "even",
       "tips": [
-        "Entre pelo lado para não cair no W, que impede seus dashes. Desvie do Q e, se estiver perto, vire de costas quando ela ultar."
+        "Guarde E para desviar do Q. Se ele acertar, recue em vez de continuar tomando os Es dela envenenado.",
+        "Não entre no W tentando sair de dash: o chão impede seus Qs e seu E. Espere sair da área para voltar a usar a mobilidade.",
+        "Faça trocas curtas quando ela errar Q e evite gastar todos os dashes só para chegar nela.",
+        "No all-in, esteja pronto para virar de costas quando ela usar R. Farmar e manter HP é melhor do que forçar uma entrada ruim."
       ],
       "build": null,
       "early": "unfavorable",
@@ -400,7 +415,10 @@
     "Chogath": {
       "late": "favorable",
       "tips": [
-        "Guarde E para desviar do Q e espere o silêncio acabar para trocar. No late, não entre com pouco HP se ele estiver com R."
+        "Pressione quando ele vier farmar nos primeiros níveis. Se deixar ele pegar a wave inteira sem responder, a passiva recupera o HP das suas trocas.",
+        "Guarde Q ou E para sair do círculo do Q. Depois que ele errar, você tem mais espaço para continuar batendo.",
+        "Quando tomar o silêncio do W, ande para fora da troca até poder usar as skills de novo. Evite ficar dando AA cercado pelos minions dele.",
+        "Segure a wave do seu lado para obrigar ele a sair da torre. Depois do 6, respeite o R se estiver com pouco HP."
       ],
       "build": null,
       "early": "favorable",
@@ -422,7 +440,10 @@
     "Darius": {
       "late": "even",
       "tips": [
-        "Entre na parte de dentro do Q e saia antes de ele stackar a passiva. Se ele errar o E, faça uma troca curta e guarde um dash para sair."
+        "Quando ele vier dar last hit, tente W, AA e saia de E + Q. A ideia é dar dano sem deixar ele alongar a troca.",
+        "Não entre de Q3 com o E dele disponível: ele pode puxar e cancelar sua entrada.",
+        "Se ele usar Q perto de você, entre na parte de dentro ou saia do alcance. A borda dá mais dano e cura o Darius.",
+        "Espere os stacks da passiva acabarem antes de trocar de novo. Na metade da lane dele, guarde mobilidade para não ser perseguido de Fantasma."
       ],
       "build": null,
       "early": "favorable",
@@ -454,7 +475,10 @@
     "DrMundo": {
       "late": "favorable",
       "tips": [
-        "Fique atrás da wave para não tomar Q. Tire a passiva com um CC e pise na cápsula se der. Depois, use o resto do combo."
+        "Fique atrás dos minions para evitar o Q e não perder HP antes de conseguir trocar.",
+        "Tire a passiva com um CC antes de depender do W ou do Q3 para segurar ele. Se for seguro, pise no recipiente para impedir que ele recupere a cura.",
+        "Pressione quando ele vier farmar e tente segurar a wave longe da torre dele. Empurrar sem necessidade deixa ele recuperar HP farmando de Q.",
+        "Depois do 6, conte com a cura do R antes de dar all-in. Se a cura estiver impedindo os abates, corta-cura pode ajudar."
       ],
       "build": null,
       "early": "favorable",
@@ -518,7 +542,10 @@
     "Fiora": {
       "late": "even",
       "tips": [
-        "Se ficar encurralado, encoste a vital na parede. Varie o timing do W e do Q3 para baitar o W dela."
+        "No começo da lane, fique perto dos seus minions e puna quando ela usar Q para entrar. Evite dar uma vital de graça só para começar a troca.",
+        "Baite o W antes do all-in. Se entrar de Q3, guarde E para desviar da resposta e não tomar o stun.",
+        "Mesmo sem stunar, o W reduz sua velocidade de ataque. Se ele acertar, recue em vez de insistir no fast combo.",
+        "Quando ela ultar, encoste numa parede para dificultar que ela acerte todas as vitais. Não gaste toda a mobilidade perseguindo e deixe as costas expostas."
       ],
       "build": null,
       "early": "favorable",
@@ -550,7 +577,10 @@
     "Gangplank": {
       "late": "favorable",
       "tips": [
-        "Não fique tomando Q de graça, só entre na range dele caso tenha E para responder o poke com shield."
+        "Use E para segurar o poke do Q quando for pegar um minion. Se estiver sem escudo, não entregue HP por um last hit ruim.",
+        "Olhe os barris antes de entrar. Quando der para destruir um com AA sem tomar a explosão, você tira boa parte do dano da resposta dele.",
+        "Respeite o barril no nível 1 e os barris escondidos no bush. Entrar sem ver a preparação dele pode virar a troca.",
+        "Procure o all-in quando ele estiver longe dos barris e você conseguir chegar sem gastar todos os Qs. Se ele comprar armadura cedo, não conte com matar numa rotação."
       ],
       "build": null,
       "early": "favorable",
@@ -560,7 +590,10 @@
     "Garen": {
       "late": "even",
       "tips": [
-        "Use E para segurar o Q e saia do giro. Espere o escudo do W acabar antes de combar. Cuidado com seu HP quando ele tiver R."
+        "Use E antes do Q dele acertar para segurar o dano. Depois do silêncio, faça uma troca curta e saia do giro.",
+        "Baite o W antes de gastar R2. Bater o combo inteiro na redução de dano e no escudo facilita ele sobreviver.",
+        "Espace os Qs para ter a próxima rotação mais cedo. Se ele gastar Q e W na primeira troca, volte a pressionar enquanto estiver sem essas skills.",
+        "Tente segurar a wave do seu lado e puna quando ele vier farmar. Evite perder muito HP numa troca que ele pode recuperar com a passiva."
       ],
       "build": null,
       "early": "even",
@@ -571,7 +604,10 @@
     "Gnar": {
       "late": "favorable",
       "tips": [
-        "Puna o mini Gnar depois que ele gastar o pulo. Se a barra de fúria estiver alta, fique longe das paredes e espere o mega acabar."
+        "Evite gastar todos os Qs só para encostar nele. Se ele ainda tiver E, pode pular para longe e te bater na saída.",
+        "Depois que ele gastar o pulo, procure outra troca antes que o E volte. Cuidado com minions perto dele, que ajudam no segundo salto.",
+        "Olhe a barra de fúria antes de dar all-in. É mais seguro procurar a luta contra o Mini Gnar do que entrar durante a transformação.",
+        "Contra o Mega Gnar, fique longe das paredes e guarde mobilidade para desviar das skills. Espere a forma acabar se não tiver uma entrada boa."
       ],
       "build": null,
       "early": "unfavorable",
@@ -582,7 +618,10 @@
     "Gragas": {
       "late": "favorable",
       "tips": [
-        "Espere ele gastar o E antes de usar Q3 e use os minions para bloquear a barrigada. Não troque em cima do barril e guarde E para se reposicionar depois do R."
+        "Não entre de Q3 enquanto ele tiver E para responder. Baite a barrigada ou espere ele gastar na wave antes de se comprometer.",
+        "Se o E dele errar, aproveite para trocar. Minions aliados entre vocês também podem bloquear a barrigada.",
+        "Quando ele preparar o W, evite ficar perto para tomar o AA fortalecido. Deixe ele gastar no minion antes de chegar.",
+        "Perto da torre dele, respeite o R te jogando para trás. Se não conseguir punir os cooldowns, mantenha o farm e procure jogadas no mapa."
       ],
       "build": null,
       "early": "unfavorable",
@@ -604,7 +643,10 @@
     "Gwen": {
       "late": "favorable",
       "tips": [
-        "Troque quando o Q dela tiver poucos stacks e desvie do centro. Se ela usar W, espere do lado de fora ou entre com seu CC pronto."
+        "Olhe os stacks do Q antes de entrar. Troque quando ela gastar a tesourada, em vez de ficar parado no centro com o Q carregado.",
+        "Se ela usar E + Q na wave, pressione antes que o dash volte. Chegar andando preserva seus Qs para dar dano e acompanhar.",
+        "Baite o W antes de gastar tudo. Dentro da névoa ela ganha resistências; de fora, seu R2 não acerta a Gwen.",
+        "No all-in, use seus dashes para desviar das agulhas do R. Não solte todo o combo parado e tome a sequência inteira."
       ],
       "build": null,
       "early": "favorable",
@@ -625,7 +667,10 @@
     "Heimerdinger": {
       "late": "favorable",
       "tips": [
-        "Limpe as torres isoladas quando ele estiver sem E. Se errar a granada, entre pelo lado. Não lute no meio das três torres."
+        "Não troque no meio das três torres. Limpe as que conseguir atingir sem tomar granada e poke de graça.",
+        "Guarde E ou um Q para desviar da granada. Se ela errar e ele estiver fora das torres, você consegue entrar com menos risco.",
+        "Mantenha HP para procurar um all-in depois do 6. Gastar todos os dashes para chegar sem ter como desviar do E facilita a resposta dele.",
+        "Se ele estiver te prendendo na torre, peça ajuda e mostre onde estão as torres dele. Entrar num gank por dentro da preparação ainda pode dar errado."
       ],
       "build": null,
       "early": "unfavorable",
@@ -647,7 +692,10 @@
     "Illaoi": {
       "late": "unfavorable",
       "tips": [
-        "Use a wave para bloquear o E e limpe os tentáculos quando der. Se ela ultar, saia e espere os tentáculos pararem de bater para voltar."
+        "Fique atrás dos minions para bloquear o E. Quando ela errar, troque antes que a skill volte.",
+        "Tire os tentáculos quando ela não puder te punir. Evite começar uma fight espremido entre paredes e vários tentáculos.",
+        "Se ela acertar E, não continue a troca como se nada tivesse acontecido. Saia do alcance dela e desvie dos golpes dos tentáculos.",
+        "Quando ela ultar, use os dashes para sair da área e volte depois. Ficar batendo perto dela durante o R dá espaço para ela curar e virar."
       ],
       "build": null,
       "early": "favorable",
@@ -658,7 +706,10 @@
     "Irelia": {
       "late": "favorable",
       "tips": [
-        "Olhe os stacks da passiva e os minions com pouco HP que ela pode usar de Q. Não gaste o burst no W dela e troque quando a passiva cair."
+        "Olhe seus minions com pouco HP: eles mostram para onde ela pode usar Q. Puna com W quando ela vier dar last hit perto de você.",
+        "Guarde E ou um Q para desviar do stun. Tomar o E permite que ela te siga por mais tempo na troca.",
+        "Não entre com a passiva dela cheia nem com vários minions baixos por perto. Ela pode stackar e renovar os Qs durante a fight.",
+        "Se ela usar W, segure o burst até a redução de dano acabar. Depois da Espada do Rei, respeite ainda mais as trocas longas."
       ],
       "build": null,
       "early": "favorable",
@@ -700,7 +751,10 @@
     "Jax": {
       "late": "favorable",
       "tips": [
-        "Saia da range do E ou dê W para recuar antes do stun. Quando o E acabar, volte a trocar usando os AAs da sua passiva."
+        "Se ele pular de E ligado, use W e recue de E para sair do alcance do stun. Guarde mobilidade antes de começar a troca.",
+        "Não gaste os AAs da passiva enquanto ele estiver desviando com E. Espere acabar para continuar o combo.",
+        "Quando ele gastar E, volte a pressionar antes que a skill volte. Trocas curtas ajudam a tirar HP sem dar tempo para ele alongar a fight.",
+        "Respeite as resistências do R. Se ele ultar sem você precisar continuar, recue e espere uma troca melhor."
       ],
       "build": null,
       "early": "even",
@@ -715,7 +769,10 @@
     "Jayce": {
       "late": "favorable",
       "tips": [
-        "Fique atrás da wave para não tomar Q + E. Baite o E da forma de martelo e guarde um dash para entrar de novo."
+        "Mantenha HP nos primeiros níveis. Guarde Q ou E para desviar do poke em vez de gastar tudo tentando alcançar ele.",
+        "Se ele estiver de martelo com E disponível, pode te jogar para longe na entrada. Procure trocar depois que ele gastar o empurrão.",
+        "Quando ele trocar de martelo para canhão perto de você, aproveite antes que consiga voltar à forma com o E defensivo.",
+        "Depois do 6, procure all-in se conseguir chegar com HP e skills. A ult ajuda a matar, mas não compensa entrar depois de tomar poke demais."
       ],
       "build": null,
       "early": "unfavorable",
@@ -767,7 +824,10 @@
     "Karma": {
       "late": "favorable",
       "tips": [
-        "Não fique perto dos minions quando ela usar R + Q. Saia da range do W para não tomar o root e volte a trocar depois que o escudo acabar."
+        "Não gaste todos os dashes perseguindo o escudo e a move speed dela. Se ela escapar da primeira entrada, volte para a wave.",
+        "Faça trocas quando ela errar poke ou gastar o escudo, sem ficar longe demais dos minions para voltar.",
+        "Depois do 6, puna se ela avançar sem recursos para sair. Não force all-in só porque sua ult está disponível.",
+        "Se ela estiver jogando recuada sem dar abertura, limpe a wave e procure ajudar o time. Ficar tentando matar sozinho pode te custar farm e tempo."
       ],
       "build": null,
       "early": "favorable",
@@ -811,7 +871,10 @@
     "Kayle": {
       "late": "favorable",
       "tips": [
-        "Segure a wave perto da sua torre antes de ela virar ranged. Force o R sem gastar tudo e guarde R2 para depois da invulnerabilidade."
+        "Pressione cedo e puna quando ela vier farmar, mas não transforme a troca numa sequência de AAs com a passiva dela stackada.",
+        "Empurre a wave até a torre e espere ela voltar para segurar do seu lado. Assim a Kayle precisa se afastar da torre para pegar farm.",
+        "Se ela usar W para escapar ou recuperar HP, mantenha a pressão sem gastar tudo na perseguição. Repetir isso também cobra mana dela.",
+        "Quando ela ultar, segure o R2 até a invulnerabilidade acabar. Guarde mobilidade para acompanhar sem ficar tomando dano de graça."
       ],
       "build": null,
       "early": "favorable",
@@ -832,7 +895,10 @@
     "Kennen": {
       "late": "favorable",
       "tips": [
-        "Não entre com duas marcas da passiva dele. Puna quando ele gastar E. Se ele ultar, saia e volte depois que o R acabar."
+        "Evite avançar com duas marcas da passiva em você. Espere as marcas acabarem para não tomar stun logo na entrada.",
+        "Olhe o AA fortalecido do W quando for farmar. Use E para segurar o poke e não entregue HP por um minion difícil.",
+        "Procure trocar depois que ele gastar E. Se precisar usar todos os Qs para chegar enquanto ele ainda pode fugir, a entrada tende a ser ruim.",
+        "Se ele ultar, saia do alcance com os dashes e volte depois. Guardar E para essa saída vale mais do que usar tudo no começo da troca."
       ],
       "build": null,
       "early": "unfavorable",
@@ -874,7 +940,10 @@
     "Kled": {
       "late": "favorable",
       "tips": [
-        "Desvie da corda e recue durante os quatro AAs do W. Quando ele desmontar, mate rápido ou saia antes de ele montar de novo."
+        "Desvie do Q e saia do alcance da corda se ela acertar. Continuar batendo preso nela facilita a troca dele.",
+        "Espere ele gastar os quatro AAs do W nos minions para trocar. Com W disponível, ele responde mais forte e recupera coragem mais rápido desmontado.",
+        "Guarde dano e CC para quando ele desmontar. Se não conseguir finalizar antes de ele montar de novo, recue em vez de insistir só no AA.",
+        "Depois que ele errar Q, procure uma troca curta ou all-in conforme o HP dos dois. Evite gastar todas as skills apenas para tirar a primeira barra."
       ],
       "build": null,
       "early": "even",
@@ -896,7 +965,10 @@
     "KSante": {
       "late": "even",
       "tips": [
-        "Desvie do Q3 e troque longe das paredes para ele não te levar de R. Espere o W acabar para entrar e guarde um dash para quando ele ultar."
+        "Faça trocas curtas nos primeiros níveis e saia antes da resposta. Não precisa gastar o combo inteiro para disputar cada minion.",
+        "Espere ele gastar W antes de entrar com tudo. Durante a preparação, evite colocar seu dano e seu CC na defesa dele.",
+        "Fique longe das paredes e da torre dele quando ele puder te reposicionar. Guarde um dash para sair da direção do W.",
+        "Depois que ele comprar armadura, não force duelo só por ter ult. Mantenha o farm e use a wave para procurar jogadas com o time."
       ],
       "build": null,
       "early": "favorable",
@@ -1001,7 +1073,10 @@
     "Malphite": {
       "late": "unfavorable",
       "tips": [
-        "Tire o escudo com um AA e não deixe a passiva voltar de graça. Guarde um dash para o R e considere Cutelo se ele stackar armadura."
+        "Pressione antes das primeiras compras de armadura. Depois que ele ficar resistente, evite trocar muito HP por pouco dano.",
+        "Use E para segurar o Q quando for farmar. Não persiga enquanto ele estiver com a move speed roubada e você sem dash.",
+        "Se ele acertar E, recue até a redução de velocidade de ataque acabar. Insistir no fast combo nesse momento piora sua troca.",
+        "Quando ficar difícil matar, limpe a wave e procure jogar no mapa. Não precisa ficar na lane tentando gastar o HP inteiro dele em várias rotações."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1023,7 +1098,10 @@
     "Maokai": {
       "late": "favorable",
       "tips": [
-        "Não lute nas bushes com mudas. Troque depois que ele gastar Q e guarde seu CC para quando ele sair do W."
+        "Baite o Q antes de gastar os dashes para entrar. O empurrão pode cortar sua troca e deixar você sem como acompanhar.",
+        "Use E para segurar o dano da resposta e faça trocas curtas. Evite soltar skills sem necessidade: elas ajudam a passiva de cura dele a voltar.",
+        "Se ele usar W para te seguir numa troca perto da torre dele, recue para puxar a chegada para longe da torre.",
+        "Procure vantagem antes de ele acumular defesa. Se a cura estiver anulando seu dano, reavalie o all-in em vez de gastar tudo numa troca que ele recupera."
       ],
       "build": null,
       "early": "favorable",
@@ -1089,7 +1167,10 @@
     "Mordekaiser": {
       "late": "favorable",
       "tips": [
-        "Desvie do E e fique junto dos minions para não tomar Q isolado. Saia antes de ele ativar a passiva e espere o escudo acabar para gastar seu burst."
+        "Guarde Q ou E para desviar do puxão e do Q. Se o Q acertar só você, o dano é maior; perto dos minions, evite dar esse acerto isolado.",
+        "Faça uma troca curta e saia antes de ele manter a passiva girando em cima de você.",
+        "Olhe a barra do W antes de dar all-in. Se ela estiver cheia, ele ainda tem um escudo grande para absorver seu combo.",
+        "Depois do 6, evite gastar toda a mobilidade na entrada. Se ele te ultar, você vai precisar dos dashes para desviar e escolher quando voltar a bater."
       ],
       "build": null,
       "early": "favorable",
@@ -1133,7 +1214,10 @@
     "Nasus": {
       "late": "unfavorable",
       "tips": [
-        "Freeze a wave para negar stacks de Q. Se ele usar W ou R, use os dashes para sair e volte quando acabar."
+        "Puna quando ele vier dar Q no minion. O objetivo é negar stacks e farm, sem empurrar a wave de graça com todos os Qs.",
+        "Segure a wave do seu lado quando conseguir. Se ele usar E para empurrar, aproveite a wave vindo para você e mantenha o controle.",
+        "Quando tomar W, evite insistir só nos AAs. Use as skills para sair e espere o slow e a redução de velocidade de ataque acabarem.",
+        "Depois do 6, respeite o R e a armadura que ele comprou. Se ele ultar, recue com mobilidade em vez de tentar ganhar uma troca longa parado."
       ],
       "build": null,
       "early": "favorable",
@@ -1207,7 +1291,10 @@
     "Olaf": {
       "late": "unfavorable",
       "tips": [
-        "Desvie dos machados e não fique no caminho dele para pegar outro. Se ele ultar, use os dashes para sair da range dos AAs e não deixar ele estender o R."
+        "Desvie do machado e evite trocar no caminho em que ele vai pegá-lo. Se ele jogar longe, você ganha espaço para uma troca curta.",
+        "Não fique na metade da lane dele com Q e E em cooldown. Ele pode te perseguir repetindo machados.",
+        "Quando ele ultar, use os dashes para criar distância. W e Q3 não vão segurar o Olaf enquanto ele estiver imune a CC.",
+        "Não confunda pouco HP com kill garantida: ele bate mais rápido e recupera vida. Tire HP antes e só se comprometa se tiver dano para finalizar."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1228,7 +1315,10 @@
     "Ornn": {
       "late": "favorable",
       "tips": [
-        "Não fique alinhado com parede ou pilar. Espere o W acabar para dar CC e tente interromper a segunda parte do R."
+        "Pressione cedo e tente segurar a wave longe da torre dele. Quando ele tiver bastante armadura, matar vai exigir mais do que uma rotação.",
+        "Use um dash para sair do último sopro do W. É esse acerto que aplica a marca de Fragilidade.",
+        "Fique longe da parede e do pilar do Q para não tomar o avanço do E contra o terreno.",
+        "Não gaste W ou Q3 tentando parar o W dele. Guarde o CC para depois; se estiver em alcance, também pode interromper a devolução do R."
       ],
       "build": null,
       "early": "favorable",
@@ -1239,7 +1329,10 @@
     "Pantheon": {
       "late": "favorable",
       "tips": [
-        "Troque quando ele tiver poucos stacks na passiva. Vá para trás do E ou espere o escudo acabar antes de soltar R2."
+        "Nos primeiros níveis, use E para segurar o poke do Q e preserve HP até ter o kit completo para trocar.",
+        "Depois do nível 3, faça trocas curtas quando ele gastar skills. Não fique ao alcance do stun sem mobilidade para sair depois.",
+        "Se ele usar E, não gaste R2 de frente no bloqueio. Espere acabar ou reposicione para acertar por trás.",
+        "Seu nível 6 traz uma ult de combate. Use isso para procurar all-in depois de tirar HP e forçar a defesa dele, sem ignorar os stacks da passiva."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1250,7 +1343,10 @@
     "Poppy": {
       "late": "favorable",
       "tips": [
-        "Espere o W acabar antes de usar os dashes. Fique longe das paredes e interrompa o R enquanto ela carrega, se estiver na range."
+        "Não use Q ou E para atravessar o W ativo dela. Espere a área acabar para voltar a usar os dashes sem ser interrompido.",
+        "Troque longe das paredes. Mesmo uma troca curta pode dar errado se ela conseguir te empurrar contra o terreno com E.",
+        "Use E para segurar o AA da passiva quando puder. Se for seguro, pise no escudo no chão antes que ela pegue.",
+        "Puna depois que ela gastar W. Se ela estiver guardando a skill e já tiver bastante armadura, mantenha o farm e procure ajuda em vez de forçar."
       ],
       "build": null,
       "early": "even",
@@ -1283,7 +1379,10 @@
     "Quinn": {
       "late": "favorable",
       "tips": [
-        "Use as bushes para chegar perto e baite o E com uma entrada curta. Guarde outro dash para depois que ela pular para trás."
+        "Mantenha HP no começo e pegue o farm que conseguir sem tomar a marca da passiva de graça.",
+        "Use os bushes para diminuir o poke e tente chegar sem gastar todos os Qs. Ela ainda pode usar E para separar vocês.",
+        "Depois que ela gastar E, procure outra entrada antes que a skill volte. Após o 6, você tem R para finalizar se conseguir manter contato.",
+        "Se ela sair da lane depois do 6, avise o time e empurre quando for seguro. Não siga sem visão e entregue outra kill no caminho."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1347,7 +1446,10 @@
     "Renekton": {
       "late": "even",
       "tips": [
-        "Não fique na range do W com 50 de Fúria: ele quebra seu escudo. Se ele gastar os dois Es, faça uma troca curta enquanto o E estiver em cooldown."
+        "Dispute espaço no nível 1 se tiver uma troca boa, antes de ele juntar fúria. Depois, olhe a barra antes de se aproximar.",
+        "Com fúria para fortalecer o W, ele pode quebrar seu escudo e te stunar. Não conte só com E para absorver a entrada.",
+        "Troque perto dos seus minions e procure punir depois que ele gastar W ou os dashes. Evite ficar ao alcance enquanto suas skills estiverem em cooldown.",
+        "Antes do all-in, tire HP em trocas curtas e considere a vida que ele ganha com R. Não gaste tudo esperando matar antes de ele reagir."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1358,7 +1460,10 @@
     "Rengar": {
       "late": "favorable",
       "tips": [
-        "Deixe a wave longe das bushes para ele não pular de graça. Guarde seu CC até ele gastar o W fortalecido ou ficar sem Ferocidade."
+        "Puxe a disputa para longe dos bushes. Com a wave encostada neles, ele consegue pular várias vezes e escolher as trocas.",
+        "Se ele pular num minion perto de você, responda com W e uma troca curta. Guarde E para segurar a volta.",
+        "Olhe a Ferocidade antes de entrar. Com a barra cheia, ele pode responder com uma skill fortalecida e virar a troca.",
+        "Evite gastar todo o burst antes do W e do W fortalecido. Ele pode recuperar boa parte do dano recente; procure continuar depois que gastar a cura."
       ],
       "build": null,
       "early": "favorable",
@@ -1380,7 +1485,10 @@
     "Rumble": {
       "late": "favorable",
       "tips": [
-        "Não tome Q quando a barra de calor estiver alta. Saia do R pelo lado e aproveite para trocar depois do superaquecimento."
+        "Quando ele ligar Q, saia do alcance do lança-chamas. Não continue dando AA enquanto toma a duração inteira.",
+        "Faça trocas curtas e guarde um dash para sair. Se gastar tudo na entrada, ele pode te acompanhar com dano constante.",
+        "Olhe o calor antes de trocar. Superaquecer limita as skills dele, mas os AAs ficam perigosos; não trate isso como entrada grátis.",
+        "Depois do 6, guarde E para sair da linha do R. Se o dano mágico estiver te tirando da lane, Hexdrinker pode ajudar a manter HP para lutar."
       ],
       "build": null,
       "early": "even",
@@ -1391,7 +1499,10 @@
     "Ryze": {
       "late": "even",
       "tips": [
-        "Não fique junto dos minions marcados pelo E. Baite o root antes de dar all-in e interrompa o R com W ou Q3."
+        "Evite ficar colado nos minions marcados pelo E. Ele pode espalhar a marca e usar Q para te acertar junto da wave.",
+        "Troque depois que ele gastar W e guarde um dash para desviar do Q. O W é de alvo: você não desvia dele com um dash depois de ser usado.",
+        "Nos primeiros níveis, olhe a mana dele antes de entrar. Com poucos recursos, fica mais difícil responder à sua troca inteira.",
+        "Se ele avançar demais, prepare o gank sem perder todo o HP tentando chegar sozinho. Avise o time quando ele sumir para usar R."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1443,7 +1554,10 @@
     "Sett": {
       "late": "even",
       "tips": [
-        "Não fique com um minion do outro lado do Sett, senão o E dá stun. Guarde um dash para sair do centro do W e recue quando a barra encher."
+        "Tire Osso Revestido antes de se comprometer. Quando ele vier farmar, tente W, AA e saia de E + Q para não tomar a resposta inteira.",
+        "Baite o E antes de alongar a troca. Evite ficar com um minion aliado do outro lado do Sett, porque isso permite o stun.",
+        "Guarde um dash para sair do centro do W. Se a barra dele estiver cheia, não continue parado batendo no escudo.",
+        "Depois que ele gastar E e W, procure outra troca antes que voltem. No all-in, lembre que ele pode ajustar o W com Flash."
       ],
       "build": null,
       "early": "even",
@@ -1464,7 +1578,10 @@
     "Shen": {
       "late": "favorable",
       "tips": [
-        "Não deixe a espada passar por você na troca e espere o W acabar para dar AA. Se ele ultar na sua frente, interrompa com seu CC."
+        "Olhe a espada antes de trocar e não deixe o Q atravessar você de graça. Os AAs fortalecidos são boa parte da resposta dele.",
+        "Se ele abrir W, pare de gastar os AAs da passiva na área. Reposicione e volte a bater depois que ela acabar.",
+        "Guarde um dash para desviar do E e faça trocas curtas quando ele estiver sem taunt e sem escudo.",
+        "Depois do 6, acompanhe quando ele recuar para ultar. Se estiver em alcance e for seguro, W ou Q3 interrompem o canal; se ele sair, puna na wave e na torre."
       ],
       "build": null,
       "early": "even",
@@ -1485,7 +1602,10 @@
     "Singed": {
       "late": "unfavorable",
       "tips": [
-        "Freeze a wave e corte o caminho dele sem correr atrás no veneno. Não caia no W: ele impede seus dashes e o Singed pode te jogar de volta nele."
+        "Cubra a entrada da lane no nível 1 para não deixar ele começar o proxy sem ser visto.",
+        "Quando ele vier farmar, faça uma troca curta e guarde parte dos dashes para depois do arremesso.",
+        "Evite iniciar com todos os Qs: ele pode te jogar para trás e sair enquanto você fica sem mobilidade.",
+        "Não persiga pelo veneno durante o R dele. Garanta sua wave e procure outra jogada em vez de perder HP correndo atrás."
       ],
       "build": null,
       "early": "favorable",
@@ -1496,7 +1616,10 @@
     "Sion": {
       "late": "favorable",
       "tips": [
-        "Cancele o Q com W ou Q3. Se o escudo estiver para explodir, recue. Depois de matar, guarde um dash para sair da passiva."
+        "Quando ele carregar Q perto de você, use W ou Q3 para interromper. Se estiver fora de alcance, saia da área em vez de entrar no golpe.",
+        "Depois de cancelar o Q, não presuma que ele vai ficar muito tempo sem a skill. Guarde mobilidade para a próxima tentativa.",
+        "Pressione cedo e segure a wave do seu lado quando conseguir. Assim ele precisa sair da torre para farmar.",
+        "Antes de matar, olhe onde está sua wave. Saia da passiva sem entregar HP nem deixar ele pegar todos os minions de graça."
       ],
       "build": null,
       "early": "favorable",
@@ -1593,7 +1716,10 @@
     "TahmKench": {
       "late": "favorable",
       "tips": [
-        "Use a wave para bloquear o Q e recue antes do terceiro stack. Faça trocas curtas para não ter que bater no escudo inteiro de uma vez."
+        "Fique atrás dos minions para bloquear o Q. Desviar evita tanto o dano quanto a cura dele ao acertar um campeão.",
+        "Faça trocas curtas e espere os stacks da passiva em você acabarem antes de voltar.",
+        "Quando ele ativar o escudo, evite gastar R2 nele. Guarde mobilidade para sair e retome quando o escudo acabar.",
+        "Não force all-in perto da torre dele com stacks em você e o R disponível. Ele pode te engolir e te colocar debaixo da torre."
       ],
       "build": null,
       "early": "even",
@@ -1635,7 +1761,10 @@
     "Teemo": {
       "late": "favorable",
       "tips": [
-        "Use as bushes para chegar perto e espere o blind acabar antes de dar AA. No late, use lente ao passar pelas entradas da side."
+        "Guarde E para segurar o poke ao pegar farm. Não perca metade do HP tentando alcançar ele antes de ter uma entrada boa.",
+        "Quando tomar blind, segure os AAs da passiva até acabar. Use W e a mobilidade para não tomar dano de graça nesse tempo.",
+        "Depois que ele gastar Q, procure entrar se conseguir chegar sem usar todos os dashes. O nível 6 ajuda a finalizar, mas você ainda precisa manter contato.",
+        "Depois do 6, use a Lente do Oráculo para conferir o caminho do all-in. Entrar passando por cogumelos pode estragar a perseguição."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1677,7 +1806,10 @@
     "Trundle": {
       "late": "favorable",
       "tips": [
-        "Faça trocas curtas e não fique preso entre o pilar e a parede. Se ele ultar, saia e espere o R acabar para continuar."
+        "Faça trocas curtas e saia antes de virar uma disputa de AAs. O Q dele rouba AD e piora sua resposta se você continuar batendo.",
+        "Se ele usar W, recue da área em vez de tentar acompanhar a velocidade de ataque e de movimento dele.",
+        "Guarde Q ou E para reposicionar quando ele usar o pilar. Gastar toda a mobilidade na entrada facilita ele te perseguir.",
+        "Tire HP antes de tentar finalizar com R. Se ele ultar, respeite a cura e o roubo de resistências em vez de insistir numa fight longa."
       ],
       "build": null,
       "early": "favorable",
@@ -1688,7 +1820,10 @@
     "Tryndamere": {
       "late": "favorable",
       "tips": [
-        "Troque com a Fúria dele baixa e guarde W para não deixar ele grudar. Conte o tempo do R e só solte R2 depois que acabar."
+        "Olhe a fúria antes de trocar. Com a barra cheia, os críticos podem virar uma disputa de AAs muito rápido.",
+        "Se ele girar em você, use W, dê AA se for seguro e saia de E. Guarde Qs para continuar recuando se ele perseguir.",
+        "Quando ele ultar, espace W, Q3 e os dashes para ganhar distância durante o R. Soltar todos os controles juntos facilita ele voltar a bater.",
+        "Segure a wave perto da sua torre para reduzir a perseguição. Não avance com tudo em cooldown se ele ainda puder girar e usar Fantasma."
       ],
       "build": null,
       "early": "favorable",
@@ -1731,7 +1866,10 @@
     "Urgot": {
       "late": "even",
       "tips": [
-        "Desvie do E e troque pelo lado em que as pernas já dispararam. Se tomar R com pouco HP, recue antes de entrar na faixa de execução."
+        "Não gaste E para começar a troca enquanto ele tiver o avanço. Guarde o dash para desviar do E dele.",
+        "Aproxime com um Q e recue se ele tentar te virar. Depois que o E errar, você tem espaço para voltar a trocar.",
+        "Durante a fight, tente ficar no mesmo lado dele. Rodar em volta do Urgot permite que ele acerte mais pernas da passiva.",
+        "Depois do 6, mantenha um dash para desviar do R. Se tomar o E, priorize sair da sequência em vez de devolver todo o combo."
       ],
       "build": null,
       "early": "even",
@@ -1742,7 +1880,10 @@
     "Varus": {
       "late": "favorable",
       "tips": [
-        "Desvie do Q carregado e guarde E para o R. Quando entrar, não estenda a troca com os stacks da passiva dele em você."
+        "Use os bushes e preserve HP enquanto farma. Entrar depois de tomar poke demais deixa pouco espaço para sobreviver à resposta.",
+        "Procure trocar depois que ele gastar Q ou E na wave. Evite usar todos os Qs só para chegar e ficar sem dano nem saída.",
+        "Depois do 6, guarde E ou um Q para desviar do R. O root pode parar o all-in mesmo quando você já conseguiu encostar.",
+        "Se ele estiver avançado, prepare o gank com HP e skills disponíveis. Não force uma entrada atravessando uma wave grande."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1826,7 +1967,10 @@
     "Vladimir": {
       "late": "favorable",
       "tips": [
-        "Recue quando o Q dele estiver vermelho. Force a poça sem gastar R2 e volte a trocar enquanto ela estiver em cooldown."
+        "Pressione quando ele vier farmar e tente fazer a wave voltar para o seu lado. Perto da torre dele, fica mais fácil recuperar HP sem se expor.",
+        "Olhe a barra do Q e evite dar o Q fortalecido de graça. Use E para segurar o dano se precisar chegar para farmar.",
+        "Force a poça com uma primeira troca e volte a pressionar antes que o W retorne. Não gaste R2 enquanto ele estiver inalvejável.",
+        "No all-in, tente chegar usando no máximo parte dos dashes. Guarde o resto para acompanhar depois da poça, em vez de gastar tudo antes dela."
       ],
       "build": null,
       "early": "favorable",
@@ -1837,7 +1981,10 @@
     "Volibear": {
       "late": "unfavorable",
       "tips": [
-        "Não fique no E quando ele vier para cima e saia antes do segundo W. Depois do 6, cuidado com o dive mesmo debaixo da sua torre."
+        "Saia do círculo do E para evitar o dano e tente não trocar enquanto ele estiver com o escudo.",
+        "Depois que ele marcar você com W, recue e espere a marca acabar. O segundo W dá mais dano e cura o Volibear.",
+        "W pode parar a corrida do Q, mas isso não coloca o Q dele em cooldown. Use a pausa para se afastar, sem achar que já pode voltar a bater.",
+        "Procure trocas curtas quando ele gastar skills. Se ele tiver Q e E prontos, guarde mobilidade para não tomar stun dentro do raio."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1848,7 +1995,10 @@
     "Warwick": {
       "late": "favorable",
       "tips": [
-        "Faça trocas curtas enquanto ele estiver com HP alto. Recue antes de ele começar a curar muito, espere o fear do E e desvie do R pelo lado."
+        "Não trate pouco HP como kill garantida. A cura dele aumenta o risco de perder uma troca que parecia ganha.",
+        "Baite o E antes de gastar o combo inteiro. Durante a redução de dano, guarde o burst e respeite o medo na saída.",
+        "Evite depender do Q3 para segurar ele com Q disponível. Se ele segurar o Q para te acompanhar, pode ignorar o deslocamento.",
+        "Segure a wave do seu lado e prepare o gank. Não precisa ganhar um duelo longo para manter o farm; se a cura estiver decidindo os all-ins, considere corta-cura."
       ],
       "build": null,
       "early": "even",
@@ -1892,7 +2042,10 @@
     "Yasuo": {
       "late": "even",
       "tips": [
-        "Tire o escudo da passiva numa troca curta e conte os Qs. Guarde R2 para depois da parede ou solte de um ângulo que ela não bloqueie."
+        "Tire o escudo da passiva com uma primeira troca antes de gastar o combo inteiro.",
+        "Faça trocas curtas e recue quando ele preparar o tornado. W e Q3 podem interromper a animação do Q se acertarem no momento certo.",
+        "Evite perseguir pelo meio dos seus minions: eles dão caminhos de E para ele desviar e continuar batendo.",
+        "Guarde R2 enquanto ele puder bloquear com a parede de vento. Espere ele gastar W ou reposicione para acertar sem atravessar a parede."
       ],
       "build": null,
       "early": "favorable",
@@ -1903,7 +2056,10 @@
     "Yone": {
       "late": "even",
       "tips": [
-        "Desvie do Q3 e recue enquanto ele estiver de E. Se der para punir a volta, prepare W onde ele vai reaparecer antes de continuar o combo."
+        "Troque quando ele estiver sem E e sem Q3 preparado. Faça dano e saia antes de ele conseguir alongar a resposta.",
+        "Se ele usar E, guarde mobilidade para recuar. Gastar todo o kit no começo deixa você exposto à perseguição.",
+        "Desvie do Q3 para não facilitar o R em sequência. Um Q ou E guardado também ajuda a sair da direção da ult.",
+        "Depois do 6, tire HP com trocas curtas antes do all-in. Não conte com matar numa rotação se ele ainda puder desviar do seu dano."
       ],
       "build": null,
       "early": "favorable",
@@ -1914,7 +2070,10 @@
     "Yorick": {
       "late": "unfavorable",
       "tips": [
-        "Desvie do E para os ghouls não pularem em você. Guarde um dash para sair da parede e puna quando ele estiver sem Donzela."
+        "Pressione cedo quando ele vier preparar túmulos. Se deixar ele juntar tropas sem responder, a próxima troca fica mais difícil.",
+        "Guarde um dash para desviar do E. Se ele acertar a marca com tropas prontas para pular, recue e limpe os bichos antes de continuar.",
+        "Guarde Q3 ou E para sair da parede do W. Não gaste toda a mobilidade entrando e fique preso na resposta.",
+        "Depois do 6, procure tirar a Donzela antes de um all-in longo. Se ela estiver viva, conte com o dano dela ao avaliar a fight."
       ],
       "build": null,
       "early": "even",
@@ -1947,7 +2106,9 @@
     "Zaahen": {
       "late": "unfavorable",
       "tips": [
-        "Troque curto antes de ele stackar Determinação. Saia do R para ele não curar e veja se a ressurreição está disponível antes de gastar tudo."
+        "Faça trocas curtas e recue antes de ele acumular Determinação batendo em você. A passiva aumenta o AD dele durante a fight.",
+        "Guarde Q ou E para sair depois do combo. Se continuar batendo sem skills enquanto ele ainda tem dano, você facilita a troca longa que ele quer.",
+        "Confira a ressurreição da passiva antes de gastar tudo no all-in. Deixar ele com pouco HP não significa que a luta acabou."
       ],
       "build": null,
       "early": "favorable",
@@ -1958,7 +2119,10 @@
     "Zac": {
       "late": "favorable",
       "tips": [
-        "Cancele o pulo com Q3 ou W se conseguir acertar antes de ele cair. Pise nas gosmas entre as trocas para ele curar menos."
+        "Quando ele usar Q num minion, espere a ligação acabar antes de se aproximar. Ele pode usar você como o segundo alvo para puxar os dois.",
+        "Guarde mobilidade para desviar da queda do E. Depois que ele gastar a entrada, faça sua troca sem entregar todos os dashes de uma vez.",
+        "Pise nos pedaços da passiva quando for seguro para negar a cura. Não tome o combo inteiro só para disputar um pedaço.",
+        "No all-in depois do 6, conte com a cura e com a passiva de reviver. Se levar Ignite, use durante a parte da luta em que ele vai recuperar HP."
       ],
       "build": null,
       "early": "favorable",
