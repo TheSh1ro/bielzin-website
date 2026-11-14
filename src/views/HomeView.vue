@@ -25,6 +25,7 @@ import YouTubeTrack from '@/components/YouTubeTrack.vue'
 import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
+import '@/assets/riven-experiment.css'
 
 const loadRiven = () => import('@/components/RivenGuide.vue')
 const RivenGuide = defineAsyncComponent(loadRiven)
@@ -883,8 +884,9 @@ function finishEntrance() {
         </div>
       </main>
     </Transition>
-    <Transition name="riven-page">
+    <Transition name="riven-page" :duration="motionEnabled ? { enter: 1150, leave: 650 } : 0">
       <main v-if="rivenOpen" class="riven-page" aria-label="Guia da Riven">
+        <div class="riven-rift" aria-hidden="true"><span></span><span></span><span></span></div>
         <div class="riven-page-inner">
           <RivenGuide>
             <template #back>

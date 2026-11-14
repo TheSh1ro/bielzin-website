@@ -279,6 +279,7 @@ void loadPatch()
           aria-labelledby="riven-greaves-title"
         >
           <header class="riven-feature-heading">
+            <div class="riven-edition"><span>RIVEN GUIDE</span><span>01 / MID</span></div>
             <h2 id="riven-greaves-title" class="riven-mid-title">RIVEN <span>MID</span></h2>
             <div class="riven-hot-tip-title">
               <img
