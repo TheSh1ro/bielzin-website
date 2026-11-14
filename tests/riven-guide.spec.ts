@@ -57,8 +57,8 @@ test('lê builds e avaliações exportadas, distingue pendências e mostra situa
     }),
   )
   await page.goto('/riven')
-  await expect(page.getByLabel('Avaliação do duelo para a Riven')).toContainText('A avaliar')
-  await expect(page.getByLabel('Avaliação do duelo para a Riven')).toContainText('Equilibrado')
+  await expect(page.getByLabel('Como é a matchup para a Riven')).toContainText('A avaliar')
+  await expect(page.getByLabel('Como é a matchup para a Riven')).toContainText('Equilibrado')
   await expect(
     page.getByRole('list', { name: 'Dicas do matchup' }).getByRole('listitem'),
   ).toHaveText(['Texto vindo do banco.\nSegunda linha.', 'Outra dica independente.'])

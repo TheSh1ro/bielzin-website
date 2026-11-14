@@ -364,7 +364,7 @@ onBeforeUnmount(() => {
                 {{
                   isDefault
                     ? 'O ponto de partida para todos os matchups.'
-                    : 'Prepare a Riven para este duelo.'
+                    : 'Edite as dicas e a build desta matchup.'
                 }}
               </p>
             </div>
@@ -409,7 +409,7 @@ onBeforeUnmount(() => {
             >
               <div class="section-heading">
                 <div>
-                  <h2 id="heading-duel">Avaliação do duelo</h2>
+                  <h2 id="heading-duel">Dificuldade da matchup</h2>
                   <p>Pela perspectiva da Riven.</p>
                 </div>
               </div>
@@ -552,7 +552,7 @@ onBeforeUnmount(() => {
                 />
                 <h3>Compras antecipadas</h3>
                 <p class="field-help">
-                  Componentes para estabilizar o duelo, sem obrigar a fechar o item.
+                  O que comprar para aguentar a lane, mesmo sem fechar o item completo.
                 </p>
                 <GuideChoicesEditor
                   v-model="draft.lanePlan.components"
@@ -582,7 +582,7 @@ onBeforeUnmount(() => {
                           : 'Monte a sequência de compra padrão da Riven.'
                         : draft.build
                           ? 'Build personalizada para este matchup.'
-                          : 'Este matchup herda os itens da configuração padrão.'
+                          : 'Esta matchup usa os itens padrão.'
                     }}
                   </p>
                 </div>
@@ -617,7 +617,7 @@ onBeforeUnmount(() => {
                         ? 'Defina a página de runas padrão da Riven.'
                         : draft.runes
                           ? 'Página personalizada para este matchup.'
-                          : 'Este matchup herda as runas da configuração padrão.'
+                          : 'Esta matchup usa as runas padrão.'
                     }}
                   </p>
                 </div>

@@ -276,7 +276,7 @@ async function collapseMatches() {
             </div>
           </li>
         </ol>
-        <p v-if="!champions.length" class="empty">Nenhuma partida nesta amostra.</p>
+        <p v-if="!champions.length" class="empty">Nenhuma partida nesse período.</p>
       </section>
 
       <section class="match-section" aria-labelledby="match-title">
@@ -314,7 +314,7 @@ async function collapseMatches() {
             >
           </li>
         </ol>
-        <p v-if="!matches.length" class="empty">Nenhuma partida nesta amostra.</p>
+        <p v-if="!matches.length" class="empty">Nenhuma partida nesse período.</p>
         <div v-if="matches.length > matchPageSize" class="match-controls">
           <button
             v-if="visibleCount < matches.length"

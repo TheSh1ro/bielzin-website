@@ -1,11 +1,11 @@
 .riven {
-  --riven-green: #b4eed0;
+  --riven-green: #e0b8e5;
   --focus-color: var(--riven-green);
-  --riven-muted: #bac8c1;
-  --riven-line: #e0eee51c;
-  --riven-hover: #b2f7cd0c;
+  --riven-muted: #c4bcc9;
+  --riven-line: #eee0f01c;
+  --riven-hover: #edb2f70c;
   --riven-warm: #f4b9ad;
-  color: #f4f8f5;
+  color: #f8f4f9;
 }
 
 .riven-glass {
@@ -18,40 +18,134 @@
   position: sticky;
   z-index: 3;
   top: 0;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) auto minmax(120px, 1fr);
   align-items: center;
-  gap: 6px;
-  min-height: 56px;
-  padding-inline: clamp(8px, 2vw, 20px);
-  border: 1px solid var(--riven-line);
-  background: #0c0e0dcc;
-  backdrop-filter: blur(18px);
+  gap: 32px;
+  min-height: 84px;
+  background: #0b090ef2;
+  backdrop-filter: blur(20px);
+  transition: transform 220ms ease;
+}
+.riven-nav.is-hidden {
+  transition: transform 120ms ease-out;
+  transform: translateY(calc(-100% - 16px));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .riven-nav,
+  .riven-nav.is-hidden {
+    transition: none;
+  }
+}
+.riven-nav::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, #bf82b326, #f2c5e552 45%, #bf82b326);
+}
+.riven-nav-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.riven-nav-identity strong {
+  display: block;
+  font: 600 1.5rem/1 var(--display);
+  letter-spacing: 0.2em;
 }
 
+.riven-nav-sigil {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 42px;
+  color: #edbedf;
+  background: linear-gradient(140deg, #d39acb20, #d39acb00 70%);
+  clip-path: polygon(50% 0, 100% 22%, 100% 65%, 50% 100%, 0 78%, 0 35%);
+}
+.riven-nav-sigil::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  background: linear-gradient(transparent, #edbedf, transparent);
+}
 .riven-nav-sections {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  align-self: stretch;
+  align-items: stretch;
+  gap: 32px;
 }
-
-.riven-nav-sections a {
+.riven-nav-sections button {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   min-height: 44px;
-  padding-inline: 8px;
-  color: var(--riven-muted);
-  font: 600 0.875rem/1.25 var(--display);
+  color: #a69baa;
+  font: 500 0.875rem/1.25 var(--display);
+  text-decoration: none;
+  transition: color 160ms ease;
 }
-
-.riven-nav-sections a:hover {
-  color: var(--riven-green);
+.riven-nav-sections button::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 2px;
+  background: linear-gradient(90deg, #c16c9f, #f0c7e4, #c16c9f);
+  opacity: 0;
+  transition: opacity 160ms ease;
 }
-
-.riven-nav-sections svg {
-  flex: none;
-  color: var(--riven-green);
+.riven-nav-sections button[aria-current] {
+  color: #f4d7ee;
+}
+.riven-nav-sections button[aria-current]::after {
+  opacity: 1;
+}
+.riven-nav-sections button:is(:hover, :focus-visible) {
+  color: #f4d7ee;
+}
+.riven-nav-return {
+  justify-self: end;
+}
+.riven-nav-return .riven-back {
+  padding-inline: 16px 0;
+  border-left: 1px solid var(--riven-line);
+  gap: 10px;
+}
+.riven-nav-return .riven-back-mark {
+  width: 22px;
+  height: 22px;
+  background: none;
+}
+.riven-nav-return .riven-back-mark::before {
+  display: none;
+}
+@media (max-width: 740px) {
+  .riven-nav {
+    grid-template-columns: 1fr auto;
+    gap: 0 12px;
+    padding-top: 12px;
+  }
+  .riven-nav-identity {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .riven-nav-return {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .riven-nav-sections {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .riven-nav-identity strong {
+    font-size: 1.125rem;
+  }
 }
 
 .riven-section {
@@ -734,13 +828,13 @@
     gap: 0;
   }
 
-  .riven-nav-sections a {
+  .riven-nav-sections button {
     gap: 5px;
     padding-right: 5px;
     font-size: 0.75rem;
   }
 
-  .riven-nav-sections a > svg {
+  .riven-nav-sections button > svg {
     display: none;
   }
 
@@ -877,4 +971,150 @@
 }
 .riven-matchup-overview .riven-assessment {
   border-left: 0;
+}
+
+/* The mid feature is a cover composition, distinct from matchup model stages. */
+.riven-feature {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  background: radial-gradient(ellipse at 80% 35%, #9f74cf1f, transparent 55%);
+  border-top: 1px solid #c8a7e045;
+  border-bottom: 1px solid var(--riven-line);
+}
+.riven-feature .riven-hot-tip-copy {
+  position: relative;
+  z-index: 1;
+  padding: 36px 0 32px;
+}
+.riven-feature .riven-hot-tip-heading {
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  color: #d5b8ed;
+}
+.riven-feature .riven-hot-tip-title {
+  margin-block: 20px;
+}
+.riven-feature .riven-hot-tip-title h3 {
+  font: 600 clamp(1.25rem, 2vw, 1.75rem)/1.15 var(--display);
+  letter-spacing: -0.055em;
+}
+.riven-feature .riven-hot-tip-copy > p {
+  max-width: none;
+  line-height: 1.75;
+}
+.riven-feature-art {
+  position: relative;
+  min-width: 0;
+  align-self: stretch;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 85%, transparent);
+}
+.riven-feature-art .local-model {
+  position: absolute;
+  inset: 0;
+}
+.riven-feature-art .canvas-host {
+  height: 100%;
+  min-height: 420px;
+}
+.riven-feature .riven-hot-tip-build {
+  grid-column: 1 / -1;
+  padding: 22px 0;
+  border-left: 0;
+  border-top: 1px solid var(--riven-line);
+}
+.riven-feature .riven-hot-tip-build > h3 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--riven-muted);
+}
+.riven-feature .riven-hot-tip-build ul {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 12px;
+}
+.riven-feature .riven-hot-tip-build li {
+  border-bottom: 0;
+  align-items: start;
+}
+@media (max-width: 740px) {
+  .riven-feature {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .riven-feature .riven-hot-tip-copy {
+    padding-block: 28px 0;
+  }
+  .riven-feature-art {
+    height: 320px;
+    margin-top: -8px;
+  }
+  .riven-feature-art .canvas-host {
+    min-height: 0;
+  }
+  .riven-feature .riven-hot-tip-build ul {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+
+@media (max-width: 740px) {
+  .riven-section {
+    scroll-margin-top: 114px;
+  }
+}
+
+.riven-feature .riven-hot-tip-copy {
+  padding-right: clamp(24px, 3vw, 48px);
+  min-height: 420px;
+}
+.riven-feature .riven-hot-tip-title {
+  margin-top: 0;
+}
+.riven-feature .riven-greaves-effects {
+  grid-template-columns: repeat(2, max-content);
+  gap: clamp(24px, 4vw, 56px);
+}
+@media (max-width: 740px) {
+  .riven-feature .riven-hot-tip-copy {
+    padding-right: 0;
+    min-height: 0;
+  }
+  .riven-feature .riven-greaves-effects {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+.riven-mid-title {
+  margin: 0 0 24px;
+  font: 750 clamp(3.5rem, 6vw, 6.5rem)/0.95 var(--display);
+  letter-spacing: -0.065em;
+}
+.riven-mid-title span {
+  color: #dba2cb;
+  font-weight: 350;
+}
+.riven-feature .riven-hot-tip-title {
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.riven-feature .riven-hot-tip-title img {
+  width: 32px;
+  height: 32px;
+}
+
+.riven-lane-label {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid #c39bbf55;
+  color: var(--riven-green);
+  font: 500 0.75rem/1.4 var(--display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }

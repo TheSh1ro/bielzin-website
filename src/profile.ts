@@ -86,7 +86,7 @@ export const profile = {
   ] satisfies Link[],
   favoriteGame: {
     name: 'League of Legends',
-    cover: '/media/riven.jpg',
+    cover: '/media/riven/broken-covenant-monochrome.jpg',
     guide: 'https://www.canva.com/design/DAGO4iMzYcM/b25o5mj_BhH2WvXUZOIkoA/view',
   },
   games: [
@@ -122,7 +122,7 @@ export const profile = {
         'Versionamento e testes de software',
         'Fundamentos de segurança da informação',
       ],
-      practice: ['Infraestrutura · prática em projetos'],
+      practice: ['Infraestrutura nos meus projetos'],
       note: 'Minha experiência com infraestrutura veio colocando projetos no ar e cuidando do ambiente em que eles rodam.',
     },
     connectedProjects: [
@@ -133,7 +133,7 @@ export const profile = {
           'O site onde os usuários gerenciam e renovam suas licenças pagas do DayZ Bot, compram créditos e baixam o aplicativo. Eu cuido das contas e licenças pelo painel de administração.',
         features: [
           'Permite comprar créditos e renovar a licença',
-          'Mostra o prazo da licença e disponibiliza o download do app',
+          'Mostra quando a licença vence e permite baixar o app',
           'Conta com painel admin para gerenciar usuários e licenças',
         ],
         tech: ['Vue', 'Supabase', 'PostgreSQL'],

@@ -185,7 +185,7 @@ function move(key: Group, index: number, offset: number) {
     </div>
     <div v-if="!structured" class="field-block">
       <label for="build-reason">Explicação da build</label>
-      <p class="field-help">Por que estes itens funcionam neste duelo?</p>
+      <p class="field-help">Por que fazer esses itens nesta matchup?</p>
       <textarea
         id="build-reason"
         v-model="build.reason"

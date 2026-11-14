@@ -761,11 +761,11 @@ function finishEntrance() {
               </section>
               <section class="connected-projects" aria-labelledby="connected-title">
                 <div class="connected-heading">
-                  <p class="dev-label">Em destaque · Em operação</p>
+                  <p class="dev-label">Meus projetos</p>
                   <h3 id="connected-title">Celerity + DayZ Bot</h3>
                   <p>
-                    Dois projetos que mantenho em operação, com usuários e licenças pagas. O site
-                    cuida do acesso e das renovações; o aplicativo roda no PC.
+                    Dois projetos que mantenho, com usuários e licenças pagas. O site cuida do
+                    acesso e das renovações; o aplicativo roda no PC.
                   </p>
                 </div>
                 <div class="connected-grid">
@@ -892,15 +892,13 @@ function finishEntrance() {
                 ref="rivenBack"
                 class="riven-back"
                 href="/"
-                aria-label="Voltar para Jogos"
+                aria-label="Voltar ao perfil"
                 @click.left.exact.prevent="closeRiven"
               >
                 <span class="riven-back-mark" aria-hidden="true">
                   <ArrowLeft :size="16" />
                 </span>
-                <span class="riven-back-label">
-                  <span class="riven-back-prefix">Voltar para </span>Jogos
-                </span>
+                <span class="riven-back-label">Voltar ao perfil</span>
               </a>
             </template>
           </RivenGuide>

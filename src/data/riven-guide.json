@@ -20,19 +20,19 @@
       "situational": [
         {
           "item": 6695,
-          "condition": "Contra escudos que impedem seus abates. Encaixe na rota quando essa defesa for a principal ameaça."
+          "condition": "Faça quebra-escudo se os escudos estiverem impedindo você de matar."
         },
         {
           "item": 3123,
-          "condition": "Contra cura que decide as trocas ou as lutas. Antecipe o componente de anti-cura e avalie quando completar o item."
+          "condition": "Se a cura estiver decidindo as trocas, compre corta-cura cedo. Não precisa fechar o item completo na hora."
         },
         {
           "item": 3156,
-          "condition": "Contra ameaça mágica relevante. Fora do núcleo com Fome, ajuste a prioridade ao dano do time inimigo; um Hexdrinker cedo não obriga a fechar Malmortius na lane."
+          "condition": "Contra muito dano AP. Você pode comprar Hexdrinker para aguentar a lane e deixar para fechar Malmortius depois."
         },
         {
           "item": 3026,
-          "condition": "Para preservar sua presença em lutas decisivas quando uma morte entrega muita vantagem."
+          "condition": "Se você está carregando e morrer pode entregar o jogo, GA dá uma segunda chance na fight."
         }
       ]
     },
@@ -59,66 +59,66 @@
       "boots": [
         {
           "item": 3158,
-          "condition": "Escolha geral quando pode priorizar aceleração, especialmente com vantagem. Ganham prioridade na rota Eclipse + Cutelo, que oferece menos aceleração que as alternativas com Fome Eterna."
+          "condition": "Para ter mais CDR, principalmente se estiver ganhando a lane. Com Eclipse + Cutelo, fazem mais falta porque você tem menos CDR do que nas builds com Fome Eterna."
         },
         {
           "item": 3047,
-          "condition": "Contra dano físico concentrado em ataques básicos, seja do laner ou de boa parte do time inimigo. Ajudam a estabilizar uma lane perdida e também a proteger uma vantagem grande."
+          "condition": "Contra laner que dá muito dano nos AAs, ou time com muito dano AD baseado em ataque básico. Boa para segurar uma lane ruim ou não entregar shutdown quando estiver forte."
         },
         {
           "item": 3111,
-          "condition": "Contra dano mágico e muito controle reduzível por tenacidade, principalmente se Fome Eterna ainda estiver longe. Considere a tenacidade que a Fome já vai oferecer."
+          "condition": "Contra dano AP e muito CC que a tenacidade reduz, principalmente se você ainda vai demorar para fechar Fome Eterna. Lembre que a Fome também dá tenacidade."
         }
       ],
-      "intro": "O primeiro item responde à matchup. O restante da build responde ao jogo: vantagem, tipo de dano e lutas que você quer fazer.",
+      "intro": "Escolha o primeiro item pela matchup. Depois, adapte a build ao time inimigo e a como o jogo está indo.",
       "routes": [
         {
           "id": "axioma",
-          "when": "Para pressionar cedo com AD, letalidade e aceleração desde os componentes.",
+          "when": "Para ganhar força cedo, já nos componentes.",
           "items": [
             6696,
             6333,
             2517
           ],
-          "title": "Axioma · pressão cedo",
-          "reason": "O Brutalizador entrega AD, aceleração e letalidade antes do item fechado. O Axioma mantém essa pressão e recupera parte da recarga do R em abates dos quais você participou. Como não oferece vida nem resistências, Dança da Morte entra em seguida para sustentar as lutas. Fome Eterna converte AD adicional em aceleração e recompensa as participações em abates com mais vampirismo.",
-          "followup": "Depois do núcleo, ajuste os espaços restantes ao dano e às ameaças do time inimigo.",
+          "title": "Axioma · forte cedo",
+          "reason": "O Brutalizador já dá AD, CDR e letalidade. Ao fechar Axioma, você mantém esse dano e recupera parte do cooldown do R ao participar de abates. Como ele não dá HP nem resistência, faça Dança da Morte para aguentar mais dano. Fome Eterna dá CDR com base no AD extra e mais omnivamp ao participar de um abate.",
+          "followup": "Depois desses três itens, faça o que precisar contra o time inimigo: penetração, defesa, corta-cura ou quebra-escudo.",
           "components": [
             {
               "item": 2020,
-              "condition": "Um pico de força durante a construção do Axioma: AD, aceleração e letalidade."
+              "condition": "Brutalizador já dá um spike antes de fechar Axioma: AD, CDR e letalidade."
             }
           ]
         },
         {
           "id": "cutelo",
-          "when": "Para trocas prolongadas, enfrentar armadura e ter uma lane mais estável.",
+          "when": "Para trocar por mais tempo, bater em quem está fazendo armadura e ter mais HP na lane.",
           "items": [
             3071,
             2517,
             6333
           ],
           "title": "Cutelo · trocas longas",
-          "reason": "O Cutelo reduz até 30% da armadura ao acumular a passiva. Vida e velocidade de movimento ao causar dano físico ajudam a prolongar a troca e sair sem ser punido. Fome Eterna acrescenta aceleração com base no AD adicional e força nas lutas; Dança da Morte completa um núcleo mais resistente.",
-          "followup": "Um caminho de estabilidade quando você precisa de vida e tempo para aplicar o combo. Ajuste os próximos itens à composição inimiga.",
+          "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e o move speed ajuda a grudar ou sair sem tomar dano de graça. Fome Eterna entra pelo CDR e sustain; Dança da Morte deixa você mais difícil de matar.",
+          "followup": "Boa opção quando você precisa aguentar mais dano para conseguir combar. Depois, adapte os itens ao time inimigo.",
           "components": []
         },
         {
           "id": "fome",
-          "when": "Lane estável ou favorável, com plano de chegar forte às lutas de três itens.",
+          "when": "Para uma lane tranquila ou ganhando, pensando nas fights com três itens.",
           "items": [
             2517,
             6333,
             3156
           ],
-          "title": "Fome · força em 3 itens",
-          "reason": "Fome Eterna, Dança da Morte e Malmortius combinam vampirismo, dano adiado, escudo mágico e aceleração. As passivas ganham muito valor quando você participa de abates e continua na luta. A rota também funciona no top, sem depender da bota aprimorada mostrada na build de mid.",
-          "followup": "Planeje o pico de três itens sem ignorar a lane. Reavalie a prioridade de resistência mágica se o time inimigo não oferecer essa ameaça.",
+          "title": "Fome · spike em 3 itens",
+          "reason": "Fome Eterna + Dança da Morte + Malmortius dão sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha mais omnivamp e limpa o dano acumulado da Dança. Dá para continuar fightando mesmo com pouco HP. Também funciona no top, sem o upgrade da bota do mid.",
+          "followup": "Você quer chegar forte nos três itens, mas precisa conseguir jogar a lane até lá. Se o time inimigo não tiver dano AP que justifique Malmortius, troque por outro item.",
           "components": []
         },
         {
           "id": "eclipse",
-          "when": "Prioridade contra Jax ou para ampliar uma vantagem com trocas curtas e escudo.",
+          "when": "Principalmente contra Jax, ou para abusar de uma lane que você já está ganhando.",
           "items": [
             6692,
             3071,
@@ -127,12 +127,12 @@
             3026
           ],
           "title": "Eclipse · trocas curtas",
-          "reason": "Duas ações distintas ativam o escudo e favorecem entrar, causar dano e sair com pouca resposta. Contra Jax, procure Q3 + ataque básico fora do E dele; quando ele saltar com o E ativo, use W para interromper a aproximação e recue até a esquiva acabar. Com vantagem, o escudo facilita punir repetidamente e preparar pressão sob a torre.",
-          "followup": "A continuação é Eclipse → Cutelo → Dança da Morte → Malmortius → Anjo Guardião. Encaixe anti-escudo ou anti-cura quando necessário e ajuste Malmortius à ameaça mágica. Aceleração merece atenção nesta rota.",
+          "reason": "O escudo do Eclipse permite trocar e sair tomando pouco dano. Contra Jax, procure Q3 + AA quando o E dele não estiver ativo. Se ele pular em você de E ligado, dê W e recue até acabar. Vá ganhando essas trocas até ter dano para matar. Com vantagem, o escudo também ajuda a bater nele debaixo da torre.",
+          "followup": "Siga com Cutelo → Dança da Morte → Malmortius → Anjo Guardião. Encaixe corta-cura ou quebra-escudo se precisar e só faça Malmortius se o dano AP justificar. Como essa build tem menos CDR, Ionianas ajudam bastante.",
           "components": []
         }
       ],
-      "bootsNote": "Perdendo a lane, priorize a defesa que resolve a ameaça. Ganhando, Ionianas aceleram o ritmo; muito à frente, botas defensivas também ajudam a preservar a vantagem. Reavalie a necessidade de aceleração conforme os dragões e o restante da build.",
+      "bootsNote": "Se estiver perdendo a lane, faça bota defensiva. Se estiver ganhando, Ionianas dão mais CDR; muito na frente, bota defensiva também ajuda a não entregar a vantagem. Considere o CDR dos dragões e dos seus itens.",
       "defaultRoute": "axioma"
     }
   },
@@ -140,28 +140,30 @@
     "Aatrox": {
       "late": "favorable",
       "tips": [
-        "Entre na zona interna do Q1 e Q2. Guarde E para esquivar do centro do Q3 e espere a cura do R acabar antes de insistir.",
+        "Entre na parte de dentro do Q1 e do Q2 para não tomar a borda. Guarde E para desviar do centro do Q3. Se ele ultar, espere o R acabar antes de continuar a troca.",
         ""
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Ahri": {
       "late": "favorable",
       "tips": [
-        "Fique atrás das tropas até ela errar o E. No late, pressione de um flanco e espere os avanços do R antes de gastar Q3."
+        "Fique atrás dos minions até ela errar o E. No late, pressione de um flanco e espere os dashes do R antes de gastar Q3."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Akali": {
       "late": "even",
       "tips": [
-        "Troque antes do nível 6 e recue quando ela soltar a fumaça. Guarde E para desviar da shuriken ou segurar o dano quando ela voltar."
+        "Troque antes do level 6. Se ela usar a fumaça, recue. Guarde E para desviar do E dela ou segurar o dano quando ela voltar."
       ],
       "build": null,
       "early": "even",
@@ -169,11 +171,11 @@
       "visible": true,
       "lanePlan": {
         "route": null,
-        "reason": "Se o dano mágico estiver impedindo trocas justas, antecipe Hexdrinker. Depois, retome seu primeiro item completo: Axioma, Cutelo ou Fome Eterna conforme a lane e o plano de jogo. Não é uma indicação de fechar Malmortius agora.",
+        "reason": "Se você está tomando muito dano AP para conseguir trocar, compre Hexdrinker cedo. Depois siga para Axioma, Cutelo ou Fome Eterna conforme a lane. Não precisa fechar Malmortius agora.",
         "components": [
           {
             "item": 3155,
-            "condition": "Compre cedo para absorver parte da pressão mágica e conseguir disputar a lane. Segure o componente e siga para o primeiro item completo."
+            "condition": "Compre para aguentar o dano AP e conseguir trocar. Segure o Hexdrinker e faça seu primeiro item antes de fechar Malmortius."
           }
         ]
       }
@@ -181,12 +183,13 @@
     "Akshan": {
       "late": "favorable",
       "tips": [
-        "Use os arbustos para limitar os ataques grátis. Fique no caminho do balanço do E quando já estiver perto e corte a fuga com W."
+        "Use as bushes para limitar os AAs de graça. Fique no caminho do balanço do E quando já estiver perto e corte a fuga com W."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Alistar": {
       "late": "favorable",
@@ -201,62 +204,68 @@
     "Ambessa": {
       "late": "even",
       "tips": [
-        "Troque depois do Q2 e guarde W para o fim de um avanço. Saia do alcance do R quando estiver sem E ou Flash."
+        "Troque depois que ela gastar o Q2 e guarde W para quando ela terminar o dash. Se estiver sem E ou Flash, fique fora da range do R."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Amumu": {
       "late": "favorable",
       "tips": [
-        "Tropas bloqueiam o Q e ele tem duas cargas. Use E para sair do alcance do R e entre quando ele gastar o controle em outro alvo."
+        "Minions bloqueiam o Q e ele tem duas cargas. Use E para sair do alcance do R e entre quando ele gastar o CC em outro alvo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Anivia": {
       "late": "unfavorable",
       "tips": [
-        "Aproxime-se atrás das tropas até o Q explodir. Guarde Q3 para atravessar a parede quando o terreno permitir e confira se o ovo está disponível."
+        "Aproxime-se atrás dos minions até o Q explodir. Guarde Q3 para atravessar a parede quando o terreno permitir e confira se o ovo está disponível."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Annie": {
       "late": "favorable",
       "tips": [
-        "Conte os acúmulos do atordoamento antes de avançar. Depois que ela usar o stun e o Tibbers, pressione pelo lado e interrompa a fuga com W."
+        "Conte os stacks do stun antes de avançar. Depois que ela usar o stun e o Tibbers, pressione pelo lado e interrompa a fuga com W."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Aphelios": {
       "late": "favorable",
       "tips": [
-        "Evite o corpo a corpo enquanto ele estiver com chakrams acumulados. Entre pelo lado e guarde um avanço para o deslocamento do Flash."
+        "Não entre no corpo a corpo enquanto ele tiver muitos chakrams. Entre pelo lado e guarde um dash para seguir o Flash."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Ashe": {
       "late": "favorable",
       "tips": [
-        "Use cobertura para chegar sem ser desacelerado por vários ataques. Desvie da flecha com E e encadeie W com Q3 quando encostar."
+        "Use as bushes para chegar perto sem tomar AA e slow de graça. Desvie do R com E e dê W + Q3 quando encostar."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "AurelionSol": {
       "late": "favorable",
@@ -271,32 +280,35 @@
     "Aurora": {
       "late": "favorable",
       "tips": [
-        "Use E para evitar a volta do Q e respeite o salto do E dela. Se ela usar R, saia da área quando a perseguição custar seu combo inteiro."
+        "Use E para desviar da volta do Q e cuidado com o pulo do E dela. Se ela ultar, não gaste o combo inteiro só para correr atrás."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Azir": {
       "late": "unfavorable",
       "tips": [
-        "Aproxime-se pelo lado oposto aos soldados. Faça-o gastar o deslocamento ou a muralha antes de usar seu último avanço."
+        "Aproxime-se pelo lado oposto aos soldados. Faça-o gastar o deslocamento ou a muralha antes de usar seu último dash."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Bard": {
       "late": "favorable",
       "tips": [
-        "Evite ficar alinhado com tropas ou parede para o Q. Quando ele abrir o túnel, prefira cortar a saída a segui-lo no escuro."
+        "Evite ficar alinhado com minions ou parede para o Q. Quando ele abrir o túnel, prefira cortar a saída a segui-lo no escuro."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Belveth": {
       "late": "unfavorable",
@@ -311,112 +323,123 @@
     "Blitzcrank": {
       "late": "favorable",
       "tips": [
-        "Use as tropas para bloquear o puxão e faça trocas longe da torre. Guarde parte do combo para depois do escudo da passiva."
+        "Use os minions para bloquear o puxão e faça trocas longe da torre. Guarde parte do combo para depois do escudo da passiva."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Brand": {
       "late": "favorable",
       "tips": [
-        "Desvie do Q quando estiver em chamas e saia de perto das tropas marcadas. No late, pegue um ângulo separado dos aliados para evitar o ricochete do R."
+        "Desvie do Q quando estiver em chamas e saia de perto dos minions marcados. No late, pegue um ângulo separado dos aliados para evitar o ricochete do R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Braum": {
       "late": "favorable",
       "tips": [
-        "Recue antes de tomar o quarto acúmulo da passiva. Bata de lado quando o escudo estiver levantado e evite jogar o R2 de frente."
+        "Recue antes de tomar o quarto stack da passiva. Bata de lado quando o escudo estiver levantado e evite jogar o R2 de frente."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Briar": {
       "late": "favorable",
       "tips": [
-        "Leve a perseguição do W para perto da sua torre se a wave permitir. Desvie lateralmente do grito e evite ficar entre ela e uma parede."
+        "Se a wave permitir, leve a Briar para perto da sua torre enquanto ela te segue de W. Desvie do E pelo lado e não fique entre ela e uma parede."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Caitlyn": {
       "late": "favorable",
       "tips": [
-        "Use arbustos e cuidado com armadilhas nas entradas. Guarde E para seguir a rede ou desviar dela antes de encadear o controle."
+        "Use bushes e cuidado com armadilhas nas entradas. Guarde E para seguir a rede ou desviar dela antes de dar CC."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Camille": {
       "late": "even",
       "tips": [
-        "Puxe a luta para longe de paredes e recue quando ela preparar o Q2. Espere o escudo físico cair antes de gastar a parte forte do combo."
+        "Troque longe das paredes e recue quando ela preparar o Q2. Espere o escudo da passiva acabar antes de gastar seu combo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Cassiopeia": {
       "late": "even",
       "tips": [
-        "Vá pelo lado para evitar o W, que trava seus avanços. Esquive do Q e vire de costas na animação do R se já estiver perto."
+        "Entre pelo lado para não cair no W, que impede seus dashes. Desvie do Q e, se estiver perto, vire de costas quando ela ultar."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Chogath": {
       "late": "favorable",
       "tips": [
-        "Guarde E para sair do círculo do Q e ataque após o silêncio. No late, evite entrar com pouca vida enquanto a Mordida estiver disponível."
+        "Guarde E para desviar do Q e espere o silêncio acabar para trocar. No late, não entre com pouco HP se ele estiver com R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Corki": {
       "late": "favorable",
       "tips": [
-        "Use E para absorver o Q ou um míssil isolado. Force a Valquíria com uma entrada curta e guarde outro avanço para segui-la."
+        "Use E para absorver o Q ou um míssil isolado. Force a Valquíria com uma entrada curta e guarde outro dash para segui-la."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Darius": {
       "late": "even",
       "tips": [
-        "Entre no círculo interno do Q e saia antes dos cinco acúmulos. Se ele errar o puxão, troque curto e conserve uma saída."
+        "Entre na parte de dentro do Q e saia antes de ele stackar a passiva. Se ele errar o E, faça uma troca curta e guarde um dash para sair."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Diana": {
       "late": "favorable",
       "tips": [
-        "Desvie do Q para limitar os avanços consecutivos. Recue quando ela usar o escudo e deixe o E pronto para sair do R após o puxão."
+        "Desvie do Q para limitar os dashes consecutivos. Recue quando ela usar o escudo e deixe o E pronto para sair do R após o puxão."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Draven": {
       "late": "favorable",
@@ -431,32 +454,35 @@
     "DrMundo": {
       "late": "favorable",
       "tips": [
-        "Fique atrás da wave contra o Q e use um controle para gastar a passiva. Pise na cápsula quando for seguro e guarde o resto do combo para depois."
+        "Fique atrás da wave para não tomar Q. Tire a passiva com um CC e pise na cápsula se der. Depois, use o resto do combo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Ekko": {
       "late": "favorable",
       "tips": [
-        "Saia da trajetória de volta do Q para evitar a terceira marca. No nível 6, acompanhe a sombra do R antes de gastar seu R2."
+        "Saia da trajetória de volta do Q para evitar a terceira marca. No level 6, acompanhe a sombra do R antes de gastar seu R2."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Elise": {
       "late": "favorable",
       "tips": [
-        "Fique atrás das tropas contra o Casulo. Se ela subir com Rapel, mantenha W para o pouso e evite lutar com pouca vida contra o Q da aranha."
+        "Fique atrás dos minions contra o Casulo. Se ela subir com Rapel, mantenha W para o pouso e evite lutar com pouca vida contra o Q da aranha."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Evelynn": {
       "late": "favorable",
@@ -471,12 +497,13 @@
     "Ezreal": {
       "late": "favorable",
       "tips": [
-        "Avance atrás das tropas para bloquear o Q. Ameace com Q ou E e só comprometa o restante do combo depois do teleporte dele."
+        "Use a wave para bloquear o Q. Baite o E com uma entrada curta e guarde o resto do combo para depois do teleporte."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Fiddlesticks": {
       "late": "favorable",
@@ -491,12 +518,13 @@
     "Fiora": {
       "late": "even",
       "tips": [
-        "Proteja um ponto vital junto à parede se for encurralado. Varie o momento do W e Q3 para fazer a Ripostar sair antes do controle."
+        "Se ficar encurralado, encoste a vital na parede. Varie o timing do W e do Q3 para baitar o W dela."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Fizz": {
       "late": "favorable",
@@ -511,12 +539,13 @@
     "Galio": {
       "late": "favorable",
       "tips": [
-        "Saia do círculo do W e volte quando ele gastar o avanço. Se ele canalizar R perto de você, interrompa com W ou Q3."
+        "Saia do círculo do W e volte quando ele gastar o dash. Se ele canalizar R perto de você, interrompa com W ou Q3."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Gangplank": {
       "late": "favorable",
@@ -531,52 +560,57 @@
     "Garen": {
       "late": "even",
       "tips": [
-        "Apare o Q com E e saia do giro. Espere o W perder o escudo e vigie a própria vida quando a execução estiver disponível."
+        "Use E para segurar o Q e saia do giro. Espere o escudo do W acabar antes de combar. Cuidado com seu HP quando ele tiver R."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Gnar": {
       "late": "favorable",
       "tips": [
-        "Aproveite o Gnar pequeno depois que ele gastar o salto. Com a barra de fúria alta, mantenha a luta longe das paredes e espere a transformação passar."
+        "Puna o mini Gnar depois que ele gastar o pulo. Se a barra de fúria estiver alta, fique longe das paredes e espere o mega acabar."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Gragas": {
       "late": "favorable",
       "tips": [
-        "Espere o avanço antes de gastar Q3 e use suas tropas para bloquear o impacto. Troque longe do barril e guarde E para reposicionar após o R."
+        "Espere ele gastar o E antes de usar Q3 e use os minions para bloquear a barrigada. Não troque em cima do barril e guarde E para se reposicionar depois do R."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Graves": {
       "late": "favorable",
       "tips": [
-        "Evite paredes para não tomar a volta rápida do Q. Saia da fumaça e troque antes que ele empilhe armadura com o E."
+        "Fique longe das paredes para não tomar a volta rápida do Q. Saia da fumaça e troque antes de ele stackar armadura com E."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Gwen": {
       "late": "favorable",
       "tips": [
-        "Ataque com poucos acúmulos no Q dela e saia do centro das tesouradas. Quando a névoa cair, espere na borda ou entre com controle pronto."
+        "Troque quando o Q dela tiver poucos stacks e desvie do centro. Se ela usar W, espere do lado de fora ou entre com seu CC pronto."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Hecarim": {
       "late": "favorable",
@@ -591,52 +625,57 @@
     "Heimerdinger": {
       "late": "favorable",
       "tips": [
-        "Limpe torres isoladas enquanto ele estiver sem granada. Ataque pelo flanco quando o E errar e evite lutar cercado pelas torres."
+        "Limpe as torres isoladas quando ele estiver sem E. Se errar a granada, entre pelo lado. Não lute no meio das três torres."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Hwei": {
       "late": "favorable",
       "tips": [
-        "Force o feitiço de medo com uma aproximação curta. Depois que a família do E estiver em recarga, feche distância pelo lado."
+        "Baite o fear com uma entrada curta. Depois que ele gastar o E, entre pelo lado enquanto estiver em cooldown."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Illaoi": {
       "late": "unfavorable",
       "tips": [
-        "Use a wave para bloquear o E e limpe tentáculos quando for seguro. Saia assim que ela ultar e volte depois que os tentáculos perderem força."
+        "Use a wave para bloquear o E e limpe os tentáculos quando der. Se ela ultar, saia e espere os tentáculos pararem de bater para voltar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Irelia": {
       "late": "favorable",
       "tips": [
-        "Conte as marcas e os minions baixos que ela pode usar para avançar. Segure o burst durante o W e troque quando a passiva cair."
+        "Olhe os stacks da passiva e os minions com pouco HP que ela pode usar de Q. Não gaste o burst no W dela e troque quando a passiva cair."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Ivern": {
       "late": "favorable",
       "tips": [
-        "Esquive da raiz e abra distância até o escudo estourar. Reposicione após o segundo ataque da Margarida para evitar o arremesso seguinte."
+        "Esquive do root e abra distância até o escudo estourar. Reposicione após o segundo ataque da Margarida para evitar o próximo knock-up."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Janna": {
       "late": "favorable",
@@ -661,7 +700,7 @@
     "Jax": {
       "late": "favorable",
       "tips": [
-        "Saia do alcance do Contra-Ataque ou use W para recuar antes do stun. Volte com os ataques da passiva enquanto o E estiver em recarga."
+        "Saia da range do E ou dê W para recuar antes do stun. Quando o E acabar, volte a trocar usando os AAs da sua passiva."
       ],
       "build": null,
       "early": "even",
@@ -669,19 +708,20 @@
       "visible": true,
       "lanePlan": {
         "route": "eclipse",
-        "reason": "Eclipse favorece o padrão de trocas curtas contra Jax. Busque Q3 + ataque básico com o E dele fora de ação; use W e recue quando ele saltar com a esquiva ativa. Repita as trocas com o escudo antes de buscar o abate.",
+        "reason": "Faça Eclipse para ganhar as trocas curtas. Procure Q3 + AA quando o E dele não estiver ativo. Se ele pular de E ligado, dê W e recue. Repita até ter dano para matar.",
         "components": []
       }
     },
     "Jayce": {
       "late": "favorable",
       "tips": [
-        "Proteja-se do disparo acelerado atrás da wave. Force o empurrão na forma de martelo e guarde um avanço para reentrar."
+        "Fique atrás da wave para não tomar Q + E. Baite o E da forma de martelo e guarde um dash para entrar de novo."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Jhin": {
       "late": "favorable",
@@ -696,12 +736,13 @@
     "Jinx": {
       "late": "favorable",
       "tips": [
-        "Entre pelo lado para evitar as mordidinhas. No late, inicie antes que ela consiga uma eliminação e ganhe velocidade para manter distância."
+        "Entre pelo lado para não cair no E. No late, tente chegar nela antes do primeiro abate, quando ela ainda não tem o move speed da passiva."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Kaisa": {
       "late": "unfavorable",
@@ -726,52 +767,57 @@
     "Karma": {
       "late": "favorable",
       "tips": [
-        "Desvie do Mantra Q sem ficar perto das tropas que ele pode explodir. Rompa o vínculo do W e entre de novo depois que o escudo cair."
+        "Não fique perto dos minions quando ela usar R + Q. Saia da range do W para não tomar o root e volte a trocar depois que o escudo acabar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Karthus": {
       "late": "favorable",
       "tips": [
-        "Lute perto de tropas para dividir o dano dos Qs. Afaste-se do corpo após o abate e interrompa o R se ele canalizar enquanto vivo."
+        "Lute perto de minions para dividir o dano dos Qs. Afaste-se do corpo após o abate e interrompa o R se ele canalizar enquanto vivo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Kassadin": {
       "late": "unfavorable",
       "tips": [
-        "Pressione com dano físico antes do nível 6. Mais tarde, ataque logo após o salto dele e aplique W antes que o próximo fique disponível."
+        "Puna antes do level 6. Depois, entre logo após ele gastar R e dê W antes de ele conseguir ultar de novo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Katarina": {
       "late": "favorable",
       "tips": [
-        "Evite as adagas no chão e guarde W ou Q3 para interromper o R. Puna a janela em que ela saltar para longe de outra adaga."
+        "Não fique nas adagas. Guarde W ou Q3 para cancelar o R e puna quando ela pular para longe de outra adaga."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Kayle": {
       "late": "favorable",
       "tips": [
-        "Segure a wave perto da sua torre antes de ela ganhar alcance. Force o R com parte do combo e solte o Golpe de Vento após a invulnerabilidade."
+        "Segure a wave perto da sua torre antes de ela virar ranged. Force o R sem gastar tudo e guarde R2 para depois da invulnerabilidade."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Kayn": {
       "late": "unfavorable",
@@ -786,7 +832,7 @@
     "Kennen": {
       "late": "favorable",
       "tips": [
-        "Evite acumular duas marcas antes de avançar e puna quando ele gastar o E. Saia do R e volte quando a tempestade acabar."
+        "Não entre com duas marcas da passiva dele. Puna quando ele gastar E. Se ele ultar, saia e volte depois que o R acabar."
       ],
       "build": null,
       "early": "unfavorable",
@@ -794,11 +840,11 @@
       "visible": true,
       "lanePlan": {
         "route": null,
-        "reason": "Se o dano mágico estiver impedindo trocas justas, antecipe Hexdrinker. Depois, retome seu primeiro item completo: Axioma, Cutelo ou Fome Eterna conforme a lane e o plano de jogo. Não é uma indicação de fechar Malmortius agora.",
+        "reason": "Se você está tomando muito dano AP para conseguir trocar, compre Hexdrinker cedo. Depois siga para Axioma, Cutelo ou Fome Eterna conforme a lane. Não precisa fechar Malmortius agora.",
         "components": [
           {
             "item": 3155,
-            "condition": "Compre cedo para absorver parte da pressão mágica e conseguir disputar a lane. Segure o componente e siga para o primeiro item completo."
+            "condition": "Compre para aguentar o dano AP e conseguir trocar. Segure o Hexdrinker e faça seu primeiro item antes de fechar Malmortius."
           }
         ]
       }
@@ -806,82 +852,90 @@
     "Khazix": {
       "late": "favorable",
       "tips": [
-        "Lute junto da wave para evitar o dano do isolamento. Guarde um controle para quando ele sair da invisibilidade e se comprometer com o salto."
+        "Fique junto da wave para não tomar dano isolado. Guarde seu CC para quando ele sair da invisibilidade ou pular em você."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Kindred": {
       "late": "favorable",
       "tips": [
-        "Evite a área do lobo durante a perseguição. Dentro do R, guarde o burst para o fim ou use Q3 para deslocar Kindred na borda."
+        "Não corra atrás dentro do W. Durante o R, guarde seu burst para quando acabar ou use Q3 para tirar Kindred da borda."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Kled": {
       "late": "favorable",
       "tips": [
-        "Esquive da corda e recue quando ele disparar os quatro ataques do W. Após desmontar, finalize rápido ou recue antes que recupere coragem."
+        "Desvie da corda e recue durante os quatro AAs do W. Quando ele desmontar, mate rápido ou saia antes de ele montar de novo."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "KogMaw": {
       "late": "favorable",
       "tips": [
-        "Espere o W acabar para iniciar com menos alcance contra você. Depois do abate, use um avanço para escapar da explosão da passiva."
+        "Espere o W acabar para entrar sem tomar tantos AAs de longe. Depois de matar, use um dash para sair da explosão da passiva."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "KSante": {
       "late": "even",
       "tips": [
-        "Evite o Q3 e lute no centro da rota para limitar o R pela parede. Entre depois que o W terminar e guarde mobilidade para a forma ofensiva."
+        "Desvie do Q3 e troque longe das paredes para ele não te levar de R. Espere o W acabar para entrar e guarde um dash para quando ele ultar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Leblanc": {
       "late": "favorable",
       "tips": [
-        "Quebre a corrente com E e observe o ponto de retorno do W. Use o controle quando ela já tiver voltado ou gastado o retorno."
+        "Quebre a corrente com E e observe o ponto de retorno do W. Use o CC quando ela já tiver voltado ou gastado o retorno."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "LeeSin": {
       "late": "favorable",
       "tips": [
-        "Use tropas para bloquear o Q e mude de ângulo para evitar um chute contra a torre. Puna depois que ele gastar W para se reposicionar."
+        "Use minions para bloquear o Q e mude de ângulo para evitar um chute contra a torre. Puna depois que ele gastar W para se reposicionar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Leona": {
       "late": "favorable",
       "tips": [
-        "Abra distância quando ela ativar W e volte após a explosão. Guarde E para evitar o centro do R e ataque quando o controle acabar."
+        "Abra distância quando ela ativar W e volte após a explosão. Guarde E para evitar o centro do R e ataque quando o CC acabar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Lillia": {
       "late": "unfavorable",
@@ -936,142 +990,156 @@
     "Lux": {
       "late": "favorable",
       "tips": [
-        "Ataque de lado para evitar o Q, que atravessa o primeiro alvo. Saia da zona do E e feche distância assim que ela gastar a raiz."
+        "Ataque de lado para evitar o Q, que atravessa o primeiro alvo. Saia da zona do E e feche distância assim que ela gastar o root."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Malphite": {
       "late": "unfavorable",
       "tips": [
-        "Dê um ataque para tirar o escudo e mantenha a pressão para evitar a recarga da passiva. Guarde mobilidade para o R e considere Cutelo contra armadura."
+        "Tire o escudo com um AA e não deixe a passiva voltar de graça. Guarde um dash para o R e considere Cutelo se ele stackar armadura."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Malzahar": {
       "late": "favorable",
       "tips": [
-        "Remova o escudo antes da entrada e limpe os voidlings. Depois do nível 6, evite all-in perto da torre se a supressão estiver pronta."
+        "Remova o escudo antes da entrada e limpe os voidlings. Depois do level 6, evite all-in perto da torre se a supressão estiver pronta."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Maokai": {
       "late": "favorable",
       "tips": [
-        "Evite lutar em arbustos com mudas e pressione depois do empurrão do Q. Guarde o controle até ele reaparecer do W."
+        "Não lute nas bushes com mudas. Troque depois que ele gastar Q e guarde seu CC para quando ele sair do W."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "MasterYi": {
       "late": "unfavorable",
       "tips": [
-        "Aplique W após ele reaparecer do Q. Interrompa a Meditação com Q3 e evite usar R2 enquanto ele puder ficar inalvejável."
+        "Dê W assim que ele sair do Q. Cancele a Meditação com Q3 e não gaste R2 se ele ainda puder desviar de Q."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Mel": {
       "late": "favorable",
       "tips": [
-        "Aproxime-se pelo lado para evitar o enraizamento. Segure R2 enquanto a reflexão estiver disponível e recue se acumular muitas marcas da passiva."
+        "Aproxime-se pelo lado para evitar o root. Segure R2 enquanto a reflexão estiver disponível e recue se acumular muitas marcas da passiva."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Milio": {
       "late": "favorable",
       "tips": [
-        "Mude o ângulo para esquivar do chute e pressione na recarga. Separe W e Q3 para que a ultimate dele não resolva a sequência inteira."
+        "Desvie do Q entrando pelo lado e troque enquanto estiver em cooldown. Não dê W e Q3 juntos, para ele não tirar os dois CCs com um R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "MissFortune": {
       "late": "favorable",
       "tips": [
-        "Evite ficar atrás de minions baixos contra o Q. Se ela abrir o R ao alcance, interrompa com W ou Q3 antes de continuar o combo."
+        "Evite ficar atrás de minions com pouco HP contra o Q. Se ela abrir o R ao alcance, interrompa com W ou Q3 antes de continuar o combo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "MonkeyKing": {
       "late": "unfavorable",
       "tips": [
-        "Troque curto antes que ele empilhe armadura e não gaste R2 na cópia. Depois do 6, conte as duas ativações do R antes de voltar."
+        "Faça trocas curtas antes de ele stackar armadura e não gaste R2 no clone. Depois do 6, conte as duas ativações do R antes de voltar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Mordekaiser": {
       "late": "favorable",
       "tips": [
-        "Desvie do puxão e divida o Q com a wave. Saia antes de ele ativar a passiva e atrase seu burst até o escudo cair."
+        "Desvie do E e fique junto dos minions para não tomar Q isolado. Saia antes de ele ativar a passiva e espere o escudo acabar para gastar seu burst."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Morgana": {
       "late": "favorable",
       "tips": [
-        "Use tropas contra a raiz e aproxime-se pelo flanco. Faça o Escudo Negro expirar antes de usar seus controles e rompa a corrente do R com E."
+        "Use minions contra o root e aproxime-se pelo flanco. Faça o Escudo Negro expirar antes de usar seus CCs e rompa a corrente do R com E."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Naafiri": {
       "late": "favorable",
       "tips": [
-        "Esquive da segunda adaga quando já estiver sangrando. Agrupe os cães para acertá-los com Q e espere ela sair do estado inalvejável para usar W."
+        "Desvie da segunda adaga se a primeira acertar. Tente pegar os cães juntos no Q e espere conseguir acertar a Naafiri antes de dar W."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Nami": {
       "late": "favorable",
       "tips": [
-        "Avance na diagonal para evitar a bolha. Use o terreno para chegar por fora da onda do R e guarde um avanço para depois do Flash."
+        "Avance na diagonal para evitar a bolha. Use o terreno para chegar por fora da onda do R e guarde um dash para depois do Flash."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Nasus": {
       "late": "unfavorable",
       "tips": [
-        "Congele a wave para negar acúmulos do Q. Se ele ultar ou usar Murchar, gaste seus avanços para sair e reentre quando o efeito acabar."
+        "Freeze a wave para negar stacks de Q. Se ele usar W ou R, use os dashes para sair e volte quando acabar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Nautilus": {
       "late": "favorable",
@@ -1086,32 +1154,35 @@
     "Neeko": {
       "late": "favorable",
       "tips": [
-        "Evite ficar atrás da wave, que fortalece o E dela. Desconfie de tropas extras e guarde E ou Flash para sair do círculo do R."
+        "Evite ficar atrás da wave, que fortalece o E dela. Desconfie de minions extras e guarde E ou Flash para sair do círculo do R."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Nidalee": {
       "late": "favorable",
       "tips": [
-        "Fique atrás das tropas para bloquear a lança e evite caminhos com armadilhas. Guarde W para quando ela pousar depois do salto de puma."
+        "Fique atrás dos minions para bloquear a lança e evite caminhos com armadilhas. Guarde W para quando ela pousar depois do salto de puma."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Nilah": {
       "late": "unfavorable",
       "tips": [
-        "Faça a esquiva do W sair antes dos ataques com passiva. Guarde E para sair do círculo do R e volte depois do puxão."
+        "Baite o W antes de dar AA. Guarde E para sair do R e volte depois do puxão."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Nocturne": {
       "late": "favorable",
@@ -1136,12 +1207,13 @@
     "Olaf": {
       "late": "unfavorable",
       "tips": [
-        "Esquive dos machados e saia do caminho da coleta. Quando ele ultar, use a mobilidade para abrir distância e não deixe que renove o efeito com ataques."
+        "Desvie dos machados e não fique no caminho dele para pegar outro. Se ele ultar, use os dashes para sair da range dos AAs e não deixar ele estender o R."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Orianna": {
       "late": "favorable",
@@ -1156,62 +1228,68 @@
     "Ornn": {
       "late": "favorable",
       "tips": [
-        "Evite alinhar-se com parede ou pilar. Espere o sopro acabar antes do controle e tente interromper a segunda ativação do R."
+        "Não fique alinhado com parede ou pilar. Espere o W acabar para dar CC e tente interromper a segunda parte do R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Pantheon": {
       "late": "favorable",
       "tips": [
-        "Troque quando ele estiver com poucos acúmulos da passiva. Caminhe para trás do escudo ou espere baixar antes do R2."
+        "Troque quando ele tiver poucos stacks na passiva. Vá para trás do E ou espere o escudo acabar antes de soltar R2."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Poppy": {
       "late": "favorable",
       "tips": [
-        "Espere a zona do W acabar para usar avanços. Lute longe das paredes e interrompa a canalização do R se estiver perto."
+        "Espere o W acabar antes de usar os dashes. Fique longe das paredes e interrompa o R enquanto ela carrega, se estiver na range."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Pyke": {
       "late": "favorable",
       "tips": [
-        "Bloqueie o gancho com tropas e esquive do retorno do E. Saia do X do R com um avanço quando a vida estiver baixa."
+        "Bloqueie o gancho com minions e esquive do retorno do E. Saia do X do R com um dash quando a vida estiver baixa."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Qiyana": {
       "late": "even",
       "tips": [
-        "Lute longe das paredes e evite ficar alinhado com o R. Guarde W para quando ela reaparecer da grama e recue com pouca vida contra o Q de pedra."
+        "Fique longe das paredes para não tomar R. Guarde W para quando ela sair da invisibilidade e cuidado com o Q de pedra se estiver com pouco HP."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Quinn": {
       "late": "favorable",
       "tips": [
-        "Use arbustos para encurtar distância e faça uma entrada curta para puxar o E. Guarde outro avanço para depois do salto dela."
+        "Use as bushes para chegar perto e baite o E com uma entrada curta. Guarde outro dash para depois que ela pular para trás."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Rakan": {
       "late": "favorable",
@@ -1226,12 +1304,13 @@
     "Rammus": {
       "late": "unfavorable",
       "tips": [
-        "Pare de atacar durante a postura defensiva e saia do alcance da provocação. Considere Cutelo cedo e pressione enquanto o W estiver em recarga."
+        "Pare de atacar durante a postura defensiva e saia da range do taunt. Considere Cutelo cedo e pressione enquanto o W estiver em cooldown."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "RekSai": {
       "late": "favorable",
@@ -1246,82 +1325,90 @@
     "Rell": {
       "late": "favorable",
       "tips": [
-        "Saia da área da queda com E e guarde o escudo para depois do Q, que pode quebrá-lo. Preserve um avanço para sair da área do R."
+        "Saia da área da queda com E e guarde o escudo para depois do Q, que pode quebrá-lo. Preserve um dash para sair da área do R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Renata": {
       "late": "favorable",
       "tips": [
-        "Use tropas para bloquear o Q e recue se ela aplicar W no alvo focado. Saia da trajetória da onda do R para não bater nos aliados."
+        "Use minions para bloquear o Q e recue se ela aplicar W no alvo focado. Saia da trajetória da onda do R para não bater nos aliados."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Renekton": {
       "late": "even",
       "tips": [
-        "Fique fora do alcance do W com 50 de Fúria, pois ele quebra seu escudo. Se ele gastar os dois avanços, faça uma troca curta enquanto o E recarrega."
+        "Não fique na range do W com 50 de Fúria: ele quebra seu escudo. Se ele gastar os dois Es, faça uma troca curta enquanto o E estiver em cooldown."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Rengar": {
       "late": "favorable",
       "tips": [
-        "Mantenha a wave longe dos arbustos quando ele puder saltar. Guarde controle até ele gastar a cura fortalecida ou ficar sem Ferocidade."
+        "Deixe a wave longe das bushes para ele não pular de graça. Guarde seu CC até ele gastar o W fortalecido ou ficar sem Ferocidade."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Riven": {
       "late": "even",
       "tips": [
-        "O espelho favorece quem acerta mais ataques com a passiva e guarda E para a resposta. Use a primeira ativação do Q inimigo para contar a janela da recarga."
+        "Na mirror, intercale AA com as skills para usar a passiva e guarde E para segurar o dano dela. Conte o cooldown a partir do primeiro Q que ela usar."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Rumble": {
       "late": "favorable",
       "tips": [
-        "Evite o lança-chamas quando a barra de calor estiver alta. Saia lateralmente do R e use a janela depois do superaquecimento."
+        "Não tome Q quando a barra de calor estiver alta. Saia do R pelo lado e aproveite para trocar depois do superaquecimento."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Ryze": {
       "late": "even",
       "tips": [
-        "Evite ficar junto das tropas marcadas pelo E. Faça o enraizamento sair antes da entrada longa e interrompa o teleporte com W ou Q3."
+        "Não fique junto dos minions marcados pelo E. Baite o root antes de dar all-in e interrompa o R com W ou Q3."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Samira": {
       "late": "favorable",
       "tips": [
-        "Guarde W ou Q3 para interromper o R. Espere o giro do W dela acabar antes de soltar Golpe de Vento."
+        "Guarde W ou Q3 para interromper o R. Espere o giro do W dela acabar antes de soltar R2."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Sejuani": {
       "late": "favorable",
@@ -1356,12 +1443,13 @@
     "Sett": {
       "late": "even",
       "tips": [
-        "Evite ficar entre Sett e uma tropa para que o E não atordoe. Guarde um avanço lateral para o centro do W e recue quando a barra encher."
+        "Não fique com um minion do outro lado do Sett, senão o E dá stun. Guarde um dash para sair do centro do W e recue quando a barra encher."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Shaco": {
       "late": "favorable",
@@ -1376,12 +1464,13 @@
     "Shen": {
       "late": "favorable",
       "tips": [
-        "Troque longe do trajeto da espada dele e aguarde o bloqueio de ataques do W. Interrompa a canalização do R quando estiver ao alcance."
+        "Não deixe a espada passar por você na troca e espere o W acabar para dar AA. Se ele ultar na sua frente, interrompa com seu CC."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Shyvana": {
       "late": "favorable",
@@ -1396,32 +1485,35 @@
     "Singed": {
       "late": "unfavorable",
       "tips": [
-        "Congele a wave e corte a rota dele sem perseguir pelo veneno. Evite o adesivo que trava avanços e o arremesso de volta para dentro dele."
+        "Freeze a wave e corte o caminho dele sem correr atrás no veneno. Não caia no W: ele impede seus dashes e o Singed pode te jogar de volta nele."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Sion": {
       "late": "favorable",
       "tips": [
-        "Interrompa o Q com W ou Q3 e recue se o escudo estiver prestes a explodir. Depois do abate, guarde um avanço para a passiva."
+        "Cancele o Q com W ou Q3. Se o escudo estiver para explodir, recue. Depois de matar, guarde um dash para sair da passiva."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Sivir": {
       "late": "favorable",
       "tips": [
-        "Force o escudo de feitiço com um Q antes do W. Esquive da volta do bumerangue e guarde mobilidade se ela acelerar com R."
+        "Force o escudo de feitiço com um Q antes do W. Esquive da volta do bumerangue e guarde um dash se ela acelerar com R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Skarner": {
       "late": "favorable",
@@ -1436,12 +1528,13 @@
     "Smolder": {
       "late": "favorable",
       "tips": [
-        "Pressione antes de acumular o Q e guarde um avanço para quando ele descer do voo. Saia do centro do R, onde o dano é maior."
+        "Pressione antes de acumular o Q e guarde um dash para quando ele descer do voo. Saia do centro do R, onde o dano é maior."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Sona": {
       "late": "favorable",
@@ -1456,62 +1549,68 @@
     "Soraka": {
       "late": "favorable",
       "tips": [
-        "Desvie do Q para cortar a cura dela e use E para sair do silêncio. Ao entrar por um flanco, encadeie controle antes que ela salve o alvo."
+        "Desvie do Q para cortar a cura dela e use E para sair do silêncio. Ao entrar por um flanco, dê CC antes que ela salve o alvo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Swain": {
       "late": "unfavorable",
       "tips": [
-        "Esquive do retorno do E antes de entrar. Depois do nível 6, afaste-se até a transformação acabar e volte no intervalo."
+        "Esquive do retorno do E antes de entrar. Depois do level 6, afaste-se até a transformação acabar e volte no intervalo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Sylas": {
       "late": "favorable",
       "tips": [
-        "Use tropas para bloquear o E2 e não fique parado na explosão do Q. Guarde R2 para depois da cura do W e confira qual ultimate ele roubou."
+        "Use minions para bloquear o E2 e não fique parado na explosão do Q. Guarde R2 para depois da cura do W e confira qual ultimate ele roubou."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Syndra": {
       "late": "favorable",
       "tips": [
-        "Avance pelo lado para evitar a linha entre Syndra e as esferas. Force o empurrão com uma entrada curta e volte quando ele estiver em recarga."
+        "Avance pelo lado para evitar a linha entre Syndra e as esferas. Force o empurrão com uma entrada curta e volte quando ele estiver em cooldown."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "TahmKench": {
       "late": "favorable",
       "tips": [
-        "Use a wave para bloquear a língua e recue antes do terceiro acúmulo. Troque em ciclos curtos para evitar o escudo cinza inteiro de uma vez."
+        "Use a wave para bloquear o Q e recue antes do terceiro stack. Faça trocas curtas para não ter que bater no escudo inteiro de uma vez."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Taliyah": {
       "late": "favorable",
       "tips": [
-        "Espere o campo de pedras desaparecer para usar avanços. Entre por um lado onde ela já gastou o W e interrompa o Q com controle."
+        "Espere o campo de pedras desaparecer para usar dashes. Entre por um lado onde ela já gastou o W e interrompa o Q com CC."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Talon": {
       "late": "favorable",
@@ -1536,7 +1635,7 @@
     "Teemo": {
       "late": "favorable",
       "tips": [
-        "Use arbustos para encurtar o caminho e espere a cegueira passar antes dos ataques. No late, leve lente ao atravessar as entradas da lateral."
+        "Use as bushes para chegar perto e espere o blind acabar antes de dar AA. No late, use lente ao passar pelas entradas da side."
       ],
       "build": null,
       "early": "unfavorable",
@@ -1544,11 +1643,11 @@
       "visible": true,
       "lanePlan": {
         "route": null,
-        "reason": "Se o dano mágico estiver impedindo trocas justas, antecipe Hexdrinker. Depois, retome seu primeiro item completo: Axioma, Cutelo ou Fome Eterna conforme a lane e o plano de jogo. Não é uma indicação de fechar Malmortius agora.",
+        "reason": "Se você está tomando muito dano AP para conseguir trocar, compre Hexdrinker cedo. Depois siga para Axioma, Cutelo ou Fome Eterna conforme a lane. Não precisa fechar Malmortius agora.",
         "components": [
           {
             "item": 3155,
-            "condition": "Compre cedo para absorver parte da pressão mágica e conseguir disputar a lane. Segure o componente e siga para o primeiro item completo."
+            "condition": "Compre para aguentar o dano AP e conseguir trocar. Segure o Hexdrinker e faça seu primeiro item antes de fechar Malmortius."
           }
         ]
       }
@@ -1556,62 +1655,68 @@
     "Thresh": {
       "late": "favorable",
       "tips": [
-        "Entre por um ângulo em que as tropas bloqueiem o gancho. Force o E antes de usar Q3 e controle o alvo antes que pegue a lanterna."
+        "Entre por um ângulo em que os minions bloqueiem o gancho. Force o E antes de usar Q3 e controle o alvo antes que pegue a lanterna."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Tristana": {
       "late": "favorable",
       "tips": [
-        "Recue quando ela colocar a bomba para evitar o salto reiniciado. Guarde o último avanço até ela gastar W ou o empurrão do R."
+        "Recue quando ela colocar a bomba para evitar o salto reiniciado. Guarde o último dash até ela gastar W ou o empurrão do R."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Trundle": {
       "late": "favorable",
       "tips": [
-        "Faça trocas curtas e evite se prender entre o pilar e a parede. Quando ele roubar suas resistências com R, saia antes de continuar."
+        "Faça trocas curtas e não fique preso entre o pilar e a parede. Se ele ultar, saia e espere o R acabar para continuar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Tryndamere": {
       "late": "favorable",
       "tips": [
-        "Troque com a Fúria dele baixa e guarde W para impedir que cole em você. Conte a duração da ultimate e use R2 depois que ela acabar."
+        "Troque com a Fúria dele baixa e guarde W para não deixar ele grudar. Conte o tempo do R e só solte R2 depois que acabar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "TwistedFate": {
       "late": "favorable",
       "tips": [
-        "Recue quando ele mostrar a carta dourada e avance após o arremesso. Se ele canalizar o teleporte perto, interrompa com W ou Q3."
+        "Recue quando ele puxar carta amarela e entre depois que ele gastar. Se ele ultar perto de você, cancele com W ou Q3."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Twitch": {
       "late": "favorable",
       "tips": [
-        "Use visão de controle no flanco e ameace quando ele aparecer sem distância. Evite alinhar-se com aliados durante o R e encerre a troca antes de muitas marcas."
+        "Use pink para checar o flanco e puna quando ele aparecer perto. Não fique alinhado com os aliados durante o R e saia da troca antes de ele stackar muito veneno."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Udyr": {
       "late": "unfavorable",
@@ -1626,32 +1731,35 @@
     "Urgot": {
       "late": "even",
       "tips": [
-        "Desvie do E para evitar o arremesso e ataque pelo lado onde as pernas já dispararam. Se o R marcar você com pouca vida, recue antes de cruzar o limite da execução."
+        "Desvie do E e troque pelo lado em que as pernas já dispararam. Se tomar R com pouco HP, recue antes de entrar na faixa de execução."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Varus": {
       "late": "favorable",
       "tips": [
-        "Evite a flecha carregada e guarde E para desviar da corrente do R. Quando entrar, não prolongue a troca com marcas acumuladas."
+        "Desvie do Q carregado e guarde E para o R. Quando entrar, não estenda a troca com os stacks da passiva dele em você."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Vayne": {
       "late": "unfavorable",
       "tips": [
-        "Jogue longe de paredes para evitar o atordoamento do E. Force o empurrão cedo e guarde um avanço para seguir o próximo rolamento."
+        "Jogue longe de paredes para evitar o stun do E. Force o empurrão cedo e guarde um dash para seguir o próximo rolamento."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Veigar": {
       "late": "favorable",
@@ -1666,22 +1774,24 @@
     "Velkoz": {
       "late": "favorable",
       "tips": [
-        "Varie o ângulo para desviar do Q dividido e guarde E para o arremesso. Interrompa o feixe com W ou Q3 quando estiver perto."
+        "Varie o ângulo para desviar do Q dividido e guarde E para o knock-up. Interrompa o feixe com W ou Q3 quando estiver perto."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Vex": {
       "late": "favorable",
       "tips": [
-        "Espere que gaste o medo na wave antes de usar avanços. Se o R errar, pressione na janela e evite alimentar a marca com dashes desnecessários."
+        "Espere ela gastar o fear na wave antes de usar seus dashes. Se ela errar R, puna. Evite dar dashes à toa para não ativar a passiva dela."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Vi": {
       "late": "favorable",
@@ -1716,132 +1826,145 @@
     "Vladimir": {
       "late": "favorable",
       "tips": [
-        "Recue com a barra do Q vermelha e force a poça sem gastar R2. Reentre quando ele voltar e a poça ainda estiver em recarga."
+        "Recue quando o Q dele estiver vermelho. Force a poça sem gastar R2 e volte a trocar enquanto ela estiver em cooldown."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Volibear": {
       "late": "unfavorable",
       "tips": [
-        "Evite ficar no círculo do E durante o avanço dele e saia antes da segunda mordida. Depois do 6, respeite o mergulho mesmo sob a própria torre."
+        "Não fique no E quando ele vier para cima e saia antes do segundo W. Depois do 6, cuidado com o dive mesmo debaixo da sua torre."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Warwick": {
       "late": "favorable",
       "tips": [
-        "Faça trocas curtas com a vida dele alta e recue antes da cura aumentar. Espere o medo do E e desvie do R pelo lado."
+        "Faça trocas curtas enquanto ele estiver com HP alto. Recue antes de ele começar a curar muito, espere o fear do E e desvie do R pelo lado."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Xayah": {
       "late": "favorable",
       "tips": [
-        "Observe a linha das penas e avance por fora dela. Force o R com um controle e guarde o outro para o pouso."
+        "Observe a linha das penas e avance por fora dela. Force o R com um CC e guarde o outro para o pouso."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Xerath": {
       "late": "favorable",
       "tips": [
-        "Use tropas contra o E e E lateral para desviar do Q. Quando ele abrir o R perto de você, interrompa com W ou Q3."
+        "Use minions contra o E e E lateral para desviar do Q. Quando ele abrir o R perto de você, interrompa com W ou Q3."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "XinZhao": {
       "late": "favorable",
       "tips": [
-        "Recue antes do terceiro ataque do Q e volte quando ele gastar o avanço. Use R2 de dentro do círculo do R para evitar o bloqueio de dano."
+        "Recue antes do terceiro ataque do Q e volte quando ele gastar o dash. Use R2 de dentro do círculo do R para evitar o bloqueio de dano."
       ],
       "build": null,
       "early": "unfavorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Yasuo": {
       "late": "even",
       "tips": [
-        "Tire o escudo da passiva com uma troca curta e conte os Qs. Use Golpe de Vento depois da parede ou de um ângulo que não a atravesse."
+        "Tire o escudo da passiva numa troca curta e conte os Qs. Guarde R2 para depois da parede ou solte de um ângulo que ela não bloqueie."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Yone": {
       "late": "even",
       "tips": [
-        "Saia da linha do Q3 e recue durante o E. Se a volta estiver exposta, prepare W no ponto de retorno antes de continuar o combo."
+        "Desvie do Q3 e recue enquanto ele estiver de E. Se der para punir a volta, prepare W onde ele vai reaparecer antes de continuar o combo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Yorick": {
       "late": "unfavorable",
       "tips": [
-        "Desvie do E para evitar que os carniçais saltem em você. Guarde um avanço para sair da parede e pressione quando a Donzela estiver fora de jogo."
+        "Desvie do E para os ghouls não pularem em você. Guarde um dash para sair da parede e puna quando ele estiver sem Donzela."
       ],
       "build": null,
       "early": "even",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Yunara": {
       "late": "favorable",
       "tips": [
-        "Evite trocar junto da wave quando os ataques dela estiverem fortalecidos. Após a transformação, espere o avanço dela antes de gastar seu último Q."
+        "Evite trocar junto da wave quando os ataques dela estiverem fortalecidos. Após a transformação, espere o dash dela antes de gastar seu último Q."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Yuumi": {
       "late": "favorable",
       "tips": [
-        "Pressione a campeã que carrega Yuumi e troque depois do escudo. Se Yuumi ficar solta, use W antes que ela consiga se prender a outro aliado."
+        "Troque com quem estiver carregando a Yuumi depois que o escudo acabar. Se ela sair do aliado, dê W antes de ela conseguir voltar."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Zaahen": {
       "late": "unfavorable",
       "tips": [
-        "Troque curto antes que ele acumule Determinação. Saia da área do R para negar a cura e confira se a ressurreição está pronta antes de gastar tudo."
+        "Troque curto antes de ele stackar Determinação. Saia do R para ele não curar e veja se a ressurreição está disponível antes de gastar tudo."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Zac": {
       "late": "favorable",
       "tips": [
-        "Interrompa o salto com Q3 ou W se conseguir alcançá-lo antes da aterrissagem. Pise nas gosmas entre as trocas para reduzir a cura."
+        "Cancele o pulo com Q3 ou W se conseguir acertar antes de ele cair. Pise nas gosmas entre as trocas para ele curar menos."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": null
     },
     "Zed": {
       "late": "favorable",
@@ -1856,22 +1979,24 @@
     "Zeri": {
       "late": "favorable",
       "tips": [
-        "Lute longe de paredes longas que permitam a fuga com E. Entre antes de ela acumular velocidade e recue se o R já estiver acelerando a perseguição."
+        "Não lute perto de paredes longas que ela possa usar para fugir de E. Entre antes de ela ganhar muito move speed e recue se ela já estiver te kitando de R."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Ziggs": {
       "late": "favorable",
       "tips": [
-        "Desvie das bombas pelo lado e evite atravessar o campo minado. Guarde um avanço para depois da carga explosiva."
+        "Desvie das bombas pelo lado e evite atravessar o campo minado. Guarde um dash para depois da carga explosiva."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     },
     "Zilean": {
       "late": "favorable",
@@ -1896,12 +2021,13 @@
     "Zyra": {
       "late": "favorable",
       "tips": [
-        "Evite entrar pelo corredor das sementes e esquive da raiz. Saia da zona do R antes do arremesso e volte pelo lado."
+        "Evite entrar pelo corredor das sementes e esquive do root. Saia da zona do R antes do knock-up e volte pelo lado."
       ],
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": false
+      "visible": false,
+      "lanePlan": null
     }
   },
   "catalog": {

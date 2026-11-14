@@ -26,7 +26,7 @@ const statistics = [
   { label: 'Performance', value: `${decimal.format(stats.pp)} pp` },
   { label: 'Precisão', value: `${percent.format(stats.accuracy)}%` },
   { label: 'Tempo de jogo', value: time },
-  { label: 'Vezes jogadas', value: number.format(stats.plays) },
+  { label: 'Play count', value: number.format(stats.plays) },
   { label: 'Combo máximo', value: `${number.format(stats.maxCombo)}×` },
   { label: 'Nível', value: number.format(stats.level) },
 ]

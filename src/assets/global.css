@@ -739,10 +739,10 @@ section[id] {
 }
 
 .riven-banner {
-  --blade-green: #a1fac8;
+  --blade-green: #dce0e5;
   --focus-color: var(--blade-green);
-  border-color: #6ac29570;
-  box-shadow: 0 8px 30px #020b0780;
+  border-color: #a1a8b070;
+  box-shadow: 0 8px 30px #00000080;
   text-decoration: none;
   transition:
     border-color 350ms ease,
@@ -763,6 +763,7 @@ section[id] {
 }
 
 .riven-banner .favorite-cover {
+  object-position: 70% 8%;
   transition:
     transform 750ms cubic-bezier(0.2, 0.7, 0.2, 1),
     filter 500ms ease;
@@ -777,8 +778,8 @@ section[id] {
 
 .riven-banner::before {
   background:
-    linear-gradient(90deg, #0b1411 0%, #0b1411dc 31%, #0b141126 80%),
-    linear-gradient(0deg, #0b1411d9 0%, transparent 65%);
+    linear-gradient(90deg, #101113 0%, #101113dc 31%, #10111326 80%),
+    linear-gradient(0deg, #101113d9 0%, transparent 65%);
 }
 
 @property --riven-edge-angle {
@@ -791,7 +792,7 @@ section[id] {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  filter: drop-shadow(0 0 4px #68f8ad) drop-shadow(0 0 9px #37b87d);
+  filter: drop-shadow(0 0 4px #d4d9df) drop-shadow(0 0 9px #7d8793);
 }
 
 .favorite-edge::before {
@@ -802,11 +803,11 @@ section[id] {
   background: conic-gradient(
     from var(--riven-edge-angle),
     transparent 0deg 304deg,
-    #246d4e00 304deg,
-    #39936b80 328deg,
-    #6df4a9 350deg,
-    #e6fff2 356deg,
-    #6df4a9 358deg,
+    #616b7700 304deg,
+    #7d879380 328deg,
+    #d4d9df 350deg,
+    #f5f6f8 356deg,
+    #d4d9df 358deg,
     transparent 360deg
   );
   mask:
@@ -823,10 +824,10 @@ section[id] {
 }
 
 .riven-banner:is(:hover, :focus-visible) {
-  border-color: #a1fac8b3;
+  border-color: #dce0e5b3;
   box-shadow:
-    0 8px 36px #57ed9c2b,
-    0 0 18px #57ed9c20;
+    0 8px 36px #b5bec92b,
+    0 0 18px #b5bec920;
 }
 
 .riven-banner:is(:hover, :focus-visible) .favorite-cover {
@@ -888,7 +889,7 @@ section[id] {
   gap: 9px;
   min-height: 44px;
   padding-inline: 12px 6px;
-  color: #e6fff0;
+  color: #f5f6f8;
   font-size: 0.9375rem;
   font-weight: 700;
   text-decoration: none;
@@ -909,17 +910,17 @@ section[id] {
 }
 .favorite-guide::before {
   inset: 0;
-  background: linear-gradient(120deg, #8cf8bb, #36584a 45%, #69b791);
+  background: linear-gradient(120deg, #dce0e5, #454b53 45%, #939da9);
 }
 .favorite-guide::after {
   inset: 1px;
-  background: linear-gradient(115deg, #234538, #101b17 60%);
+  background: linear-gradient(115deg, #30353c, #141619 60%);
 }
 .favorite-guide-blade {
   width: 22px;
   height: 22px;
   flex: none;
-  background: linear-gradient(135deg, #57967a 12%, var(--blade-green) 82%);
+  background: linear-gradient(135deg, #78838f 12%, var(--blade-green) 82%);
   clip-path: polygon(
     97% 3%,
     88% 38%,
@@ -947,23 +948,21 @@ section[id] {
   height: 30px;
   padding-left: 4px;
   clip-path: polygon(22% 0, 100% 0, 100% 66%, 72% 100%, 0 100%);
-  background: #315c49;
+  background: #3c434c;
   color: var(--blade-green);
   transition:
-    transform 350ms ease,
-    background 350ms ease,
-    color 350ms ease;
+    background-color 180ms ease,
+    color 180ms ease;
 }
 .riven-banner:is(:hover, :focus-visible) .favorite-guide::before {
   background: var(--blade-green);
 }
 .riven-banner:is(:hover, :focus-visible) .favorite-guide::after {
-  background: linear-gradient(115deg, #2a5944, #14261d 60%);
+  background: linear-gradient(115deg, #414952, #1b1f24 60%);
 }
 .riven-banner:is(:hover, :focus-visible) .favorite-guide-arrow {
-  transform: translateX(3px);
   background: var(--blade-green);
-  color: #12291d;
+  color: #1b1f24;
 }
 .games {
   margin-top: 24px;
@@ -1535,9 +1534,8 @@ body:has(.site--riven) {
   overflow: auto;
   overscroll-behavior: contain;
   background:
-    linear-gradient(145deg, #060706d6, #050505f0 76%),
-    url('/media/riven/splash.jpg') center top / cover fixed,
-    #050505;
+    radial-gradient(ellipse 70% 650px at 90% 0, #38203d38, transparent 80%),
+    radial-gradient(ellipse 50% 500px at 0 15%, #421c2c1c, transparent 80%), #0b090e;
 }
 
 .riven-page-inner {
@@ -1582,86 +1580,54 @@ body:has(.site--riven) {
 .riven-back {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   min-height: 44px;
-  padding-inline: 6px;
-  color: #edf7f0;
-  font: 600 0.875rem/1.25 var(--display);
+  padding-inline: 4px 10px;
+  color: var(--riven-muted);
+  font: 500 0.875rem/1.25 var(--display);
   white-space: nowrap;
+  text-decoration: none;
   transition: color 180ms ease;
 }
-
 .riven-back-mark {
   position: relative;
-  isolation: isolate;
   display: grid;
-  flex: none;
   place-items: center;
-  width: 25px;
-  height: 24px;
+  flex: none;
+  width: 30px;
+  height: 30px;
   color: var(--riven-green);
+  background: radial-gradient(circle, #d5a0db12, transparent 70%);
 }
-
 .riven-back-mark::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: linear-gradient(122deg, #b4eed05c, #b4eed018 53%, #b4eed038);
-  clip-path: polygon(36% 0, 100% 0, 77% 42%, 88% 42%, 64% 100%, 0 100%);
-  opacity: 0.6;
   content: '';
-  transition: opacity 180ms ease;
-}
-
-.riven-back-mark svg {
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.riven-back-label {
-  position: relative;
-}
-
-.riven-back-label::after {
   position: absolute;
-  inset: auto 0 -4px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--riven-green), transparent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-  content: '';
+  inset: 1px;
+  border: 1px solid #d5a0db60;
+  border-right-color: transparent;
+  border-radius: 50%;
+  transform: rotate(-35deg);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
-
 .riven-back:is(:hover, :focus-visible) {
-  color: var(--riven-green);
+  color: #f8f4f9;
 }
-
-.riven-back:focus-visible {
-  box-shadow: none;
-}
-
 .riven-back:is(:hover, :focus-visible) .riven-back-mark::before {
-  opacity: 1;
+  border-color: #e0b8e5;
+  border-right-color: transparent;
+  box-shadow: -3px 0 12px #d5a0db18;
 }
-
-.riven-back:is(:hover, :focus-visible) svg {
-  transform: translateX(-3px);
+.riven-back:focus-visible {
+  outline: 2px solid var(--riven-green);
+  outline-offset: 4px;
+  border-radius: 20px;
 }
-
-.riven-back:is(:hover, :focus-visible) .riven-back-label::after {
-  transform: scaleX(1);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .riven-back,
-  .riven-back-mark::before,
-  .riven-back-mark svg,
-  .riven-back-label::after {
+  .riven-back-mark::before {
     transition: none;
-  }
-
-  .riven-back:is(:hover, :focus-visible) svg {
-    transform: none;
   }
 }
 

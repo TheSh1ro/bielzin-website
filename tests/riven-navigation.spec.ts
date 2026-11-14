@@ -51,16 +51,21 @@ test('abre o guia pelo banner e volta para Jogos preservando o histórico', asyn
   const shortcut = page.getByRole('link', { name: 'Guia de Riven' })
   await shortcut.click()
   await expect(page).toHaveURL(/\/riven$/)
-  await expect(page.getByRole('heading', { name: 'Matchups da Riven', level: 1 })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Matchups da Riven Top', level: 1 })).toBeVisible()
   await expect(page.getByRole('tablist')).toHaveCount(0)
 
-  await page.getByRole('link', { name: 'Habilidades', exact: true }).click()
-  await expect(page).toHaveURL(/\/riven#riven-habilidades$/)
+  await page.getByRole('button', { name: 'Habilidades', exact: true }).click()
+  await expect(page).toHaveURL(/\/riven$/)
+  await expect(page.getByRole('button', { name: 'Habilidades', exact: true })).toHaveAttribute(
+    'aria-current',
+    'location',
+  )
   await expect(page.getByRole('region', { name: 'Habilidades da Riven' })).toBeFocused()
   await page.reload()
-  await expect(page.getByRole('region', { name: 'Habilidades da Riven' })).toBeFocused()
+  await expect(page).toHaveURL(/\/riven$/)
+  await expect(page.getByRole('navigation', { name: 'Guia da Riven' })).toBeVisible()
 
-  await page.getByRole('link', { name: 'Voltar para Jogos' }).click()
+  await page.getByRole('link', { name: 'Voltar ao perfil' }).click()
   await expect(page).toHaveURL(/\/$/)
   await expect(shortcut).toBeFocused()
 
@@ -68,4 +73,22 @@ test('abre o guia pelo banner e volta para Jogos preservando o histórico', asyn
   await expect(page.getByRole('region', { name: 'Habilidades da Riven' })).toBeVisible()
   await page.goBack()
   await expect(shortcut).toBeFocused()
+})
+
+test('esconde o header ao descer e revela ao subir', async ({ page }) => {
+  await page.goto('/riven')
+  const nav = page.getByRole('navigation', { name: 'Guia da Riven' })
+  await expect(page.getByRole('heading', { name: 'Matchups da Riven Top', level: 1 })).toBeVisible()
+  await page.locator('.riven-page').evaluate((element) => {
+    element.scrollTop = 500
+  })
+  await expect(nav).toHaveClass(/is-hidden/)
+  await page.locator('.riven-page').evaluate((element) => {
+    element.scrollTop = 400
+  })
+  await expect(nav).not.toHaveClass(/is-hidden/)
+  await page.locator('.riven-page').evaluate((element) => {
+    element.scrollTop = 0
+  })
+  await expect(nav).not.toHaveClass(/is-hidden/)
 })

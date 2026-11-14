@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
+import {
+  defineAsyncComponent,
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue'
 import { ArrowUpRight, ChevronDown, Clock3, Search, Sword, Swords } from 'lucide-vue-next'
 import { profile } from '@/profile'
 import { rivenLessons, rivenSkillOrder } from '@/data/riven'
@@ -8,6 +17,7 @@ import RivenItemization from './RivenItemization.vue'
 import RivenBootsGuide from './RivenBootsGuide.vue'
 import RivenRunePage from './RivenRunePage.vue'
 import ChampionModel from './ChampionModel.vue'
+const FeaturedRivenModel = defineAsyncComponent(() => import('./LocalChampionModel.vue'))
 import {
   abilityText,
   cooldownText,
@@ -20,29 +30,70 @@ import {
   type Item,
 } from '@/lib/data-dragon'
 
+const activeSection = ref('riven-destaque')
 const guideLinks = [
+  { id: 'riven-destaque', name: 'Em destaque', icon: Sword },
   { id: 'riven-matchups', name: 'Matchups', icon: Swords },
   { id: 'riven-habilidades', name: 'Habilidades', icon: Sword },
 ]
 
-function jumpTo(id: string, updateUrl = true) {
+function jumpTo(id: string) {
   const section = document.getElementById(id)
   if (!section) return
-  if (updateUrl) window.history.replaceState(window.history.state, '', '#' + id)
+  activeSection.value = id
   section.focus({ preventScroll: true })
-  section.scrollIntoView({ block: 'start', behavior: updateUrl ? 'smooth' : 'instant' })
+  section.scrollIntoView({ block: 'start', behavior: 'smooth' })
 }
 
 onMounted(() => {
-  const link = guideLinks.find(({ id }) => window.location.hash === '#' + id)
-  if (link) jumpTo(link.id, false)
+  if (window.location.hash.startsWith('#riven-')) {
+    window.history.replaceState(
+      window.history.state,
+      '',
+      window.location.pathname + window.location.search,
+    )
+  }
 })
+
+const headerHidden = ref(false)
+let scrollAnchor = 0
+let navigationRoot: Element | null = null
+function updateNavigation() {
+  const nav = document.querySelector<HTMLElement>('.riven-nav')
+  const top = Math.max(0, navigationRoot?.scrollTop ?? 0)
+  const height = nav?.offsetHeight ?? 84
+  if (top <= height) {
+    headerHidden.value = false
+    scrollAnchor = top
+  } else if (Math.abs(top - scrollAnchor) >= 8) {
+    headerHidden.value = top > scrollAnchor
+    scrollAnchor = top
+  }
+  const edge = Math.max(height + 36, (navigationRoot?.clientHeight ?? 0) * 0.35)
+  let current = guideLinks[0]!.id
+  for (const link of guideLinks) {
+    const section = document.getElementById(link.id)
+    if (section && section.getBoundingClientRect().top <= edge) current = link.id
+  }
+  if (
+    navigationRoot &&
+    navigationRoot.scrollTop + navigationRoot.clientHeight >= navigationRoot.scrollHeight - 2
+  ) {
+    current = guideLinks[guideLinks.length - 1]!.id
+  }
+  activeSection.value = current
+}
+onMounted(() => {
+  navigationRoot = document.querySelector('.riven-page')
+  navigationRoot?.addEventListener('scroll', updateNavigation, { passive: true })
+})
+onUnmounted(() => navigationRoot?.removeEventListener('scroll', updateNavigation))
 
 const goldFormat = new Intl.NumberFormat('pt-BR')
 const greavesSynergies = [
-  { id: 2517, summary: 'Vampirismo Universal que aumenta após participar de um abate.' },
-  { id: 6333, summary: 'Adia parte do dano e limpa o restante ao participar de um abate.' },
-  { id: 3156, summary: 'Resistência mágica e, ao ativar a passiva, escudo e vampirismo.' },
+  { id: 2517, summary: 'Dá CDR com base no AD extra e mais omnivamp após participar de um abate.' },
+  { id: 6333, summary: 'Segura parte do burst. No abate, limpa o dano acumulado e recupera HP.' },
+  { id: 3156, summary: 'Contra burst AP: escudo mágico e mais omnivamp quando a passiva ativa.' },
 ]
 
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
@@ -77,7 +128,7 @@ const lessonStats = computed(() => {
   if (lessonKey.value === 'P') {
     // Data Dragon omits the passive ratio documented in patch 26.3.
     return [
-      { label: 'Dano físico extra por carga', value: '30% a 45% do DdA total (níveis 1 a 18)' },
+      { label: 'Dano físico extra por carga', value: '30% a 45% do AD total (níveis 1 a 18)' },
     ]
   }
   const labels: Partial<Record<(typeof spellKeys)[number], string>> = {
@@ -92,9 +143,9 @@ const lessonStats = computed(() => {
     const maximum = lessonEffect(2)
     // The patch 26.15 notes provide the R2 ratios missing from Data Dragon's tooltip.
     return [
-      { label: 'R1 · DdA concedido', value: bonus && `+${bonus}% do DdA adicional` },
-      { label: 'R2 · Dano físico mínimo', value: base && `${base} (+55% do DdA adicional)` },
-      { label: 'R2 · Dano físico máximo', value: maximum && `${maximum} (+165% do DdA adicional)` },
+      { label: 'R1 · AD extra', value: bonus && `+${bonus}% do AD extra` },
+      { label: 'R2 · Dano físico mínimo', value: base && `${base} (+55% do AD extra)` },
+      { label: 'R2 · Dano físico máximo', value: maximum && `${maximum} (+165% do AD extra)` },
     ].filter(({ value }) => value)
   }
   return label && base ? [{ label, value: base }] : []
@@ -271,24 +322,40 @@ void loadPatch()
 
 <template>
   <div class="riven">
-    <nav class="riven-nav" aria-label="Guia da Riven">
-      <slot name="back" />
-      <div class="riven-nav-sections">
-        <a
-          v-for="link in guideLinks"
-          :key="link.id"
-          :href="'#' + link.id"
-          @click.left.exact.prevent="jumpTo(link.id)"
-        >
-          <component :is="link.icon" :size="16" aria-hidden="true" />
-          {{ link.name }}
-        </a>
+    <nav
+      class="riven-nav"
+      :class="{ 'is-hidden': headerHidden }"
+      aria-label="Guia da Riven"
+      @focusin="headerHidden = false"
+    >
+      <div class="riven-nav-identity" aria-label="Riven">
+        <span class="riven-nav-sigil" aria-hidden="true"
+          ><Sword :size="20" :stroke-width="1.25"
+        /></span>
+        <strong>RIVEN</strong>
       </div>
+      <div class="riven-nav-sections">
+        <button
+          v-for="link in guideLinks"
+          type="button"
+          :key="link.id"
+          :aria-current="activeSection === link.id ? 'location' : undefined"
+          @click="jumpTo(link.id)"
+        >
+          {{ link.name }}
+        </button>
+      </div>
+      <div class="riven-nav-return"><slot name="back" /></div>
     </nav>
 
-    <section class="riven-section riven-hot-tip riven-glass" aria-labelledby="riven-greaves-title">
+    <section
+      id="riven-destaque"
+      tabindex="-1"
+      class="riven-section riven-hot-tip riven-feature"
+      aria-labelledby="riven-greaves-title"
+    >
       <div class="riven-hot-tip-copy">
-        <h2 id="riven-greaves-title" class="riven-hot-tip-heading">DESTAQUE: RIVEN MID</h2>
+        <h2 id="riven-greaves-title" class="riven-mid-title">RIVEN <span>MID</span></h2>
         <div class="riven-hot-tip-title">
           <img
             v-if="version"
@@ -300,15 +367,13 @@ void loadPatch()
           />
           <div class="riven-synergy-name">
             <h3>Caminho Imortal</h3>
-            <span v-if="items[3168]" class="riven-item-price">
-              {{ goldFormat.format(items[3168].gold.total) }} ouro
-            </span>
           </div>
         </div>
         <p>
-          <strong>Caminho Imortal é o que faz essa build de Riven Mid ser tão forte</strong>,
-          aumentando o dano quando você está acima de 50% de HP e a cura e o escudo do E quando está
-          abaixo de 50%.
+          <strong>O upgrade da missão do mid faz a diferença nas fights longas.</strong>
+          Com HP alto, Caminho Imortal dá mais dano. Abaixo de 50%, aumenta a cura e o shield do E.
+          Com Fome Eterna e Dança da Morte, você tem sustain para continuar fightando e recuperar
+          muito HP enquanto bate.
         </p>
         <dl class="riven-greaves-effects">
           <div>
@@ -321,13 +386,20 @@ void loadPatch()
           </div>
         </dl>
         <p>
-          A bota chega a 10% de Vampirismo Universal, fazendo ataques e habilidades recuperarem
-          vida. Com Fome Eterna, Dança da Morte e Malmortius, esses status tornam a Riven
-          praticamente imortal em fights longas.
+          <strong>O primeiro abate é o que vira a fight.</strong> Participar de um abate ativa o
+          omnivamp extra da Fome Eterna e faz a Dança da Morte limpar o dano acumulado e curar.
+          Contra burst AP, Malmortius ajuda a sobreviver com o escudo mágico e mais omnivamp. É essa
+          combinação que permite continuar batendo mesmo com pouco HP.
         </p>
       </div>
+      <div class="riven-feature-art" aria-hidden="true">
+        <FeaturedRivenModel
+          source="/models/riven-pacto-quebrado.glb"
+          champion="Riven Pacto Quebrado"
+        />
+      </div>
       <div class="riven-hot-tip-build">
-        <h3>Itens que fortalecem a build</h3>
+        <h3>Como os itens se completam</h3>
         <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
           Carregando itens…
         </p>
@@ -370,10 +442,10 @@ void loadPatch()
       aria-labelledby="riven-matchups-title"
     >
       <div class="riven-title-line riven-section-heading">
-        <h1 id="riven-matchups-title">Matchups da Riven</h1>
-        <span class="riven-patch"
-          >Top<span v-if="version"> · Patch BR · {{ version }}</span></span
-        >
+        <h1 id="riven-matchups-title">
+          Matchups da Riven <span class="riven-lane-label">Top</span>
+        </h1>
+        <span v-if="version" class="riven-patch">Patch BR · {{ version }}</span>
       </div>
       <p v-if="dataState === 'loading'" class="riven-feedback" role="status">
         Carregando campeões…
@@ -451,7 +523,7 @@ void loadPatch()
               </div>
             </div>
 
-            <dl class="riven-assessment" aria-label="Avaliação do duelo para a Riven">
+            <dl class="riven-assessment" aria-label="Como é a matchup para a Riven">
               <div v-for="stage in assessment" :key="stage.label">
                 <dt>{{ stage.label }}</dt>
                 <dd
@@ -477,7 +549,7 @@ void loadPatch()
           </div>
 
           <div class="riven-duel-stage">
-            <ChampionModel :key="selectedId" :champion="selected" />
+            <ChampionModel :champion="selected" />
             <div class="riven-duel-copy">
               <div class="riven-duel-heading">
                 <span>Riven × {{ selected.name }}</span>
@@ -494,7 +566,7 @@ void loadPatch()
               <section class="riven-enemy-panel" aria-labelledby="riven-enemy-title">
                 <div class="riven-title-line">
                   <h2 id="riven-enemy-title">Habilidades de {{ selected.name }}</h2>
-                  <span class="riven-meta">Recarga base por nível</span>
+                  <span class="riven-meta">Cooldown por level</span>
                 </div>
                 <p v-if="enemyState === 'loading'" class="riven-feedback" role="status">
                   Carregando habilidades…
@@ -628,8 +700,8 @@ void loadPatch()
         <h3 id="riven-skill-order-title">Ordem de up das skills</h3>
         <div class="riven-skill-openings">
           <p class="riven-skill-order-intro">
-            O padrão é <strong>Q → E → W</strong>: upe E no level 2 para bloquear dano com o escudo
-            e sair da troca. Maximize <strong>Q → E → W</strong> e upe
+            Comece de <strong>Q → E → W</strong>. No level 2, o E serve para segurar o dano e sair
+            da troca. Maximize <strong>Q → E → W</strong> e upe
             <strong>R nos levels 6, 11 e 16</strong>.
           </p>
           <p class="riven-skill-order-intro">
@@ -649,7 +721,7 @@ void loadPatch()
         >
           <table class="riven-skill-grid">
             <caption class="sr-only">
-              Sequência padrão de evolução das habilidades da Riven por nível
+              Ordem padrão para upar as skills da Riven
             </caption>
             <tbody>
               <tr v-for="skill in skillRows" :key="skill.key">

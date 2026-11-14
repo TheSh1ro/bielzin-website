@@ -105,9 +105,13 @@ for (const width of [1280, 390]) {
     )
     await page.goto('/riven')
     await expect(page.getByRole('img', { name: 'Modelo 3D animado de Renekton' })).toBeVisible()
-    await expect(page.locator('.local-model')).toHaveAttribute('aria-busy', 'false', {
-      timeout: 20000,
-    })
+    await expect(page.locator('.champion-stage .local-model')).toHaveAttribute(
+      'aria-busy',
+      'false',
+      {
+        timeout: 20000,
+      },
+    )
     await expect(page.locator('.champion-stage select, .champion-stage button')).toHaveCount(0)
     await expect(page.getByRole('region', { name: 'Árvore primária', exact: true })).toBeVisible()
     await expect(page.locator('.rune-tree').first().locator('.rune-row')).toHaveCount(4)
@@ -123,11 +127,31 @@ for (const width of [1280, 390]) {
     ).toHaveText(['1Cutelo', '2Fome', '3Dança'])
     await expect(page.getByText('Motivo de Cutelo', { exact: true })).toBeVisible()
     await page.getByRole('button', { name: 'Oponente Renekton' }).click()
+    await page.evaluate(() => {
+      const stage = document.querySelector('.champion-stage')!
+      const heights: number[] = []
+      const observer = new ResizeObserver(() => heights.push(stage.getBoundingClientRect().height))
+      observer.observe(stage)
+      Object.assign(window, { modelSwitch: { heights, observer } })
+    })
     await page.getByRole('button', { name: 'Jax', exact: true }).click()
     await expect(page.getByRole('img', { name: 'Modelo 3D animado de Jax' })).toBeVisible()
-    await expect(page.locator('.local-model')).toHaveAttribute('aria-busy', 'false', {
-      timeout: 20000,
+    await expect(page.locator('.champion-stage .local-model')).toHaveAttribute(
+      'aria-busy',
+      'false',
+      {
+        timeout: 20000,
+      },
+    )
+    const heights = await page.evaluate(() => {
+      const state = (
+        window as unknown as { modelSwitch: { heights: number[]; observer: ResizeObserver } }
+      ).modelSwitch
+      state.observer.disconnect()
+      return state.heights
     })
+    expect(heights.length).toBeGreaterThan(0)
+    expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1)
     await expect(page.locator('.champion-stage iframe')).toHaveCount(0)
     await expect(page.locator('.champion-stage canvas')).toHaveCount(1)
     await expect(routes.getByRole('button', { name: /Eclipse/ })).toHaveAttribute(

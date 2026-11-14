@@ -63,7 +63,7 @@ function move(index: number, offset: number) {
           :label="`componente da rota ${index + 1}`"
           @pick="(action, category) => emit('pick', action, category)"
         />
-        <label :for="`route-followup-${route.id}`">Como continuar e adaptar</label
+        <label :for="`route-followup-${route.id}`">O que fazer depois</label
         ><textarea
           :id="`route-followup-${route.id}`"
           v-model="route.followup"
@@ -105,7 +105,7 @@ function move(index: number, offset: number) {
       Adicionar rota
     </button>
     <h3>Escolha das botas</h3>
-    <label for="boots-note">Critérios gerais das botas</label
+    <label for="boots-note">Quando fazer cada bota</label
     ><textarea id="boots-note" v-model="content.bootsNote" rows="4" maxlength="3000" />
     <GuideChoicesEditor
       v-model="content.boots"

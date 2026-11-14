@@ -23,11 +23,11 @@ const profiles = [
 ]
 
 const stats = [
-  { label: 'Partidas registradas', value: number.format(chess.games) },
+  { label: 'Partidas', value: number.format(chess.games) },
   { label: 'Vitórias', value: number.format(chess.wins) },
   { label: 'Taxa de vitórias', value: percent.format(chess.wins / chess.games) },
   {
-    label: 'Tempo de jogo registrado',
+    label: 'Tempo jogado',
     value: `${number.format(Math.floor(chess.playTime / 3600))} h ${Math.floor((chess.playTime % 3600) / 60)} min`,
   },
 ]

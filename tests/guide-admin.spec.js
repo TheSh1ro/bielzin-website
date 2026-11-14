@@ -124,7 +124,7 @@ test('edita, salva, recarrega e restaura herança independente', async ({ page }
   const state = await setup(page)
   await page.getByRole('button', { name: 'Renekton', exact: true }).click()
   await expect(page.getByRole('tablist')).toHaveCount(0)
-  for (const section of ['Avaliação do duelo', 'Itens', 'Runas']) {
+  for (const section of ['Dificuldade da matchup', 'Itens', 'Runas']) {
     await expect(page.getByRole('region', { name: section, exact: true })).toBeVisible()
   }
   await expect(page.getByLabel('Mostrar este campeão na lista pública')).toBeChecked()
@@ -344,7 +344,7 @@ test('edita rotas compartilhadas e plano de lane com recarga e herança independ
   })
   await page.getByText('1 · Rota base', { exact: true }).click()
   await page.getByLabel('Por que funciona', { exact: true }).fill('Sinergia editada')
-  await page.getByLabel('Critérios gerais das botas').fill('Critério atualizado de botas')
+  await page.getByLabel('Quando fazer cada bota').fill('Critério atualizado de botas')
   await page.getByRole('button', { name: 'Adicionar item da rota 1', exact: true }).click()
   await page.getByLabel('Buscar item').fill('Céu')
   await page.getByRole('button', { name: 'Céu Dividido', exact: true }).click()

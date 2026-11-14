@@ -25,7 +25,7 @@ function idleClip(clips: THREE.AnimationClip[]) {
     name: clip.name.replace(/\.anm$/i, '').toLowerCase(),
   }))
   return (
-    names.find(({ name }) => /(^|_)idle_?0?1(?:_base|_raw)?$/.test(name)) ??
+    names.find(({ name }) => /(^|_)idle_?0?1(?:_base|_raw|_ult)?$/.test(name)) ??
     names.find(({ name }) => /(^|_)idle(?:_base)?$/.test(name) || name === 'idlebase') ??
     names.find(({ name }) => name === 'idle0')
   )?.clip
@@ -148,10 +148,12 @@ onMounted(async () => {
     camera.position.set(0, targetY, distance)
     camera.lookAt(0, targetY, 0)
     frame()
+    // Populate the canvas before revealing it, with pose and camera settled.
+    renderer.render(scene, camera)
     loading.value = false
     let lastTime = performance.now()
     renderer.setAnimationLoop((time) => {
-      const delta = Math.min((time - lastTime) / 1000, 0.1)
+      const delta = Math.max(0, Math.min((time - lastTime) / 1000, 0.1))
       lastTime = time
       if (document.hidden) return
       if (!reducedMotion) mixer?.update(delta)
@@ -185,10 +187,14 @@ onUnmounted(() => {
 .local-model {
   position: relative;
   pointer-events: none;
+  overflow: clip;
 }
 .canvas-host {
   width: 100%;
   height: 480px;
+}
+.local-model[aria-busy='true'] .canvas-host {
+  visibility: hidden;
 }
 .canvas-host :deep(canvas) {
   display: block;
