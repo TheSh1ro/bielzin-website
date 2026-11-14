@@ -69,7 +69,11 @@ function move(index: number, offset: number) {
       type="button"
       class="secondary-button"
       @click="
-        emit('pick', (item) => choices.push({ item, condition: '' }), boots ? 'boots' : undefined)
+        emit(
+          'pick',
+          (item) => (choices = [...choices, { item, condition: '' }]),
+          boots ? 'boots' : undefined,
+        )
       "
     >
       Adicionar {{ label }}

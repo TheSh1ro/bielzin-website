@@ -1276,6 +1276,20 @@
   white-space: nowrap;
 }
 
+.admin-page .early-purchases-editor {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+}
+.admin-page .early-purchases-editor .field-help {
+  margin: 0;
+}
+.admin-page .early-purchases-editor > .choices-editor {
+  margin-top: 8px;
+}
+.admin-page .matchup-build-panel > .text-button {
+  margin-top: 24px;
+}
 .admin-page .itemization-editor,
 .admin-page .route-editor-fields {
   display: grid;

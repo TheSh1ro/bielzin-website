@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import RivenItem from './RivenItem.vue'
 import type { Itemization, LanePlan } from '@/lib/riven-guide'
-import type { Item } from '@/lib/data-dragon'
+import { riotImage, type Item } from '@/lib/data-dragon'
 const props = defineProps<{
   content: Itemization
   plan?: LanePlan | null
@@ -11,27 +11,21 @@ const props = defineProps<{
   items: Record<string, Item>
   version: string
 }>()
-const routeId = ref('')
-watch(
-  () => [props.opponent, props.plan?.route, props.content.defaultRoute],
-  () => {
-    routeId.value = props.plan?.route ?? props.content.defaultRoute
-  },
-  { immediate: true },
+const recommended = computed(
+  () =>
+    props.content.routes.find((r) => r.id === (props.plan?.route ?? props.content.defaultRoute)) ??
+    props.content.routes[0],
 )
-const route = computed(
-  () => props.content.routes.find((r) => r.id === routeId.value) ?? props.content.routes[0],
+const routes = computed(() =>
+  recommended.value
+    ? [recommended.value, ...props.content.routes.filter((r) => r.id !== recommended.value?.id)]
+    : [],
 )
 </script>
 <template>
   <div class="itemization">
-    <section
-      v-if="plan?.reason || plan?.components.length"
-      class="lane-plan"
-      aria-label="Plano para a lane"
-    >
-      <h3>Na lane contra {{ opponent }}</h3>
-      <p v-if="plan.reason">{{ plan.reason }}</p>
+    <section v-if="plan?.components.length" class="lane-plan" aria-label="Compras antecipadas">
+      <h3>Compras antecipadas contra {{ opponent }}</h3>
       <ul v-if="plan.components.length" class="choices">
         <li v-for="(choice, index) in plan.components" :key="index">
           <RivenItem :id="choice.item" :items="items" :version="version" />
@@ -39,69 +33,60 @@ const route = computed(
         </li>
       </ul>
     </section>
-    <h3 class="route-heading">Qual build fazer neste jogo?</h3>
-    <div class="route-picker" role="group" aria-label="Rotas de build">
-      <button
-        v-for="(option, index) in content.routes"
-        :key="option.id"
-        type="button"
-        :aria-pressed="route?.id === option.id"
-        @click="routeId = option.id"
+    <h3 class="route-heading">O que buildar contra {{ opponent }}</h3>
+    <template v-for="(route, routeIndex) in routes" :key="opponent + route.id">
+      <h3 v-if="routeIndex === 1" class="alternatives-heading">Outras builds</h3>
+      <component
+        :is="routeIndex === 0 ? 'section' : 'details'"
+        :class="routeIndex === 0 ? 'route-content' : 'alternative-build'"
+        :aria-label="routeIndex === 0 ? 'Build indicada' : route.title"
       >
-        <span class="route-number" aria-hidden="true">0{{ index + 1 }}</span>
-        <img
-          v-if="items[option.items[0]!]"
-          :src="
-            'https://ddragon.leagueoflegends.com/cdn/' +
-            version +
-            '/img/item/' +
-            items[option.items[0]!]!.image.full
-          "
-          width="28"
-          height="28"
-          alt=""
-        />
-        <span
-          >{{ option.title
-          }}<small v-if="plan?.route === option.id">Indicada para esta lane</small></span
-        >
-      </button>
-    </div>
-    <section
-      v-if="route"
-      :key="route.id"
-      class="route-content"
-      aria-label="Rota selecionada"
-      aria-live="polite"
-    >
-      <header class="route-intro">
-        <span class="route-caption">Sequência de itens</span>
-        <h4>{{ route.title }}</h4>
-        <p class="route-when">{{ route.when }}</p>
-      </header>
-      <ol class="route-items" aria-label="Sequência da rota">
-        <li v-for="(id, index) in route.items" :key="index">
-          <span class="step"
-            ><span>{{ index + 1 }}</span></span
-          ><RivenItem :id="id" :items="items" :version="version" />
-        </li>
-      </ol>
-      <details class="explanation">
-        <summary>
-          <span>Explicação da build</span><ChevronDown :size="18" aria-hidden="true" />
+        <summary v-if="routeIndex > 0">
+          <span class="alternative-title">
+            <img
+              v-if="route.items[0] && items[route.items[0]]"
+              :src="riotImage(version, 'item', items[route.items[0]]!.image.full)"
+              alt=""
+              width="32"
+              height="32"
+              loading="lazy"
+            />
+            <span>{{ route.title }}</span> </span
+          ><ChevronDown :size="18" aria-hidden="true" />
         </summary>
-        <div class="explanation-body">
-          <p>{{ route.reason }}</p>
-          <ul v-if="route.components.length" class="choices">
-            <li v-for="(choice, index) in route.components" :key="index">
-              <RivenItem :id="choice.item" :items="items" :version="version" />
-              <p>{{ choice.condition }}</p>
+        <div :class="{ 'alternative-body': routeIndex > 0 }">
+          <header class="route-intro">
+            <span v-if="routeIndex === 0" class="route-caption">{{
+              plan?.route ? 'Indicada para esta lane' : 'Build padrão'
+            }}</span>
+            <h4 v-if="routeIndex === 0">{{ route.title }}</h4>
+            <p class="route-when">{{ route.when }}</p>
+          </header>
+          <ol class="route-items" aria-label="Sequência da rota">
+            <li v-for="(id, index) in route.items" :key="index">
+              <span class="step"
+                ><span>{{ index + 1 }}</span></span
+              ><RivenItem :id="id" :items="items" :version="version" />
             </li>
-          </ul>
-          <p class="explanation-followup">{{ route.followup }}</p>
+          </ol>
+          <details class="explanation">
+            <summary>
+              <span>Explicação da build</span><ChevronDown :size="18" aria-hidden="true" />
+            </summary>
+            <div class="explanation-body">
+              <p>{{ route.reason }}</p>
+              <ul v-if="route.components.length" class="choices">
+                <li v-for="(choice, index) in route.components" :key="index">
+                  <RivenItem :id="choice.item" :items="items" :version="version" />
+                  <p>{{ choice.condition }}</p>
+                </li>
+              </ul>
+              <p class="explanation-followup">{{ route.followup }}</p>
+            </div>
+          </details>
         </div>
-      </details>
-    </section>
+      </component>
+    </template>
   </div>
 </template>
 <style scoped>
@@ -119,62 +104,32 @@ h3 {
   font-weight: 600;
 }
 .lane-plan {
-  border-left: 2px solid var(--riven-green);
-  padding: 0 0 0 12px;
-  margin-bottom: 18px;
+  margin-block: 28px 32px;
 }
-.lane-plan > p {
-  margin-top: 5px;
+.lane-plan h3 {
+  color: var(--riven-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.lane-plan .choices {
+  margin-top: 12px;
+  gap: 20px;
+}
+.lane-plan .choices li {
+  display: grid;
+  grid-template-columns: minmax(140px, 180px) minmax(0, 58ch);
+  align-items: start;
+  gap: 12px 24px;
+}
+.lane-plan .choices p {
+  margin: 0;
+  line-height: 1.7;
 }
 .route-heading {
-  margin-bottom: 8px;
-}
-.route-picker {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.route-picker button {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  position: relative;
-  padding: 22px 28px 16px 12px;
-  min-height: 76px;
-  text-align: left;
-  border: 1px solid var(--riven-line);
-  color: var(--riven-muted);
-  background: linear-gradient(135deg, #d3aad208, #100d1240);
-  font-size: 0.8125rem;
-}
-.route-picker button[aria-pressed='true'] {
-  color: #f5def7;
-  border-color: #d7a7de80;
-  background: linear-gradient(120deg, #d3a1df20, #d3a1df04);
-  box-shadow: inset 0 -2px var(--riven-green);
-}
-.route-picker button:hover {
-  background: var(--riven-hover);
-}
-.route-picker img {
-  flex: none;
-}
-small {
-  display: block;
-  font-size: 0.8125rem;
-  color: var(--riven-muted);
-}
-.route-number {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  font: 0.8125rem var(--mono);
-  color: #d5b6df65;
+  margin-bottom: 16px;
 }
 .route-content {
-  margin-top: 22px;
-  padding: 22px 0 0;
-  border-top: 1px solid var(--riven-line);
+  margin-top: 12px;
 }
 .route-caption {
   color: var(--riven-green);
@@ -207,9 +162,16 @@ small {
 .step {
   display: grid;
   place-items: center;
+  position: relative;
   flex: none;
   font: 0.75rem var(--mono);
   color: var(--riven-green);
+  width: 40px;
+  height: 40px;
+}
+.step::before {
+  content: '';
+  position: absolute;
   width: 28px;
   height: 28px;
   border: 1px solid #d4a6dc45;
@@ -217,7 +179,7 @@ small {
   transform: rotate(45deg);
 }
 .step > span {
-  transform: rotate(-45deg);
+  position: relative;
 }
 .explanation {
   border: 1px solid #d7a7de35;
@@ -290,9 +252,34 @@ details[open] > summary > svg {
   margin-top: 4px;
   font-size: 0.8125rem;
 }
-@media (max-width: 420px) {
-  .route-picker {
-    grid-template-columns: 1fr 1fr;
+.alternatives-heading {
+  margin: 32px 0 12px;
+  color: var(--riven-muted);
+}
+.alternative-build {
+  border-bottom: 1px solid var(--riven-line);
+}
+.alternative-build > summary {
+  padding-inline: 0;
+  font-size: 0.875rem;
+  color: inherit;
+}
+.alternative-body {
+  padding-block: 8px 24px;
+}
+.alternative-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.alternative-title img {
+  flex: none;
+  border: 1px solid var(--riven-line);
+}
+@media (max-width: 640px) {
+  .lane-plan .choices li {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 </style>

@@ -78,12 +78,30 @@ const routeUsage = computed(() => {
   }
   return usage
 })
-const defaultRouteTitle = computed(
-  () =>
-    guide.value?.defaults.itemization?.routes.find(
-      (route) => route.id === guide.value?.defaults.itemization?.defaultRoute,
-    )?.title ?? 'Rota inicial',
-)
+// Retain legacy fields in saved data, but edit only matchup-specific purchases.
+const earlyPurchases = computed({
+  get: () => draft.value.lanePlan?.components ?? [],
+  set: (components) => {
+    draft.value.lanePlan = {
+      ...draft.value.lanePlan,
+      route: draft.value.lanePlan?.route ?? null,
+      reason: draft.value.lanePlan?.reason ?? '',
+      components,
+    }
+  },
+})
+const indicatedRoute = computed({
+  get: () => draft.value.lanePlan?.route ?? null,
+  set: (route: string | null) => {
+    draft.value.lanePlan = {
+      reason: '',
+      components: [],
+      ...draft.value.lanePlan,
+      route,
+    }
+  },
+})
+
 type ResetGroup = 'build' | 'runes' | 'lanePlan'
 const resetDialog = ref<HTMLDialogElement>()
 const resetGroup = ref<ResetGroup>('build')
@@ -559,7 +577,9 @@ onBeforeUnmount(() => {
             >
               {{ section.label }}
               <small v-if="!isDefault && section.id === 'build'">{{
-                draft.build || draft.lanePlan ? 'Com ajustes' : 'Padrão'
+                draft.build || draft.lanePlan?.route || draft.lanePlan?.components.length
+                  ? 'Com ajustes'
+                  : 'Padrão'
               }}</small>
               <small v-if="!isDefault && section.id === 'runes'">{{
                 draft.runes ? 'Próprias' : 'Padrão'
@@ -683,7 +703,7 @@ onBeforeUnmount(() => {
                     <p>
                       {{
                         section.id === 'routes'
-                          ? 'Sequências e explicações exibidas em todos os matchups. Cada lane pode indicar uma delas.'
+                          ? 'Sequências e explicações compartilhadas entre todos os matchups.'
                           : 'Regras exibidas em todos os matchups, independente da build escolhida.'
                       }}
                     </p>
@@ -699,68 +719,42 @@ onBeforeUnmount(() => {
               </section>
               <section
                 v-if="!isDefault && guide.defaults.itemization && section.id === 'build'"
-                class="editor-panel"
-                aria-labelledby="heading-lane-plan"
+                class="editor-panel matchup-build-panel"
+                aria-labelledby="heading-early-purchases"
               >
                 <div class="section-heading">
                   <div>
-                    <h2 id="heading-lane-plan">Build indicada para {{ title }}</h2>
-                    <p>
-                      {{
-                        draft.lanePlan
-                          ? 'Plano próprio deste matchup. As demais builds continuam disponíveis no guia.'
-                          : 'Usa a rota inicial dos padrões do guia.'
-                      }}
-                    </p>
+                    <h2 id="heading-early-purchases">Build contra {{ title }}</h2>
                   </div>
-                  <button
-                    type="button"
-                    class="secondary-button"
-                    @click="
-                      draft.lanePlan
-                        ? requestReset('lanePlan')
-                        : (draft.lanePlan = { route: null, reason: '', components: [] })
-                    "
-                  >
-                    {{ draft.lanePlan ? 'Remover plano da lane' : 'Definir plano da lane' }}
-                  </button>
                 </div>
-                <div v-if="draft.lanePlan" class="itemization-editor">
-                  <label for="lane-route">Rota indicada para a lane</label
-                  ><select id="lane-route" v-model="draft.lanePlan.route">
-                    <option :value="null">Rota inicial · {{ defaultRouteTitle }}</option>
-                    <option
-                      v-for="route in guide.defaults.itemization.routes"
-                      :key="route.id"
-                      :value="route.id"
-                    >
-                      {{ route.title }}
-                    </option>
+                <div class="itemization-editor">
+                  <label for="lane-route">Rota indicada para a lane</label>
+                  <select id="lane-route" v-model="indicatedRoute">
+                    <option :value="null">Usar padrão do guia</option>
+                    <optgroup label="Indicar uma build para esta lane">
+                      <option
+                        v-for="route in guide.defaults.itemization.routes"
+                        :key="route.id"
+                        :value="route.id"
+                      >
+                        {{ route.title }}
+                      </option>
+                    </optgroup>
                   </select>
-                  <label for="lane-reason">Explicação para esta lane</label
-                  ><textarea
-                    id="lane-reason"
-                    v-model="draft.lanePlan.reason"
-                    rows="4"
-                    maxlength="5000"
-                  />
+                </div>
+                <div class="early-purchases-editor">
                   <h3>Compras antecipadas</h3>
                   <p class="field-help">
-                    O que comprar para aguentar a lane, mesmo sem fechar o item completo.
+                    Componentes que vale rushar nesta matchup, sem precisar fechar o item.
                   </p>
                   <GuideChoicesEditor
-                    v-model="draft.lanePlan.components"
+                    v-model="earlyPurchases"
                     :catalog="catalog"
                     prefix="lane-component"
                     label="componente da lane"
                     @pick="pick"
                   />
                 </div>
-                <p v-else class="field-help">
-                  O guia abre em <strong>{{ defaultRouteTitle }}</strong
-                  >. Você pode indicar outra build e adicionar compras antecipadas só contra
-                  {{ title }}.
-                </p>
                 <button type="button" class="text-button" @click="openDefaults('routes')">
                   Editar builds compartilhadas <ArrowUpRight :size="14" />
                 </button>
@@ -889,9 +883,9 @@ onBeforeUnmount(() => {
         <p class="field-help">
           {{
             resetGroup === 'build'
-              ? 'Plano da lane, runas, dicas, dificuldade e visibilidade são mantidos.'
+              ? 'Compras antecipadas, runas, dicas, dificuldade e visibilidade são mantidos.'
               : resetGroup === 'runes'
-                ? 'Itens, plano da lane, dicas, dificuldade e visibilidade são mantidos.'
+                ? 'Itens, compras antecipadas, dicas, dificuldade e visibilidade são mantidos.'
                 : 'Itens iniciais, situacionais, runas, dicas, dificuldade e visibilidade são mantidos.'
           }}
         </p>

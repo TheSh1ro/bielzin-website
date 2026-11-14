@@ -74,7 +74,7 @@
       "routes": [
         {
           "id": "axioma",
-          "when": "Para ganhar força cedo, já nos componentes.",
+          "when": "• Para obter um item forte e barato buscando snowballar cedo na partida, seja contra seu laner ou agindo no mapa (jungle inimiga, lutas no rio, roaming pro mid). Além de ter bons atributos como AD, CDR e letalidade, a passiva faz a ultimate voltar mais rápido.\n\n• Axioma pode se tornar menos eficiente caso seu inimigo rushe bota de armadura, tendo em vista que não é muito legal comprar letalidade contra armadura, mas sempre tenha em mente que a partida não se trata apenas de stompar a lane. \n\n• Você também pode partir para outra build e se adaptar de acordo com as decisões do seu inimigo: se ele volta da base com bota 1 e couraça de pano, você pode partir para cutelo de primeiro item por exemplo. Se você tem gold para comprar brutalizador, sempre opte por seguir itemizando axioma.",
           "items": [
             6696,
             6333,
@@ -89,7 +89,7 @@
         },
         {
           "id": "cutelo",
-          "when": "Para trocar por mais tempo, bater em quem está fazendo armadura e ter mais HP na lane.",
+          "when": "• Para tornar o seu all-in mais forte, bater em quem está fazendo armadura e ter mais HP na lane. Não significa que você deva dar all-in cegamente no inimigo, pode pokear para deixar low e depois finalizar partindo pra cima com tudo.\n\n• Essa build no longo prazo também torna riven um campeão mais sólido por possuir mais status de defesa (HP no cutelo).",
           "items": [
             3071,
             6333,
@@ -104,7 +104,7 @@
         },
         {
           "id": "fome",
-          "when": "Para uma lane tranquila ou ganhando, pensando nas fights com três itens.",
+          "when": "• Essa build é mais forte no mid (super broken), mas também pode ser uma boa opção em lanes que você sabe que vai ter estabilidade e consegue mirar em ficar forte no mid game ao completar 3 itens.",
           "items": [
             2517,
             6333,
@@ -119,7 +119,7 @@
         },
         {
           "id": "eclipse",
-          "when": "Principalmente contra Jax, ou para abusar de uma lane que você já está ganhando.",
+          "when": "• Eclipse é útil em vários cenários, principalmente para abusar de uma lane que você já está ganhando pois se torna muito fácil ganhar as trades de um inimigo que mal pode devolver o dano recebido.\n\n• Permite fazer trocas anulando o dano que seu inimigo devolveria.\n\n• Também é de grande utilidade contra campeões que vão comprar itens de vida ao longo da partida, devido a passiva que dá dano baseado em [%HP].\n\nOBS: fazer eclipse pode se tornar um pouco mais complexo pois se torna difícil incorporar itens como corta shield, corta cura, anjo guardião ou malmortius na build, sempre tendo que fazer uma concessão; a ordem de fome eterna e serylda também pode ser invertida de acordo com a partida.",
           "items": [
             6692,
             6333,
@@ -150,7 +150,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Ahri": {
       "late": "favorable",
@@ -176,8 +180,8 @@
       "runes": null,
       "visible": true,
       "lanePlan": {
-        "route": null,
-        "reason": "Se você está tomando muito dano AP para conseguir trocar, compre Hexdrinker cedo. Depois siga para Axioma, Cutelo ou Fome Eterna conforme a lane. Não precisa fechar Malmortius agora.",
+        "route": "axioma",
+        "reason": "",
         "components": [
           {
             "item": 3155,
@@ -219,7 +223,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Amumu": {
       "late": "favorable",
@@ -396,7 +404,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Cassiopeia": {
       "late": "even",
@@ -410,7 +422,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "fome",
+        "reason": "",
+        "components": []
+      }
     },
     "Chogath": {
       "late": "favorable",
@@ -424,7 +440,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Corki": {
       "late": "favorable",
@@ -449,7 +469,16 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": [
+          {
+            "item": 1001,
+            "condition": "Nessa lane spacing é muito importante, se um lado tiver botas e o outro não, quem não tiver vai sofrer aos poucos até a morte."
+          }
+        ]
+      }
     },
     "Diana": {
       "late": "favorable",
@@ -484,7 +513,16 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": [
+          {
+            "item": 3123,
+            "condition": "Jogue o early game com base no seu ignite, deixe para comprar carrasco no midgame."
+          }
+        ]
+      }
     },
     "Ekko": {
       "late": "favorable",
@@ -551,7 +589,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Fizz": {
       "late": "favorable",
@@ -585,7 +627,12 @@
       "build": null,
       "early": "favorable",
       "runes": null,
-      "visible": true
+      "visible": true,
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Garen": {
       "late": "even",
@@ -599,7 +646,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Gnar": {
       "late": "favorable",
@@ -613,7 +664,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Gragas": {
       "late": "favorable",
@@ -627,7 +682,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Graves": {
       "late": "favorable",
@@ -652,7 +711,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Hecarim": {
       "late": "favorable",
@@ -676,7 +739,16 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "fome",
+        "reason": "",
+        "components": [
+          {
+            "item": 3155,
+            "condition": "Dependendo da vantagem que você conquistar com hexdrinker pode ser até bom fechar malmortius de primeiro item."
+          }
+        ]
+      }
     },
     "Hwei": {
       "late": "favorable",
@@ -701,7 +773,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Irelia": {
       "late": "favorable",
@@ -715,7 +791,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Ivern": {
       "late": "favorable",
@@ -778,7 +858,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Jhin": {
       "late": "favorable",
@@ -833,7 +917,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Karthus": {
       "late": "favorable",
@@ -880,7 +968,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Kayn": {
       "late": "unfavorable",
@@ -905,12 +997,16 @@
       "runes": null,
       "visible": true,
       "lanePlan": {
-        "route": null,
+        "route": "axioma",
         "reason": "Se você está tomando muito dano AP para conseguir trocar, compre Hexdrinker cedo. Depois siga para Axioma, Cutelo ou Fome Eterna conforme a lane. Não precisa fechar Malmortius agora.",
         "components": [
           {
             "item": 3155,
-            "condition": "Compre para aguentar o dano AP e conseguir trocar. Segure o Hexdrinker e faça seu primeiro item antes de fechar Malmortius."
+            "condition": "Compre para facilitar a lane e possibilitar jogar contra o kennen, feche o item só mais tarde."
+          },
+          {
+            "item": 3111,
+            "condition": "Rushar essa bota vai tornar a lane fácil, junto com hexdrinker se torna impossivel perder, mas só rushe os dois se for muito necessário."
           }
         ]
       }
@@ -949,7 +1045,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "KogMaw": {
       "late": "favorable",
@@ -960,7 +1060,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "KSante": {
       "late": "even",
@@ -974,7 +1078,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Leblanc": {
       "late": "favorable",
@@ -1082,7 +1190,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "fome",
+        "reason": "",
+        "components": []
+      }
     },
     "Malzahar": {
       "late": "favorable",
@@ -1107,7 +1219,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "fome",
+        "reason": "",
+        "components": []
+      }
     },
     "MasterYi": {
       "late": "unfavorable",
@@ -1176,7 +1292,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Morgana": {
       "late": "favorable",
@@ -1223,7 +1343,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Nautilus": {
       "late": "favorable",
@@ -1300,7 +1424,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Orianna": {
       "late": "favorable",
@@ -1324,7 +1452,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Pantheon": {
       "late": "favorable",
@@ -1338,7 +1470,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Poppy": {
       "late": "favorable",
@@ -1352,7 +1488,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Pyke": {
       "late": "favorable",
@@ -1374,7 +1514,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Quinn": {
       "late": "favorable",
@@ -1388,7 +1532,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Rakan": {
       "late": "favorable",
@@ -1455,7 +1603,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Rengar": {
       "late": "favorable",
@@ -1469,7 +1621,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Riven": {
       "late": "even",
@@ -1494,7 +1650,16 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": [
+          {
+            "item": 3155,
+            "condition": "Necessário pra ter um early game saudável contra rumble."
+          }
+        ]
+      }
     },
     "Ryze": {
       "late": "even",
@@ -1508,7 +1673,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Samira": {
       "late": "favorable",
@@ -1563,7 +1732,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Shaco": {
       "late": "favorable",
@@ -1587,7 +1760,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Shyvana": {
       "late": "favorable",
@@ -1611,7 +1788,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Sion": {
       "late": "favorable",
@@ -1625,7 +1806,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Sivir": {
       "late": "favorable",
@@ -1725,7 +1910,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Taliyah": {
       "late": "favorable",
@@ -1771,12 +1960,12 @@
       "runes": null,
       "visible": true,
       "lanePlan": {
-        "route": null,
+        "route": "axioma",
         "reason": "Se você está tomando muito dano AP para conseguir trocar, compre Hexdrinker cedo. Depois siga para Axioma, Cutelo ou Fome Eterna conforme a lane. Não precisa fechar Malmortius agora.",
         "components": [
           {
             "item": 3155,
-            "condition": "Compre para aguentar o dano AP e conseguir trocar. Segure o Hexdrinker e faça seu primeiro item antes de fechar Malmortius."
+            "condition": "Compre para aguentar o dano AP e conseguir trocar, a partir daqui você terá vantagem na lane."
           }
         ]
       }
@@ -1815,7 +2004,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Tryndamere": {
       "late": "favorable",
@@ -1829,7 +2022,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "TwistedFate": {
       "late": "favorable",
@@ -1875,7 +2072,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Varus": {
       "late": "favorable",
@@ -1889,7 +2090,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Vayne": {
       "late": "unfavorable",
@@ -1976,7 +2181,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Volibear": {
       "late": "unfavorable",
@@ -1990,7 +2199,11 @@
       "early": "unfavorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Warwick": {
       "late": "favorable",
@@ -2004,7 +2217,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Xayah": {
       "late": "favorable",
@@ -2051,7 +2268,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Yone": {
       "late": "even",
@@ -2065,7 +2286,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": []
+      }
     },
     "Yorick": {
       "late": "unfavorable",
@@ -2079,7 +2304,11 @@
       "early": "even",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "cutelo",
+        "reason": "",
+        "components": []
+      }
     },
     "Yunara": {
       "late": "favorable",
@@ -2114,7 +2343,11 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "axioma",
+        "reason": "",
+        "components": []
+      }
     },
     "Zac": {
       "late": "favorable",
@@ -2128,7 +2361,16 @@
       "early": "favorable",
       "runes": null,
       "visible": true,
-      "lanePlan": null
+      "lanePlan": {
+        "route": "eclipse",
+        "reason": "",
+        "components": [
+          {
+            "item": 3123,
+            "condition": "Pode ser um facilitador se você não estiver gerenciando bem seu ignite."
+          }
+        ]
+      }
     },
     "Zed": {
       "late": "favorable",

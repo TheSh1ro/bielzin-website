@@ -347,9 +347,7 @@ test('adiciona, reordena e remove dicas com salvamento automático', async ({ pa
   await expect(page.getByText('Nenhuma dica adicionada.')).toBeVisible()
 })
 
-test('edita rotas compartilhadas e plano de lane com recarga e herança independentes', async ({
-  page,
-}) => {
+test('edita builds compartilhadas e compras antecipadas com persistência', async ({ page }) => {
   const state = await setup(page, (guide) => {
     guide.defaults.itemization = {
       intro: 'Introdução',
@@ -388,9 +386,8 @@ test('edita rotas compartilhadas e plano de lane com recarga e herança independ
   )
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await page.getByRole('tab', { name: /^Itens/ }).click()
-  await page.getByRole('button', { name: 'Definir plano da lane' }).click()
   await page.getByLabel('Rota indicada para a lane').selectOption('base')
-  await page.getByLabel('Explicação para esta lane').fill('Antecipe defesa sem fechar o item')
+  await expect(page.getByLabel('Explicação para esta lane')).toHaveCount(0)
   await page.getByRole('button', { name: 'Adicionar componente da lane', exact: true }).click()
   await page.getByLabel('Buscar item').fill('Carrasco')
   await page.getByRole('button', { name: 'Chamado do Carrasco', exact: true }).click()
@@ -406,19 +403,14 @@ test('edita rotas compartilhadas e plano de lane com recarga e herança independ
   await page.reload()
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await page.getByRole('tab', { name: /^Itens/ }).click()
-  await expect(page.getByLabel('Rota indicada para a lane')).toHaveValue('base')
-  await expect(page.getByLabel('Explicação para esta lane')).toHaveValue(
-    'Antecipe defesa sem fechar o item',
+  await expect(page.getByLabel('componente da lane 1 · Quando e por quê')).toHaveValue(
+    'Antes do núcleo',
   )
-  await page.getByRole('button', { name: 'Remover plano da lane' }).click()
-  await expect(page.getByRole('dialog')).toContainText(
-    'Itens iniciais, situacionais, runas, dicas, dificuldade e visibilidade são mantidos.',
-  )
-  await page.getByRole('button', { name: 'Remover plano', exact: true }).click()
+  await page.getByRole('button', { name: 'Remover componente da lane 1', exact: true }).click()
   await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
     'Salvo automaticamente',
   )
-  expect(state.guide.matchups.Ahri.lanePlan).toBeNull()
+  expect(state.guide.matchups.Ahri.lanePlan.components).toEqual([])
   expect(state.guide.defaults.itemization.routes[0].reason).toBe('Sinergia editada')
 })
 
@@ -439,7 +431,7 @@ test('confirma resets por grupo, permite cancelar e desfazer sem perder o confro
   await page.getByRole('button', { name: 'Restaurar itens padrão' }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toContainText(
-    'Plano da lane, runas, dicas, dificuldade e visibilidade são mantidos.',
+    'Compras antecipadas, runas, dicas, dificuldade e visibilidade são mantidos.',
   )
   await page.getByRole('button', { name: 'Cancelar', exact: true }).click()
   expect(state.saves).toHaveLength(0)

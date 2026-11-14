@@ -8,6 +8,7 @@ const snapshot = JSON.parse(
 test('lê builds e avaliações exportadas, distingue pendências e mostra situacionais indisponíveis', async ({
   page,
 }) => {
+  await page.route('**/api/guide', (route) => route.fulfill({ status: 503 }))
   const data = structuredClone(snapshot)
   delete data.defaults.itemization
   data.defaults.build.start = [1055, 2003]

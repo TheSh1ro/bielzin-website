@@ -19,7 +19,13 @@ import {
   TrendingUp,
 } from 'lucide-vue-next'
 import { profile } from '@/profile'
-import { guideBuild, guideMatchup, guideVisible, guideItemization } from '@/lib/riven-guide'
+import {
+  guideBuild,
+  guideMatchup,
+  guideVisible,
+  guideItemization,
+  watchLocalGuide,
+} from '@/lib/riven-guide'
 import RivenItemization from './RivenItemization.vue'
 import RivenBootsGuide from './RivenBootsGuide.vue'
 import RivenRunePage from './RivenRunePage.vue'
@@ -83,7 +89,17 @@ const greavesSynergies = [
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
 
 const version = ref('')
-const roster = shallowRef<ChampionSummary[]>([])
+const allChampions = shallowRef<ChampionSummary[]>([])
+const roster = computed(() => allChampions.value.filter(({ id }) => guideVisible(id)))
+let stopLocalGuide = () => {}
+onMounted(() => {
+  stopLocalGuide = watchLocalGuide()
+})
+onUnmounted(() => stopLocalGuide())
+watch(roster, (champions) => {
+  if (!champions.some(({ id }) => id === selectedId.value))
+    selectedId.value = champions[0]?.id ?? ''
+})
 const items = shallowRef<Record<string, Item>>({})
 const dataState = ref<'loading' | 'ready' | 'error'>('loading')
 const itemsState = ref<'loading' | 'ready' | 'error'>('loading')
@@ -97,9 +113,7 @@ async function loadPatch() {
     version.value = v
     void loadItems()
     const { data } = await riotData<ChampionSummary>(v, 'champion')
-    roster.value = Object.values(data)
-      .filter(({ id }) => guideVisible(id))
-      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+    allChampions.value = Object.values(data).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
     if (!roster.value.some(({ id }) => id === selectedId.value)) {
       selectedId.value = roster.value[0]?.id ?? ''
     }
@@ -168,13 +182,13 @@ const build = computed(() => guideBuild(selectedId.value))
 
 const itemGroups = computed(() => [
   {
-    name: guideItemization ? 'Início' : 'Início e botas',
+    name: guideItemization.value ? 'Início' : 'Início e botas',
     ids: [
       ...build.value.start,
-      ...(!guideItemization && build.value.boots ? [build.value.boots] : []),
+      ...(!guideItemization.value && build.value.boots ? [build.value.boots] : []),
     ],
   },
-  ...(!guideItemization ? [{ name: 'Ordem de compra', ids: build.value.core }] : []),
+  ...(!guideItemization.value ? [{ name: 'Ordem de compra', ids: build.value.core }] : []),
 ])
 const selected = computed(() => roster.value.find(({ id }) => id === selectedId.value))
 const matchup = computed(() => guideMatchup(selectedId.value))

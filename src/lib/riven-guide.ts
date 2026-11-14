@@ -1,4 +1,5 @@
 import snapshot from '@/data/riven-guide.json'
+import { computed, shallowReactive } from 'vue'
 
 export type GuideBuild = {
   start: number[]
@@ -54,8 +55,47 @@ type Guide = {
   catalog: { version: string; styles: RuneStyle[]; shards: Record<string, Rune> }
 }
 
-const guide: Guide = snapshot as Guide
-export const guideItemization = guide.defaults.itemization
+const guide = shallowReactive<Guide>(snapshot as Guide)
+export const guideItemization = computed(() => guide.defaults.itemization)
+
+// Production keeps the exported snapshot; local previews follow the admin database.
+export function watchLocalGuide() {
+  if (!import.meta.env.DEV) return () => {}
+  let stopped = false
+  let pending = false
+  async function refresh() {
+    if (pending || document.hidden) return
+    pending = true
+    try {
+      const response = await fetch('/api/guide', {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(4000),
+      })
+      if (!response.ok) return
+      const data = (await response.json()) as Pick<Guide, 'defaults' | 'matchups'>
+      if (!stopped && data.defaults?.build && data.defaults?.runes && data.matchups) {
+        if (JSON.stringify(data.defaults) !== JSON.stringify(guide.defaults))
+          guide.defaults = data.defaults
+        if (JSON.stringify(data.matchups) !== JSON.stringify(guide.matchups))
+          guide.matchups = data.matchups
+      }
+    } catch {
+      // Keep the last readable version when the local tracker is unavailable.
+    } finally {
+      pending = false
+    }
+  }
+  void refresh()
+  const interval = window.setInterval(() => void refresh(), 2000)
+  window.addEventListener('focus', refresh)
+  document.addEventListener('visibilitychange', refresh)
+  return () => {
+    stopped = true
+    window.clearInterval(interval)
+    window.removeEventListener('focus', refresh)
+    document.removeEventListener('visibilitychange', refresh)
+  }
+}
 
 export function guideMatchup(id: string) {
   return guide.matchups[id]
