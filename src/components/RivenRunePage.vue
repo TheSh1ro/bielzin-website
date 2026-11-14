@@ -172,7 +172,7 @@ header {
 }
 .tree-heading h3 {
   color: var(--tree-color);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 600;
 }
 .rune-row {

@@ -103,7 +103,9 @@ for (const width of [1280, 390]) {
     await page.route('https://modelviewer.lol/embed?**', (route) =>
       route.fulfill({ contentType: 'text/html', body: '<html><body>3D fixture</body></html>' }),
     )
+    await page.route('**/api/guide', (route) => route.fulfill({ json: data }))
     await page.goto('/riven')
+    await page.getByRole('button', { name: 'Matchups', exact: true }).click()
     await expect(page.getByRole('img', { name: 'Modelo 3D animado de Renekton' })).toBeVisible()
     await expect(page.locator('.champion-stage .local-model')).toHaveAttribute(
       'aria-busy',
@@ -116,17 +118,17 @@ for (const width of [1280, 390]) {
     await expect(page.getByRole('region', { name: 'Árvore primária', exact: true })).toBeVisible()
     await expect(page.locator('.rune-tree').first().locator('.rune-row')).toHaveCount(4)
     await expect(page.locator('.rune-tree').nth(1).locator('.rune-row')).toHaveCount(3)
-    const routes = page.getByRole('group', { name: 'Rotas de build' })
-    await expect(routes.getByRole('button', { name: 'Axioma', exact: true })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
-    await routes.getByRole('button', { name: 'Cutelo', exact: true }).click()
+    const recommended = page.getByRole('region', { name: 'Build indicada', exact: true })
+    await expect(recommended.getByRole('heading', { name: 'Axioma', exact: true })).toBeVisible()
+    const cutelo = page
+      .locator('.alternative-build')
+      .filter({ has: page.locator('.alternative-title > span').filter({ hasText: /^Cutelo$/ }) })
+    await cutelo.locator('summary').first().click()
     await expect(
-      page.getByRole('list', { name: 'Sequência da rota' }).getByRole('listitem'),
+      cutelo.getByRole('list', { name: 'Sequência da rota' }).getByRole('listitem'),
     ).toHaveText(['1Cutelo', '2Fome', '3Dança'])
     await expect(page.getByText('Motivo de Cutelo', { exact: true })).toBeHidden()
-    await page.getByText('Explicação da build', { exact: true }).click()
+    await cutelo.getByText('Explicação da build', { exact: true }).click()
     await expect(page.getByText('Motivo de Cutelo', { exact: true })).toBeVisible()
     await page.getByRole('button', { name: 'Oponente Renekton' }).click()
     await page.evaluate(() => {
@@ -156,22 +158,16 @@ for (const width of [1280, 390]) {
     expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1)
     await expect(page.locator('.champion-stage iframe')).toHaveCount(0)
     await expect(page.locator('.champion-stage canvas')).toHaveCount(1)
-    await expect(routes.getByRole('button', { name: /Eclipse/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
-    await expect(page.getByRole('region', { name: 'Plano para a lane' })).toContainText(
-      'Trocas curtas contra Jax.',
-    )
-    await routes.getByRole('button', { name: 'Fome', exact: true }).click()
-    await expect(page.getByRole('list', { name: 'Sequência da rota' })).toContainText('Malmortius')
+    await expect(recommended.getByRole('heading', { name: 'Eclipse', exact: true })).toBeVisible()
+    const fome = page
+      .locator('.alternative-build')
+      .filter({ has: page.locator('.alternative-title > span').filter({ hasText: /^Fome$/ }) })
+    await fome.locator('summary').first().click()
+    await expect(fome.getByRole('list', { name: 'Sequência da rota' })).toContainText('Malmortius')
     await page.getByRole('button', { name: 'Oponente Jax' }).click()
     await page.getByRole('button', { name: 'Teemo', exact: true }).click()
-    await expect(routes.getByRole('button', { name: 'Axioma', exact: true })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
-    await expect(page.getByRole('region', { name: 'Plano para a lane' })).toContainText(
+    await expect(recommended.getByRole('heading', { name: 'Axioma', exact: true })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Compras antecipadas' })).toContainText(
       'Hexdrinker',
     )
     await expect(page.getByText('Defesa contra ataques básicos.', { exact: true })).toBeVisible()

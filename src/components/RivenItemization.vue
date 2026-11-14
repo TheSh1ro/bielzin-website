@@ -10,6 +10,7 @@ const props = defineProps<{
   opponent: string
   items: Record<string, Item>
   version: string
+  section?: 'primary' | 'alternatives'
 }>()
 const recommended = computed(
   () =>
@@ -21,10 +22,25 @@ const routes = computed(() =>
     ? [recommended.value, ...props.content.routes.filter((r) => r.id !== recommended.value?.id)]
     : [],
 )
+const visibleRoutes = computed(() =>
+  routes.value
+    .map((route, routeIndex) => ({ route, routeIndex }))
+    .filter(({ routeIndex }) =>
+      props.section === 'primary'
+        ? routeIndex === 0
+        : props.section === 'alternatives'
+          ? routeIndex > 0
+          : true,
+    ),
+)
 </script>
 <template>
   <div class="itemization">
-    <section v-if="plan?.components.length" class="lane-plan" aria-label="Compras antecipadas">
+    <section
+      v-if="section !== 'alternatives' && plan?.components.length"
+      class="lane-plan"
+      aria-label="Compras antecipadas"
+    >
       <h3>Compras antecipadas contra {{ opponent }}</h3>
       <ul v-if="plan.components.length" class="choices">
         <li v-for="(choice, index) in plan.components" :key="index">
@@ -33,8 +49,7 @@ const routes = computed(() =>
         </li>
       </ul>
     </section>
-    <h3 class="route-heading">O que buildar contra {{ opponent }}</h3>
-    <template v-for="(route, routeIndex) in routes" :key="opponent + route.id">
+    <template v-for="{ route, routeIndex } in visibleRoutes" :key="opponent + route.id">
       <h3 v-if="routeIndex === 1" class="alternatives-heading">Outras builds</h3>
       <component
         :is="routeIndex === 0 ? 'section' : 'details'"
@@ -56,10 +71,7 @@ const routes = computed(() =>
         </summary>
         <div :class="{ 'alternative-body': routeIndex > 0 }">
           <header class="route-intro">
-            <span v-if="routeIndex === 0" class="route-caption">{{
-              plan?.route ? 'Indicada para esta lane' : 'Build padrão'
-            }}</span>
-            <h4 v-if="routeIndex === 0">{{ route.title }}</h4>
+            <h3 v-if="routeIndex === 0">{{ route.title }}</h3>
             <p class="route-when">{{ route.when }}</p>
           </header>
           <ol class="route-items" aria-label="Sequência da rota">
@@ -91,8 +103,8 @@ const routes = computed(() =>
 </template>
 <style scoped>
 .itemization {
-  font-size: 0.875rem;
-  line-height: 1.55;
+  font-size: 0.9375rem;
+  line-height: 1.7;
 }
 p {
   white-space: pre-line;
@@ -100,16 +112,16 @@ p {
 }
 h3 {
   color: #f4f8f5;
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   font-weight: 600;
 }
 .lane-plan {
   margin-block: 28px 32px;
 }
 .lane-plan h3 {
-  color: var(--riven-muted);
-  font-size: 0.8125rem;
-  font-weight: 500;
+  color: #ded6d9;
+  font-size: 1rem;
+  font-weight: 600;
 }
 .lane-plan .choices {
   margin-top: 12px;
@@ -125,22 +137,13 @@ h3 {
   margin: 0;
   line-height: 1.7;
 }
-.route-heading {
-  margin-bottom: 16px;
-}
 .route-content {
   margin-top: 12px;
 }
-.route-caption {
-  color: var(--riven-green);
-  font: 0.8125rem var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.route-intro h4 {
+.route-intro h3 {
   margin: 8px 0;
   color: #f3e6f5;
-  font: 600 1.375rem var(--display);
+  font: 600 clamp(1.375rem, 1.5vw, 1.625rem)/1.25 var(--display);
   letter-spacing: -0.035em;
 }
 .route-items {
@@ -154,7 +157,7 @@ h3 {
   align-items: center;
   gap: 14px;
   position: relative;
-  padding: 14px 0;
+  padding: 18px 0;
 }
 .route-items li + li {
   border-top: 1px solid var(--riven-line);
@@ -250,18 +253,18 @@ details[open] > summary > svg {
 }
 .choices p {
   margin-top: 4px;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 .alternatives-heading {
   margin: 32px 0 12px;
-  color: var(--riven-muted);
+  color: #ded6d9;
 }
 .alternative-build {
   border-bottom: 1px solid var(--riven-line);
 }
 .alternative-build > summary {
   padding-inline: 0;
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: inherit;
 }
 .alternative-body {
@@ -273,6 +276,8 @@ details[open] > summary > svg {
   gap: 12px;
 }
 .alternative-title img {
+  width: 40px;
+  height: 40px;
   flex: none;
   border: 1px solid var(--riven-line);
 }

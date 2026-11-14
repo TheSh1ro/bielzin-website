@@ -44,8 +44,8 @@ h2 {
 p {
   white-space: pre-line;
   color: var(--riven-muted);
-  font-size: 0.8125rem;
-  line-height: 1.6;
+  font-size: 0.9375rem;
+  line-height: 1.7;
 }
 ul {
   display: grid;

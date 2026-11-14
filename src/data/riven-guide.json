@@ -74,7 +74,7 @@
       "routes": [
         {
           "id": "axioma",
-          "when": "• Para obter um item forte e barato buscando snowballar cedo na partida, seja contra seu laner ou agindo no mapa (jungle inimiga, lutas no rio, roaming pro mid). Além de ter bons atributos como AD, CDR e letalidade, a passiva faz a ultimate voltar mais rápido.\n\n• Axioma pode se tornar menos eficiente caso seu inimigo rushe bota de armadura, tendo em vista que não é muito legal comprar letalidade contra armadura, mas sempre tenha em mente que a partida não se trata apenas de stompar a lane. \n\n• Você também pode partir para outra build e se adaptar de acordo com as decisões do seu inimigo: se ele volta da base com bota 1 e couraça de pano, você pode partir para cutelo de primeiro item por exemplo. Se você tem gold para comprar brutalizador, sempre opte por seguir itemizando axioma.",
+          "when": "Para buscar snowball cedo com um primeiro item forte e barato, pressionando a lane ou criando jogadas na jungle inimiga, no rio e em roams para o mid. Perde eficiência se o oponente priorizar armadura.",
           "items": [
             6696,
             6333,
@@ -83,13 +83,13 @@
             3026
           ],
           "title": "Axioma · forte cedo / barato",
-          "reason": "O Brutalizador já dá AD, CDR e letalidade. Ao fechar Axioma, você mantém esse dano e recupera parte do cooldown do R ao participar de abates. Como ele não dá HP nem resistência, faça Dança da Morte para aguentar mais dano. Fome Eterna dá CDR com base no AD extra e mais omnivamp ao participar de um abate.",
-          "followup": "Depois desses três itens, faça o que precisar contra o time inimigo: penetração, defesa, corta-cura ou quebra-escudo.",
+          "reason": "O Brutalizador já oferece AD, CDR e letalidade. Ao fechar Axioma, você mantém esses atributos e recupera parte do cooldown do R ao participar de abates. A vantagem não precisa vir só de stompar a lane: procure oportunidades no mapa.\n\nObserve as compras do oponente antes de decidir o primeiro item. Se ele voltar com Bota e Armadura de Pano, você pode mudar para Cutelo. Se tiver gold para comprar Brutalizador, prefira seguir itemizando Axioma.\n\nComo Axioma não dá HP nem resistência, Dança da Morte ajuda a aguentar mais dano. Fome Eterna complementa com CDR baseado no AD extra e mais omnivamp ao participar de um abate.",
+          "followup": "Depois de Axioma, Dança da Morte e Fome Eterna, adapte os últimos espaços ao time inimigo: penetração, defesa, corta-cura ou quebra-escudo. A sequência cadastrada é uma referência; ajuste conforme a partida.",
           "components": []
         },
         {
           "id": "cutelo",
-          "when": "• Para tornar o seu all-in mais forte, bater em quem está fazendo armadura e ter mais HP na lane. Não significa que você deva dar all-in cegamente no inimigo, pode pokear para deixar low e depois finalizar partindo pra cima com tudo.\n\n• Essa build no longo prazo também torna riven um campeão mais sólido por possuir mais status de defesa (HP no cutelo).",
+          "when": "Para trocas longas e all-ins, principalmente contra quem está comprando armadura, ou quando você precisa de mais HP para aguentar o dano enquanto comba.",
           "items": [
             3071,
             6333,
@@ -98,13 +98,13 @@
             3026
           ],
           "title": "Cutelo · trocas longas / all-in",
-          "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e o move speed ajuda a grudar ou sair sem tomar dano de graça. Fome Eterna entra pelo CDR e sustain; Dança da Morte deixa você mais difícil de matar.",
-          "followup": "Boa opção quando você precisa aguentar mais dano para conseguir combar. Depois, adapte os itens ao time inimigo.",
+          "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e a velocidade de movimento ajuda a grudar ou sair sem tomar dano de graça. Essa base também deixa a Riven mais sólida ao longo da partida.\n\nFortalecer o all-in não significa entrar cegamente: você pode pokear, deixar o inimigo com pouca vida e só então partir para finalizar. Dança da Morte aumenta sua sobrevivência, e Fome Eterna complementa com CDR e sustain.",
+          "followup": "Depois de Cutelo, Dança da Morte e Fome Eterna, adapte os últimos itens ao time inimigo. Faça Malmortius se o dano AP justificar e avalie Anjo Guardião para uma luta decisiva. Encaixe corta-cura ou quebra-escudo quando necessário.",
           "components": []
         },
         {
           "id": "fome",
-          "when": "• Essa build é mais forte no mid (super broken), mas também pode ser uma boa opção em lanes que você sabe que vai ter estabilidade e consegue mirar em ficar forte no mid game ao completar 3 itens.",
+          "when": "Principalmente no mid, aproveitando o upgrade da missão. No top, é uma opção para lanes estáveis em que você consegue mirar no spike de três itens no mid game.",
           "items": [
             2517,
             6333,
@@ -113,13 +113,13 @@
             3026
           ],
           "title": "Fome · spike em 3 itens / tenacidade",
-          "reason": "Fome Eterna + Dança da Morte + Malmortius dão sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha mais omnivamp e limpa o dano acumulado da Dança. Dá para continuar fightando mesmo com pouco HP. Também funciona no top, sem o upgrade da bota do mid.",
-          "followup": "Você quer chegar forte nos três itens, mas precisa conseguir jogar a lane até lá. Se o time inimigo não tiver dano AP que justifique Malmortius, troque por outro item.",
+          "reason": "Fome Eterna, Dança da Morte e Malmortius combinam sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha mais omnivamp e limpa o dano acumulado da Dança da Morte, permitindo continuar fightando mesmo com pouco HP.\n\nA proposta fica mais forte no mid com o upgrade da bota, mas também funciona no top sem esse bônus. Você precisa conseguir jogar a lane até chegar aos três itens.",
+          "followup": "Se o time inimigo não tiver dano AP que justifique Malmortius, substitua esse espaço por outro item adequado à partida. Depois do núcleo, ajuste penetração e defesa ao que o time inimigo estiver fazendo.",
           "components": []
         },
         {
           "id": "eclipse",
-          "when": "• Eclipse é útil em vários cenários, principalmente para abusar de uma lane que você já está ganhando pois se torna muito fácil ganhar as trades de um inimigo que mal pode devolver o dano recebido.\n\n• Permite fazer trocas anulando o dano que seu inimigo devolveria.\n\n• Também é de grande utilidade contra campeões que vão comprar itens de vida ao longo da partida, devido a passiva que dá dano baseado em [%HP].\n\nOBS: fazer eclipse pode se tornar um pouco mais complexo pois se torna difícil incorporar itens como corta shield, corta cura, anjo guardião ou malmortius na build, sempre tendo que fazer uma concessão; a ordem de fome eterna e serylda também pode ser invertida de acordo com a partida.",
+          "when": "Para trocas curtas e poke, especialmente em uma lane que você já está ganhando. Também é útil contra campeões que vão acumular vida ao longo da partida.",
           "items": [
             6692,
             6333,
@@ -128,8 +128,8 @@
             3156
           ],
           "title": "Eclipse · trocas curtas / poke",
-          "reason": "O escudo do Eclipse permite trocar e sair tomando pouco dano. Contra Jax, procure Q3 + AA quando o E dele não estiver ativo. Se ele pular em você de E ligado, dê W e recue até acabar. Vá ganhando essas trocas até ter dano para matar. Com vantagem, o escudo também ajuda a bater nele debaixo da torre.",
-          "followup": "Siga com Cutelo → Dança da Morte → Malmortius → Anjo Guardião. Encaixe corta-cura ou quebra-escudo se precisar e só faça Malmortius se o dano AP justificar. Como essa build tem menos CDR, Ionianas ajudam bastante.",
+          "reason": "O escudo do Eclipse permite trocar e sair tomando pouco dano, ajudando a anular a resposta do inimigo. Com vantagem, fica mais fácil repetir as trocas sem que ele consiga devolver o dano recebido. A passiva com dano baseado em vida também ajuda contra quem compra HP.\n\nContra Jax, por exemplo, procure Q3 + AA quando o E dele não estiver ativo. Se ele pular em você de E ligado, use W e recue até acabar. Vá ganhando essas trocas até ter dano para matar. Com vantagem, o escudo também ajuda a bater nele debaixo da torre.",
+          "followup": "Depois de Eclipse e Dança da Morte, adapte os próximos espaços: a ordem de Fome Eterna e Serylda pode ser invertida conforme a partida. Só faça Malmortius se o dano AP justificar.\n\nEsta rota exige concessões para encaixar corta-cura, quebra-escudo ou Anjo Guardião: substitua o item menos necessário em vez de seguir a sequência cegamente. Como a build tem menos CDR, Ionianas ajudam bastante.",
           "components": []
         }
       ],

@@ -884,9 +884,9 @@ function finishEntrance() {
         </div>
       </main>
     </Transition>
-    <Transition name="riven-page" :duration="motionEnabled ? { enter: 1150, leave: 650 } : 0">
+    <Transition name="riven-page" :duration="motionEnabled ? { enter: 1200, leave: 600 } : 0">
       <main v-if="rivenOpen" class="riven-page" aria-label="Guia da Riven">
-        <div class="riven-rift" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="riven-shutter" aria-hidden="true"><span></span><span></span><span></span></div>
         <div class="riven-page-inner">
           <RivenGuide>
             <template #back>

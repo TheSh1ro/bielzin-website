@@ -9,15 +9,7 @@ import {
   shallowRef,
   watch,
 } from 'vue'
-import {
-  ArrowUpRight,
-  ChevronDown,
-  CircleHelp,
-  Minus,
-  Search,
-  TrendingDown,
-  TrendingUp,
-} from 'lucide-vue-next'
+import { ArrowUpRight, ChevronDown, Search } from 'lucide-vue-next'
 import { profile } from '@/profile'
 import {
   guideBuild,
@@ -51,6 +43,7 @@ const guideLinks = [
 ]
 
 function jumpTo(id: string) {
+  stopMarginScroll()
   const index = guideLinks.findIndex((link) => link.id === id)
   const root = steps.value
   const section = document.getElementById(id)
@@ -68,6 +61,103 @@ function updateNavigation() {
   const index = Math.round(root.scrollTop / root.clientHeight)
   activeSection.value = guideLinks[Math.min(index, guideLinks.length - 1)]!.id
 }
+
+function onStepsWheel(event: WheelEvent) {
+  stopMarginScroll()
+  const root = steps.value
+  if (!root || event.ctrlKey || event.deltaY <= 0 || root.scrollTop > 1) return
+  const target = event.target
+  if (target instanceof Element && target.closest('.riven-popover')) return
+  const panel = root.firstElementChild
+  const nextButton = panel?.lastElementChild
+  if (!panel || !nextButton) return
+  // Hand off as soon as the final content is visible, ignoring empty bottom padding.
+  if (nextButton.getBoundingClientRect().bottom > panel.getBoundingClientRect().bottom + 1) return
+  event.preventDefault()
+  jumpTo('riven-matchups')
+}
+
+let marginFrame = 0
+let marginPanel: HTMLElement | null = null
+let marginTarget = 0
+
+function stopMarginScroll() {
+  cancelAnimationFrame(marginFrame)
+  marginFrame = 0
+  marginPanel = null
+}
+
+function scrollFromMargin(panel: HTMLElement, delta: number) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    stopMarginScroll()
+    panel.scrollBy({ top: delta, behavior: 'instant' })
+    return
+  }
+  if (marginPanel !== panel) {
+    stopMarginScroll()
+    marginPanel = panel
+    marginTarget = panel.scrollTop
+  }
+  marginTarget = Math.max(
+    0,
+    Math.min(panel.scrollHeight - panel.clientHeight, marginTarget + delta),
+  )
+  if (marginFrame) return
+  let lastTime = performance.now()
+  function advance(time: number) {
+    const elapsed = Math.min(time - lastTime, 64)
+    lastTime = time
+    const distance = marginTarget - panel.scrollTop
+    if (Math.abs(distance) <= 1) {
+      panel.scrollTop = marginTarget
+      stopMarginScroll()
+      return
+    }
+    const movement = distance * (1 - Math.exp(-elapsed / 65))
+    panel.scrollTop += Math.sign(distance) * Math.max(1, Math.abs(movement))
+    marginFrame = requestAnimationFrame(advance)
+  }
+  marginFrame = requestAnimationFrame(advance)
+}
+
+function onPageWheel(event: WheelEvent) {
+  const root = steps.value
+  if (!root || event.ctrlKey || !event.deltaY || Math.abs(event.deltaX) > Math.abs(event.deltaY))
+    return
+  if (event.target instanceof Node && root.contains(event.target)) return
+  event.preventDefault()
+  const index = Math.round(root.scrollTop / root.clientHeight)
+  // Let an ongoing section transition finish before accepting another margin gesture.
+  if (Math.abs(root.scrollTop - index * root.clientHeight) > 1) return
+  const panel = root.children[index] as HTMLElement | undefined
+  if (!panel) return
+  const delta =
+    event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? panel.clientHeight : 1)
+  const remaining = panel.scrollHeight - panel.clientHeight - panel.scrollTop
+  const finalContent = panel.lastElementChild
+  const atEnd =
+    remaining <= 1 ||
+    (index === 0 &&
+      finalContent &&
+      finalContent.getBoundingClientRect().bottom <= panel.getBoundingClientRect().bottom + 1)
+  if (delta > 0 && atEnd && index < guideLinks.length - 1) {
+    jumpTo(guideLinks[index + 1]!.id)
+  } else if (delta < 0 && panel.scrollTop <= 1 && index > 0) {
+    jumpTo(guideLinks[index - 1]!.id)
+  } else {
+    scrollFromMargin(panel, delta)
+  }
+}
+
+let pageSurface: HTMLElement | null = null
+onMounted(() => {
+  pageSurface = steps.value?.closest<HTMLElement>('.riven-page') ?? null
+  pageSurface?.addEventListener('wheel', onPageWheel, { passive: false })
+})
+onUnmounted(() => {
+  pageSurface?.removeEventListener('wheel', onPageWheel)
+  stopMarginScroll()
+})
 
 onMounted(() => {
   if (window.location.hash.startsWith('#riven-')) {
@@ -255,22 +345,41 @@ void loadPatch()
 
 <template>
   <div class="riven">
-    <div class="riven-return"><slot name="back" /></div>
-    <nav class="riven-step-nav" aria-label="Guia da Riven">
+    <div class="riven-toolbar">
+      <div class="riven-return"><slot name="back" /></div>
+      <nav class="riven-step-nav" aria-label="Guia da Riven">
+        <button
+          v-for="(link, index) in guideLinks"
+          type="button"
+          :key="link.id"
+          :aria-label="link.name"
+          :title="link.name"
+          :aria-current="activeSection === link.id ? 'location' : undefined"
+          @click="jumpTo(link.id)"
+        >
+          <span aria-hidden="true">{{ index === 0 ? 'Destaque' : 'Matchups' }}</span>
+        </button>
+      </nav>
+    </div>
+
+    <nav
+      class="riven-progress"
+      :class="{ 'is-matchups': activeSection === 'riven-matchups' }"
+      aria-label="Etapas do guia"
+    >
       <button
         v-for="(link, index) in guideLinks"
-        type="button"
         :key="link.id"
-        :aria-label="link.name"
-        :title="link.name"
-        :aria-current="activeSection === link.id ? 'location' : undefined"
+        type="button"
+        :aria-label="index === 0 ? 'Ir para destaque' : 'Ir para matchups'"
+        :aria-current="activeSection === link.id ? 'step' : undefined"
         @click="jumpTo(link.id)"
       >
-        <span aria-hidden="true">0{{ index + 1 }}</span>
+        <span class="riven-progress-number" aria-hidden="true">0{{ index + 1 }}</span>
       </button>
     </nav>
 
-    <div ref="steps" class="riven-steps" @scroll.passive="updateNavigation">
+    <div ref="steps" class="riven-steps" @scroll.passive="updateNavigation" @wheel="onStepsWheel">
       <div class="riven-step">
         <section
           id="riven-destaque"
@@ -279,7 +388,6 @@ void loadPatch()
           aria-labelledby="riven-greaves-title"
         >
           <header class="riven-feature-heading">
-            <div class="riven-edition"><span>RIVEN GUIDE</span><span>01 / MID</span></div>
             <h2 id="riven-greaves-title" class="riven-mid-title">RIVEN <span>MID</span></h2>
             <div class="riven-hot-tip-title">
               <img
@@ -361,9 +469,10 @@ void loadPatch()
             </ul>
           </div>
         </section>
-
         <button class="riven-next-step" type="button" @click="jumpTo('riven-matchups')">
-          Explorar matchups <ChevronDown :size="18" aria-hidden="true" />
+          <span class="riven-explore-label"
+            ><span>Explorar</span><strong>Matchups do top</strong></span
+          >
         </button>
       </div>
       <div class="riven-step">
@@ -458,7 +567,7 @@ void loadPatch()
                 </div>
 
                 <dl class="riven-assessment" aria-label="Como é a matchup para a Riven">
-                  <div v-for="stage in assessment" :key="stage.label">
+                  <div v-for="stage in assessment" :key="stage.label" :data-outlook="stage.value">
                     <dt>{{ stage.label }}</dt>
                     <dd
                       :class="{
@@ -466,19 +575,6 @@ void loadPatch()
                         unfavorable: stage.value === 'unfavorable',
                       }"
                     >
-                      <component
-                        :is="
-                          stage.value === 'favorable'
-                            ? TrendingUp
-                            : stage.value === 'unfavorable'
-                              ? TrendingDown
-                              : stage.value === 'even'
-                                ? Minus
-                                : CircleHelp
-                        "
-                        :size="15"
-                        aria-hidden="true"
-                      />
                       {{
                         stage.value === 'favorable'
                           ? 'Favorável'
@@ -591,6 +687,7 @@ void loadPatch()
                   </div>
                   <RivenItemization
                     v-if="guideItemization"
+                    section="primary"
                     :content="guideItemization"
                     :plan="matchup?.lanePlan"
                     :opponent="selected?.name ?? selectedId"
@@ -633,6 +730,15 @@ void loadPatch()
                       </li>
                     </ul>
                   </div>
+                  <RivenItemization
+                    v-if="guideItemization"
+                    section="alternatives"
+                    :content="guideItemization"
+                    :plan="matchup?.lanePlan"
+                    :opponent="selected?.name ?? selectedId"
+                    :items="items"
+                    :version="version"
+                  />
                 </div>
               </section>
               <aside class="riven-matchup-aside" aria-label="Runas e botas">
@@ -667,9 +773,6 @@ void loadPatch()
           <a :href="profile.favoriteGame.guide" target="_blank" rel="noopener noreferrer"
             >Guia anterior <ArrowUpRight :size="14"
           /></a>
-          <p>
-            Projeto de fãs independente. League of Legends, imagens e dados pertencem à Riot Games.
-          </p>
         </footer>
       </div>
     </div>

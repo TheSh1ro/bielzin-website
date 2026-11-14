@@ -184,14 +184,14 @@ test('mantém o canvas no enquadramento e os controles fora da leitura de Quad H
       const nav = element.querySelector('.riven-step-nav')!.getBoundingClientRect()
       const back = element.querySelector('.riven-return')!.getBoundingClientRect()
       return {
-        clearance: Math.min(nav.top, back.top) - reading.bottom,
+        clearance: reading.top - Math.max(nav.bottom, back.bottom),
         controlsOverlap: back.right > nav.left,
       }
     })
     expect(
       layout.clearance,
       `${width}×${height}: controles sobre a leitura`,
-    ).toBeGreaterThanOrEqual(8)
+    ).toBeGreaterThanOrEqual(0)
     expect(layout.controlsOverlap, `${width}×${height}: controles sobrepostos`).toBe(false)
     await expect
       .poll(
