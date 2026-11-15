@@ -8,7 +8,7 @@ Copie `.env.example` para `.env.local` e informe a URL e a chave **publicável**
 
 - `/admin` aceita a conta cadastrada no Supabase Auth e autorizada no banco. Cada salvamento fica disponível imediatamente no guia público. Reabra o guia ou volte à aba para ler a atualização.
 - A seção League of Legends atualiza o perfil, as últimas 40 partidas ranqueadas e o histórico de elo pelo Supabase. O site carrega os ícones no Data Dragon.
-- O total abaixo de **Conexões** conta um navegador uma vez por perfil de armazenamento. A visita é registrada no clique de entrada. Os detalhes das novas entradas aparecem em **Visitas** no painel. A função Vercel usa `VISIT_INGEST_TOKEN` no servidor e envia ao Supabase a estimativa de cidade e estado disponível na requisição.
+- O total abaixo de **Conexões** conta um navegador uma vez por dia de Brasília enquanto o armazenamento for preservado. A visita é registrada no clique de entrada. Os detalhes das novas entradas aparecem em **Visitas** no painel. A função Vercel usa `VISIT_INGEST_TOKEN` no servidor e envia ao Supabase a estimativa de cidade e estado disponível na requisição.
 
 ## Perfil de osu!
 

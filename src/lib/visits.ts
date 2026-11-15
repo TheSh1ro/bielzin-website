@@ -1,8 +1,8 @@
 import { backendConfigured, publicRpc } from './supabase'
 
-type Visitor = { id: string; counted: boolean; detailsRecorded?: boolean }
+type Visitor = { id: string }
 
-function useVisitor(update: (visitor?: Visitor) => Visitor) {
+function getVisitor() {
   return new Promise<Visitor>((resolve, reject) => {
     const request = indexedDB.open('bielzin', 1)
     request.onupgradeneeded = () => request.result.createObjectStore('profile')
@@ -25,7 +25,11 @@ function useVisitor(update: (visitor?: Visitor) => Visitor) {
         const read = store.get('visitor')
         read.onsuccess = () => {
           try {
-            visitor = update(read.result as Visitor | undefined)
+            if (read.result) {
+              visitor = read.result as Visitor
+              return
+            }
+            visitor = { id: crypto.randomUUID() }
             store.put(visitor, 'visitor')
           } catch {
             transaction.abort()
@@ -41,10 +45,8 @@ function useVisitor(update: (visitor?: Visitor) => Visitor) {
 
 export async function recordEntrance(): Promise<number | undefined> {
   if (!backendConfigured) return
-  const visitor = await useVisitor(
-    (stored) => stored ?? { id: crypto.randomUUID(), counted: false },
-  ).catch(() => undefined)
-  if (!visitor || visitor.detailsRecorded) return readVisitCount()
+  const visitor = await getVisitor().catch(() => undefined)
+  if (!visitor) return readVisitCount()
 
   try {
     const response = await fetch('/api/visit', {
@@ -56,10 +58,6 @@ export async function recordEntrance(): Promise<number | undefined> {
     if (!response.ok) return readVisitCount()
     const count: unknown = await response.json()
     if (typeof count !== 'number') return readVisitCount()
-    // The saved ID also makes a retry safe if the response or this local write is lost.
-    void useVisitor(() => ({ id: visitor.id, counted: true, detailsRecorded: true })).catch(
-      () => {},
-    )
     return count
   } catch {
     return readVisitCount()

@@ -1,19 +1,20 @@
 import { expect, test } from '@playwright/test'
 
-test('só conta ao entrar e reutiliza a mesma visita entre abas e recargas', async ({
+test('só conta uma vez por dia de Brasília entre abas e recargas', async ({
   browser,
   context,
   page,
 }) => {
   const counted = new Set<string>()
   const ids: string[] = []
+  let day = 11
   await context.route('**/rest/v1/rpc/get_visit_count', (route) =>
     route.fulfill({ json: counted.size }),
   )
   await context.route('**/api/visit', (route) => {
     const id = route.request().postDataJSON().id as string
     ids.push(id)
-    counted.add(id)
+    counted.add(day + '/' + id)
     return route.fulfill({ json: counted.size })
   })
   const nextTab = await context.newPage()
@@ -34,15 +35,21 @@ test('só conta ao entrar e reutiliza a mesma visita entre abas e recargas', asy
   await expect(page.getByRole('main', { name: 'Guia da Riven' })).toBeVisible()
   expect(counted.size).toBe(1)
 
+  day = 12
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Entrar no perfil' }).click()
+  await expect(page.locator('.profile-visits')).toHaveText('2 visitas')
+  expect(new Set(ids).size).toBe(1)
+
   const independent = await browser.newContext({ baseURL: new URL(nextTab.url()).origin })
   await independent.route('**/api/visit', (route) => {
-    counted.add(route.request().postDataJSON().id as string)
+    counted.add(day + '/' + (route.request().postDataJSON().id as string))
     return route.fulfill({ json: counted.size })
   })
   const newVisitor = await independent.newPage()
   await newVisitor.goto('/')
   await newVisitor.getByRole('button', { name: 'Entrar no perfil' }).click()
-  await expect(newVisitor.locator('.profile-visits')).toHaveText('2 visitas')
+  await expect(newVisitor.locator('.profile-visits')).toHaveText('3 visitas')
   await independent.close()
 })
 
@@ -74,7 +81,7 @@ test('envia os detalhes para um navegador que já foi contado pelo modelo anteri
         request.onsuccess = () => {
           const db = request.result
           const tx = db.transaction('profile', 'readwrite')
-          tx.objectStore('profile').put({ id, counted: true }, 'visitor')
+          tx.objectStore('profile').put({ id, counted: true, detailsRecorded: true }, 'visitor')
           tx.oncomplete = () => {
             db.close()
             resolve()
