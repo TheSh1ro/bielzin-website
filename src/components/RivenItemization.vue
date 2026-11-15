@@ -1,104 +1,79 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import RivenItem from './RivenItem.vue'
-import type { Itemization, LanePlan } from '@/lib/riven-guide'
+import type { BuildRoute, LanePlan } from '@/lib/riven-guide'
 import { riotImage, type Item } from '@/lib/data-dragon'
-const props = defineProps<{
-  content: Itemization
+defineProps<{
+  routes: BuildRoute[]
   plan?: LanePlan | null
   opponent: string
   items: Record<string, Item>
   version: string
-  section?: 'primary' | 'alternatives'
+  alternatives?: boolean
 }>()
-const recommended = computed(
-  () =>
-    props.content.routes.find((r) => r.id === (props.plan?.route ?? props.content.defaultRoute)) ??
-    props.content.routes[0],
-)
-const routes = computed(() =>
-  recommended.value
-    ? [recommended.value, ...props.content.routes.filter((r) => r.id !== recommended.value?.id)]
-    : [],
-)
-const visibleRoutes = computed(() =>
-  routes.value
-    .map((route, routeIndex) => ({ route, routeIndex }))
-    .filter(({ routeIndex }) =>
-      props.section === 'primary'
-        ? routeIndex === 0
-        : props.section === 'alternatives'
-          ? routeIndex > 0
-          : true,
-    ),
-)
 </script>
 <template>
-  <div class="itemization" :class="{ 'itemization-alternatives': section === 'alternatives' }">
+  <div class="itemization" :class="{ 'itemization-alternatives': alternatives }">
     <section
-      v-if="section !== 'alternatives' && plan?.components.length"
+      v-if="!alternatives && plan?.components.length"
       class="lane-plan"
       aria-label="Compras antecipadas"
     >
       <h3>Compras antecipadas contra {{ opponent }}</h3>
-      <ul v-if="plan.components.length" class="choices">
+      <ul class="choices">
         <li v-for="(choice, index) in plan.components" :key="index">
           <RivenItem :id="choice.item" :items="items" :version="version" />
           <p>{{ choice.condition }}</p>
         </li>
       </ul>
     </section>
-    <template v-for="{ route, routeIndex } in visibleRoutes" :key="opponent + route.id">
-      <h3 v-if="routeIndex === 1" class="alternatives-heading">Outras builds</h3>
-      <component
-        :is="routeIndex === 0 ? 'section' : 'details'"
-        :class="routeIndex === 0 ? 'route-content' : 'alternative-build'"
-        :aria-label="routeIndex === 0 ? 'Build indicada' : route.title"
-      >
-        <summary v-if="routeIndex > 0">
-          <span class="alternative-title">
-            <img
-              v-if="route.items[0] && items[route.items[0]]"
-              :src="riotImage(version, 'item', items[route.items[0]]!.image.full)"
-              alt=""
-              width="32"
-              height="32"
-              loading="lazy"
-            />
-            <span>{{ route.title }}</span> </span
-          ><ChevronDown :size="18" aria-hidden="true" />
-        </summary>
-        <div :class="{ 'alternative-body': routeIndex > 0 }">
-          <header class="route-intro">
-            <h3 v-if="routeIndex === 0">{{ route.title }}</h3>
-            <p class="route-when">{{ route.when }}</p>
-          </header>
-          <ol class="route-items" aria-label="Sequência da rota">
-            <li v-for="(id, index) in route.items" :key="index">
-              <span class="step"
-                ><span>{{ index + 1 }}</span></span
-              ><RivenItem :id="id" :items="items" :version="version" />
-            </li>
-          </ol>
-          <details class="explanation">
-            <summary>
-              <span>Explicação da build</span><ChevronDown :size="18" aria-hidden="true" />
-            </summary>
-            <div class="explanation-body">
-              <p>{{ route.reason }}</p>
-              <ul v-if="route.components.length" class="choices">
-                <li v-for="(choice, index) in route.components" :key="index">
-                  <RivenItem :id="choice.item" :items="items" :version="version" />
-                  <p>{{ choice.condition }}</p>
-                </li>
-              </ul>
-              <p class="explanation-followup">{{ route.followup }}</p>
-            </div>
-          </details>
-        </div>
-      </component>
-    </template>
+    <h3 v-if="alternatives" class="alternatives-heading">Outras builds</h3>
+    <component
+      :is="alternatives ? 'details' : 'div'"
+      v-for="route in routes"
+      :key="opponent + route.id"
+      :class="alternatives ? 'alternative-build' : 'route-content'"
+      :aria-label="alternatives ? route.title : undefined"
+    >
+      <summary v-if="alternatives">
+        <span class="alternative-title">
+          <img
+            v-if="route.items[0] && items[route.items[0]]"
+            :src="riotImage(version, 'item', items[route.items[0]]!.image.full)"
+            alt=""
+            width="32"
+            height="32"
+            loading="lazy"
+          />
+          <span>{{ route.title }}</span> </span
+        ><ChevronDown :size="18" aria-hidden="true" />
+      </summary>
+      <div :class="{ 'alternative-body': alternatives }">
+        <p v-if="alternatives">{{ route.when }}</p>
+        <ol class="route-items" aria-label="Sequência da rota">
+          <li v-for="(id, index) in route.items" :key="index">
+            <span class="step"
+              ><span>{{ index + 1 }}</span></span
+            ><RivenItem :id="id" :items="items" :version="version" />
+          </li>
+        </ol>
+        <details class="explanation">
+          <summary>
+            <span>Explicação da build</span><ChevronDown :size="18" aria-hidden="true" />
+          </summary>
+          <div class="explanation-body">
+            <p>{{ route.reason }}</p>
+            <ul v-if="route.components.length" class="choices">
+              <li v-for="(choice, index) in route.components" :key="index">
+                <RivenItem :id="choice.item" :items="items" :version="version" />
+                <p>{{ choice.condition }}</p>
+              </li>
+            </ul>
+            <p class="explanation-followup">{{ route.followup }}</p>
+          </div>
+        </details>
+      </div>
+    </component>
   </div>
 </template>
 <style scoped>
@@ -111,9 +86,6 @@ const visibleRoutes = computed(() =>
   padding-top: 24px;
   border-top: 1px solid var(--riven-line);
 }
-.itemization-alternatives .alternatives-heading {
-  margin-top: 0;
-}
 p {
   white-space: pre-line;
   color: var(--riven-muted);
@@ -124,7 +96,7 @@ h3 {
   font-weight: 600;
 }
 .lane-plan {
-  margin-block: 28px 32px;
+  margin-bottom: 22px;
 }
 .lane-plan h3 {
   color: #ded6d9;
@@ -145,20 +117,14 @@ h3 {
   margin: 0;
   line-height: 1.7;
 }
-.route-content {
-  margin-top: 12px;
-}
-.route-intro h3 {
-  margin: 8px 0;
-  color: #f3e6f5;
-  font: 600 clamp(1.375rem, 1.5vw, 1.625rem)/1.25 var(--display);
-  letter-spacing: -0.035em;
-}
 .route-items {
   display: grid;
   gap: 0;
   margin: 22px 0;
   border-block: 1px solid var(--riven-line);
+}
+.route-content .route-items {
+  margin-top: 0;
 }
 .route-items li {
   display: flex;
@@ -264,7 +230,7 @@ details[open] > summary > svg {
   font-size: 0.9375rem;
 }
 .alternatives-heading {
-  margin: 32px 0 12px;
+  margin-bottom: 12px;
   color: #ded6d9;
 }
 .alternative-build {

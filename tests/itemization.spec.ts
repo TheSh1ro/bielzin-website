@@ -9,6 +9,7 @@ for (const width of [1280, 390]) {
   test(`rotas, compras da lane e botas em ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     const data = structuredClone(snapshot)
+    const defaultTitle = 'Axioma: pressão cedo e primeiro item barato'
     const route = (id: string, title: string, items: number[]) => ({
       id,
       title,
@@ -22,7 +23,7 @@ for (const width of [1280, 390]) {
       intro: 'Primeiro a lane, depois o jogo.',
       defaultRoute: 'axioma',
       routes: [
-        route('axioma', 'Axioma', [6696, 6333, 2517]),
+        route('axioma', defaultTitle, [6696, 6333, 2517]),
         route('cutelo', 'Cutelo', [3071, 2517, 6333]),
         route('fome', 'Fome', [2517, 6333, 3156]),
         route('eclipse', 'Eclipse', [6692, 3071, 6333, 3156, 3026]),
@@ -120,8 +121,11 @@ for (const width of [1280, 390]) {
     await expect(page.locator('.rune-tree').first().locator('.rune-row')).toHaveCount(4)
     await expect(page.locator('.rune-tree').nth(1).locator('.rune-row')).toHaveCount(3)
     await page.getByRole('tab', { name: 'Itemização', exact: true }).click()
-    const recommended = page.getByRole('region', { name: 'Build indicada', exact: true })
-    await expect(recommended.getByRole('heading', { name: 'Axioma', exact: true })).toBeVisible()
+    const itemization = page.getByRole('tabpanel', { name: 'Itemização' })
+    const routeHeading = itemization.getByRole('heading', { level: 2 })
+    await expect(routeHeading).toHaveText([defaultTitle])
+    await expect(itemization.getByText('Build recomendada', { exact: true })).toHaveCount(0)
+    await expect(itemization.getByRole('list', { name: 'Início', exact: true })).toBeVisible()
     const cutelo = page
       .locator('.alternative-build')
       .filter({ has: page.locator('.alternative-title > span').filter({ hasText: /^Cutelo$/ }) })
@@ -160,7 +164,8 @@ for (const width of [1280, 390]) {
     expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1)
     await expect(page.locator('.champion-stage iframe')).toHaveCount(0)
     await expect(page.locator('.champion-stage canvas')).toHaveCount(1)
-    await expect(recommended.getByRole('heading', { name: 'Eclipse', exact: true })).toBeVisible()
+    await expect(routeHeading).toHaveText(['Eclipse'])
+    await expect(itemization.getByText('Quando usar Eclipse', { exact: true })).toBeVisible()
     const fome = page
       .locator('.alternative-build')
       .filter({ has: page.locator('.alternative-title > span').filter({ hasText: /^Fome$/ }) })
@@ -168,7 +173,7 @@ for (const width of [1280, 390]) {
     await expect(fome.getByRole('list', { name: 'Sequência da rota' })).toContainText('Malmortius')
     await page.getByRole('button', { name: 'Oponente Jax' }).click()
     await page.getByRole('button', { name: 'Teemo', exact: true }).click()
-    await expect(recommended.getByRole('heading', { name: 'Axioma', exact: true })).toBeVisible()
+    await expect(routeHeading).toHaveText([defaultTitle])
     await expect(page.getByRole('region', { name: 'Compras antecipadas' })).toContainText(
       'Hexdrinker',
     )

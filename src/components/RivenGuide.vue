@@ -299,19 +299,28 @@ function selectOpponent(id: string) {
 }
 
 const build = computed(() => guideBuild(selectedId.value))
+const selected = computed(() => roster.value.find(({ id }) => id === selectedId.value))
+const matchup = computed(() => guideMatchup(selectedId.value))
+const recommendedRoute = computed(() => {
+  const itemization = guideItemization.value
+  if (!itemization) return
+  const routeId = matchup.value?.lanePlan?.route ?? itemization.defaultRoute
+  return itemization.routes.find(({ id }) => id === routeId) ?? itemization.routes[0]
+})
+const alternativeRoutes = computed(
+  () => guideItemization.value?.routes.filter(({ id }) => id !== recommendedRoute.value?.id) ?? [],
+)
 
 const itemGroups = computed(() => [
   {
-    name: guideItemization.value ? 'Início' : 'Início e botas',
+    name: recommendedRoute.value ? 'Início' : 'Início e botas',
     ids: [
       ...build.value.start,
-      ...(!guideItemization.value && build.value.boots ? [build.value.boots] : []),
+      ...(!recommendedRoute.value && build.value.boots ? [build.value.boots] : []),
     ],
   },
-  ...(!guideItemization.value ? [{ name: 'Ordem de compra', ids: build.value.core }] : []),
+  ...(!recommendedRoute.value ? [{ name: 'Ordem de compra', ids: build.value.core }] : []),
 ])
-const selected = computed(() => roster.value.find(({ id }) => id === selectedId.value))
-const matchup = computed(() => guideMatchup(selectedId.value))
 const assessment = computed(() => [
   { label: 'Early game', value: matchup.value?.early },
   { label: 'Late game', value: matchup.value?.late },
@@ -720,15 +729,19 @@ void loadPatch()
                     class="riven-matchup-column build-panel"
                     aria-labelledby="riven-build-title"
                   >
-                    <div class="riven-title-line">
-                      <h2 id="riven-build-title">Build recomendada</h2>
-                      <span v-if="build.isBase && !guideItemization" class="riven-meta"
-                        >Padrão</span
-                      >
-                    </div>
-                    <p v-if="!guideItemization" class="riven-build-reason" aria-live="polite">
-                      {{ build.reason }}
-                    </p>
+                    <header class="riven-build-intro">
+                      <div class="riven-title-line">
+                        <h2 id="riven-build-title">
+                          {{ recommendedRoute?.title ?? 'Build recomendada' }}
+                        </h2>
+                        <span v-if="build.isBase && !recommendedRoute" class="riven-meta"
+                          >Padrão</span
+                        >
+                      </div>
+                      <p v-if="recommendedRoute?.when ?? build.reason" class="riven-build-reason">
+                        {{ recommendedRoute?.when ?? build.reason }}
+                      </p>
+                    </header>
                     <p v-if="itemsState === 'loading'" class="riven-feedback" role="status">
                       Carregando itens…
                     </p>
@@ -762,9 +775,8 @@ void loadPatch()
                         </ul>
                       </div>
                       <RivenItemization
-                        v-if="guideItemization"
-                        section="primary"
-                        :content="guideItemization"
+                        v-if="recommendedRoute"
+                        :routes="[recommendedRoute]"
                         :plan="matchup?.lanePlan"
                         :opponent="selected?.name ?? selectedId"
                         :items="items"
@@ -808,16 +820,15 @@ void loadPatch()
                       </div>
                     </div>
                     <RivenBootsGuide
-                      v-if="guideItemization && itemsState === 'ready'"
+                      v-if="recommendedRoute && guideItemization && itemsState === 'ready'"
                       :content="guideItemization"
                       :items="items"
                       :version="version"
                     />
                     <RivenItemization
-                      v-if="guideItemization && itemsState === 'ready'"
-                      section="alternatives"
-                      :content="guideItemization"
-                      :plan="matchup?.lanePlan"
+                      v-if="alternativeRoutes.length && itemsState === 'ready'"
+                      alternatives
+                      :routes="alternativeRoutes"
                       :opponent="selected?.name ?? selectedId"
                       :items="items"
                       :version="version"

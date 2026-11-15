@@ -192,7 +192,6 @@ body:has(.riven-page) {
   font-weight: 500;
 }
 .riven-page .riven .riven-matchup-column > h2,
-.riven-page .riven .riven-matchup-column > .riven-title-line > h2,
 .riven-page .riven .riven-enemy-panel h2 {
   color: #d9cdd1;
 }
@@ -616,7 +615,12 @@ body:has(.riven-page) {
 }
 
 /* Build reading hierarchy: section / item name / explanation. */
-.riven-page .riven .build-panel > .riven-title-line > h2,
+.riven-build-intro h2 {
+  color: #f3e6f5;
+  font: 600 clamp(1.375rem, 1.5vw, 1.625rem)/1.25 var(--display);
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
 .riven-page .riven .riven-matchup-aside > section > h2 {
   font-size: 1.5rem;
   line-height: 1.25;

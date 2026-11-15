@@ -316,8 +316,7 @@
   border-left: 1px solid var(--riven-line);
 }
 
-.riven-matchup-column > h2,
-.riven-matchup-column > .riven-title-line > h2 {
+.riven-matchup-column > h2 {
   font: 600 clamp(1.0625rem, 2.2vw, 1.375rem)/1.2 var(--display);
   letter-spacing: -0.025em;
 }
@@ -1433,9 +1432,12 @@
     text-overflow: ellipsis;
   }
 }
-/* Starting purchases are a compact prelude to the named build. */
-.riven-content-panel .build-panel > .riven-title-line {
+/* The starting purchases sit between the build intro and the numbered route. */
+.riven-build-intro {
   margin-bottom: 24px;
+}
+.riven-build-intro .riven-build-reason {
+  margin-top: 8px;
 }
 .riven-content-panel .build-panel > .riven-item-groups {
   margin-top: 0;
@@ -1445,9 +1447,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 16px 28px;
-  padding-bottom: 24px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--riven-line);
+  margin-bottom: 10px;
 }
 .riven-opening-label {
   flex: none;
