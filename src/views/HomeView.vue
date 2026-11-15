@@ -25,12 +25,15 @@ import YouTubeTrack from '@/components/YouTubeTrack.vue'
 import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
+import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import '@/assets/riven-experiment.css'
 
 const loadRiven = () => import('@/components/RivenGuide.vue')
 const RivenGuide = defineAsyncComponent(loadRiven)
 
 function preloadRiven() {
+  const poster = new Image()
+  poster.src = rivenPoster
   void loadRiven().catch(() => {})
 }
 const sections = [
@@ -62,6 +65,7 @@ function isRivenLocation() {
 }
 
 const rivenOpen = ref(isRivenLocation())
+const rivenMounted = ref(rivenOpen.value)
 const rivenShortcut = ref<HTMLAnchorElement>()
 const rivenBack = ref<HTMLAnchorElement>()
 const activeSection = ref<Section>(sectionFromLocation())
@@ -71,6 +75,14 @@ const profileTitle = document.title
 watchEffect(() => {
   document.title = rivenOpen.value ? 'Riven · bielzin' : profileTitle
 })
+watchEffect(
+  () => {
+    if (rivenOpen.value && window.history.state?.fromProfile) {
+      rivenBack.value?.focus({ preventScroll: true })
+    }
+  },
+  { flush: 'post' },
+)
 const entering = ref(false)
 const startWithSound = ref(true)
 const soundVolume = ref(profile.music.volume)
@@ -195,7 +207,7 @@ function syncSection() {
   rivenOpen.value = isRivenLocation()
   if (rivenOpen.value) {
     entered.value = true
-    void nextTick(() => rivenBack.value?.focus({ preventScroll: true }))
+    rivenMounted.value = true
   } else {
     activeSection.value = sectionFromLocation()
     if (wasRivenOpen) void restoreGamesPosition()
@@ -369,7 +381,7 @@ function finishEntrance() {
 </script>
 
 <template>
-  <div class="site" :class="{ 'is-entering': entering, 'site--riven': rivenOpen }" :style="theme">
+  <div class="site" :class="{ 'is-entering': entering }" :style="theme">
     <img
       v-if="profile.theme.backgroundStill"
       class="site-backdrop"
@@ -884,8 +896,14 @@ function finishEntrance() {
         </div>
       </main>
     </Transition>
-    <Transition name="riven-page" :duration="motionEnabled ? { enter: 1200, leave: 600 } : 0">
-      <main v-if="rivenOpen" class="riven-page" aria-label="Guia da Riven">
+    <Transition name="riven-page" type="animation" persisted @after-leave="rivenMounted = rivenOpen">
+      <main
+        v-if="rivenMounted"
+        v-show="rivenOpen"
+        class="riven-page"
+        :inert="!rivenOpen"
+        aria-label="Guia da Riven"
+      >
         <div class="riven-shutter" aria-hidden="true"><span></span><span></span><span></span></div>
         <div class="riven-page-inner">
           <RivenGuide>

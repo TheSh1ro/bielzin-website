@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
 const props = defineProps<{ source: string; champion: string }>()
+const emit = defineEmits<{ ready: [] }>()
 const host = ref<HTMLDivElement>()
 const loading = ref(true)
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -63,8 +64,7 @@ onMounted(async () => {
     const silhouette = new THREE.Vector3()
     const frame = () => {
       if (silhouette.y <= 0) return
-      const { width, height } = element.getBoundingClientRect()
-      const aspect = Math.max(width, 1) / Math.max(height, 1)
+      const aspect = Math.max(element.clientWidth, 1) / Math.max(element.clientHeight, 1)
       const zoom = framing[championId]?.zoom ?? 1
       // Identical silhouette margins, including broad champions and their weapons.
       const halfHeight = Math.max(silhouette.y / 0.84, silhouette.x / (aspect * 0.88)) / (2 * zoom)
@@ -79,8 +79,7 @@ onMounted(async () => {
     light.position.set(3, 5, 4)
     scene.add(light)
     const resize = () => {
-      const { width, height } = element.getBoundingClientRect()
-      renderer?.setSize(Math.max(width, 1), Math.max(height, 1))
+      renderer?.setSize(Math.max(element.clientWidth, 1), Math.max(element.clientHeight, 1))
       frame()
     }
     observer = new ResizeObserver(resize)
@@ -151,6 +150,7 @@ onMounted(async () => {
     // Populate the canvas before revealing it, with pose and camera settled.
     renderer.render(scene, camera)
     loading.value = false
+    emit('ready')
     let lastTime = performance.now()
     renderer.setAnimationLoop((time) => {
       const delta = Math.max(0, Math.min((time - lastTime) / 1000, 0.1))

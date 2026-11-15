@@ -1519,17 +1519,19 @@ p.dev-label {
   }
 }
 
-html:not(:has(.site--riven)) {
+html:has(.site) {
   scrollbar-gutter: stable;
 }
 
-body:has(.site--riven) {
-  overflow: hidden;
+html:has(.riven-page) {
+  overflow-y: hidden;
+  background: #080808;
 }
 
 .riven-page {
   --riven-green: #e0b8e5;
   --riven-muted: #c4bcc9;
+  container-type: inline-size;
   position: fixed;
   z-index: 30;
   inset: 0;
@@ -1543,43 +1545,21 @@ body:has(.site--riven) {
 }
 
 .riven-page-inner {
-  width: min(100% - 2 * clamp(16px, 3.4vw, 80px), 1840px);
+  position: relative;
+  width: min(90%, 1440px);
   margin-inline: auto;
   flex: 1;
   min-height: 0;
 }
 
-.riven-page-enter-active,
-.riven-page-leave-active {
-  transition: opacity 320ms ease;
-}
-
-.riven-page-enter-active .riven-page-inner,
-.riven-page-leave-active .riven-page-inner {
-  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.riven-page-enter-from,
-.riven-page-leave-to {
-  opacity: 0;
-}
-
-.riven-page-enter-from .riven-page-inner,
-.riven-page-leave-to .riven-page-inner {
-  transform: translateY(18px) scale(0.988);
+@media (max-width: 740px) {
+  .riven-page-inner {
+    width: calc(100% - 40px);
+  }
 }
 
 .riven-page-leave-active {
   pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .riven-page-enter-active,
-  .riven-page-leave-active,
-  .riven-page-enter-active .riven-page-inner,
-  .riven-page-leave-active .riven-page-inner {
-    transition: none;
-  }
 }
 
 .riven-back {

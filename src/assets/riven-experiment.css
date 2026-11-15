@@ -1,7 +1,4 @@
 /* Experiment 02: black / silver / carmine. Atmosphere belongs to the viewport. */
-body:has(.riven-page) {
-  overflow: hidden;
-}
 .riven-banner {
   --blade-green: #e4c3cc;
   border-color: #ffffff2a;
@@ -59,10 +56,6 @@ body:has(.riven-page) {
   .riven-page::before {
     transition: none;
   }
-}
-.riven-page-inner {
-  position: relative;
-  width: min(100% - 2 * clamp(20px, 5vw, 96px), 1728px);
 }
 .riven-page .riven {
   --riven-line: #ffffff16;
@@ -280,14 +273,6 @@ body:has(.riven-page) {
 .riven-shutter span:nth-child(3) {
   top: 66.6%;
 }
-.riven-page-enter-active,
-.riven-page-leave-active {
-  transition: none;
-}
-.riven-page-enter-from,
-.riven-page-leave-to {
-  opacity: 1;
-}
 .riven-page-enter-active {
   animation: riven-exposure 1200ms cubic-bezier(0.76, 0, 0.18, 1) both;
 }
@@ -309,17 +294,9 @@ body:has(.riven-page) {
 }
 .riven-page-enter-active .riven-page-inner {
   animation: riven-develop 1100ms ease both;
-  transition: none;
 }
 .riven-page-leave-active {
   animation: riven-exposure 600ms cubic-bezier(0.76, 0, 0.18, 1) reverse both;
-}
-.riven-page-leave-active .riven-page-inner {
-  transition: none;
-  transform: none;
-}
-.riven-page-leave-active canvas {
-  visibility: hidden;
 }
 @keyframes riven-exposure {
   0% {
@@ -529,11 +506,11 @@ body:has(.riven-page) {
 
 /* Two chapters share a continuous track and one moving indicator. */
 .riven-progress {
-  position: fixed;
+  position: absolute;
   z-index: 4;
-  right: clamp(14px, 1.8vw, 44px);
+  left: calc(100% + (100cqw - 100%) / 4);
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   display: grid;
   width: 44px;
   height: 184px;
@@ -543,7 +520,8 @@ body:has(.riven-page) {
 .riven-progress::after {
   content: '';
   position: absolute;
-  right: 0;
+  left: 50%;
+  translate: -50% 0;
   pointer-events: none;
   border-radius: 2px;
 }
@@ -556,7 +534,6 @@ body:has(.riven-page) {
   top: 14px;
   height: 64px;
   width: 2px;
-  right: -0.5px;
   background: #e7c7d1;
   transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -564,52 +541,21 @@ body:has(.riven-page) {
   transform: translateY(92px);
 }
 .riven-progress button {
-  position: relative;
   width: 44px;
   height: 92px;
-  text-align: left;
-  color: #73696e;
-  transition: color 200ms ease;
-}
-.riven-progress-number {
-  font: 400 0.6875rem/1 var(--mono);
-  letter-spacing: 0.06em;
-}
-.riven-progress button[aria-current] {
-  color: #f0e7eb;
-}
-.riven-progress button::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  width: 5px;
-  background: #ffffff35;
-}
-.riven-progress button:is(:hover, :focus-visible) {
-  color: #f0e7eb;
 }
 .riven-progress button:focus-visible {
   outline: 1px solid var(--riven-green);
   outline-offset: 4px;
   box-shadow: none;
 }
-@media (max-width: 740px) {
-  .riven-page-inner {
-    width: calc(100% - 40px);
-    margin-inline: auto;
-  }
-}
-/* Below Full HD, the outer margin cannot keep a 16px gap from the 44px targets. */
-@media (max-width: 1919px) {
+@container (width < 1620px) {
   .riven-progress {
     display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .riven-progress::after,
-  .riven-progress button {
+  .riven-progress::after {
     transition: none;
   }
 }

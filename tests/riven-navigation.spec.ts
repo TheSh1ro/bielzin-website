@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } })
+
 async function enterGames(page: Page) {
   await page.goto('/')
   await page.getByRole('button', { name: 'Entrar sem trilha' }).click()
@@ -73,6 +75,76 @@ test('abre o guia pelo banner e volta para Jogos preservando o histórico', asyn
   await expect(page.getByRole('region', { name: 'Matchups da Riven Top' })).toBeVisible()
   await page.goBack()
   await expect(shortcut).toBeFocused()
+})
+
+test.describe('transição animada do guia', () => {
+  test.use({
+    viewport: { width: 1920, height: 911 },
+    reducedMotion: 'no-preference',
+  })
+
+  test('preserva a largura e mantém a Riven visível na entrada e na saída', async ({ page }) => {
+    const model = Promise.withResolvers<void>()
+    await page.route('**/models/riven-pacto-quebrado.glb', async (route) => {
+      await model.promise
+      await route.continue()
+    })
+
+    await enterGames(page)
+    await expect(page.locator('.profile-reveal-enter-active')).toHaveCount(0)
+    const profile = page.locator('#perfil')
+    const profileLeft = () => profile.evaluate((el) => el.getBoundingClientRect().left)
+    const initialLeft = await profileLeft()
+    const viewportWidth = await page.evaluate(() => document.documentElement.clientWidth)
+    const guide = page.locator('.riven-page')
+    const poster = guide.locator('.riven-feature-poster')
+    try {
+      await page.getByRole('link', { name: 'Guia de Riven' }).click()
+      await expect(guide).toHaveCSS('animation-name', 'riven-exposure')
+      await expect(guide.locator('.riven-shutter span').first()).toHaveCSS(
+        'animation-name',
+        'riven-band',
+      )
+      await expect(poster).toBeVisible()
+      await expect
+        .poll(() => poster.evaluate((img: HTMLImageElement) => img.naturalWidth))
+        .toBeGreaterThan(0)
+      await expect(guide).not.toHaveClass(/riven-page-enter-active/)
+      expect(await profileLeft()).toBe(initialLeft)
+      expect((await guide.boundingBox())?.width).toBe(viewportWidth)
+      expect((await guide.locator('.riven-page-inner').boundingBox())?.width).toBe(1440)
+    } finally {
+      model.resolve()
+    }
+
+    await expect(poster).toBeHidden()
+    await expect(guide.locator('.riven-feature-art canvas')).toBeVisible()
+    const visibleDuringExit = await guide.evaluate(
+      (el) =>
+        new Promise((resolve) => {
+          el.addEventListener('animationstart', (event) => {
+            if (
+              event.target !== el ||
+              event.animationName !== 'riven-exposure' ||
+              !el.classList.contains('riven-page-leave-active')
+            )
+              return
+            const canvas = el.querySelector<HTMLCanvasElement>('.riven-feature-art canvas')
+            resolve(
+              !!canvas &&
+                getComputedStyle(el).animationDirection === 'reverse' &&
+                getComputedStyle(canvas).visibility === 'visible' &&
+                canvas.getContext('webgl2')?.isContextLost() === false,
+            )
+          })
+          el.querySelector<HTMLAnchorElement>('.riven-back')!.click()
+        }),
+    )
+    expect(visibleDuringExit).toBe(true)
+    await expect(guide).toHaveCount(0)
+    expect(await profileLeft()).toBe(initialLeft)
+    await expect(page.getByRole('link', { name: 'Guia de Riven' })).toBeFocused()
+  })
 })
 
 for (const width of [1280, 390]) {

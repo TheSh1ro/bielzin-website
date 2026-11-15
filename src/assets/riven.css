@@ -573,7 +573,7 @@
   border-bottom: 0;
 }
 
-.riven-hot-tip img {
+.riven-hot-tip img:not(.riven-feature-poster) {
   flex: none;
   border: 1px solid var(--riven-line);
 }
@@ -910,9 +910,15 @@
   min-height: 0;
   pointer-events: none;
 }
+.riven-feature-poster,
 .riven-feature-art .local-model {
   position: absolute;
   inset: 0;
+}
+.riven-feature-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .riven-feature-art :deep(.canvas-host) {
   height: 100%;
@@ -1158,7 +1164,8 @@
   top: 0;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1fr 1.35fr 0.9fr 0.9fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 8px;
   padding-bottom: 16px;
   background: #080808;

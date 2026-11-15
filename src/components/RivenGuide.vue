@@ -10,6 +10,7 @@ import {
   watch,
 } from 'vue'
 import { ArrowUpRight, ChevronDown, Search, Swords } from 'lucide-vue-next'
+import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import { profile } from '@/profile'
 import {
   guideBuild,
@@ -22,7 +23,6 @@ import RivenItemization from './RivenItemization.vue'
 import RivenBootsGuide from './RivenBootsGuide.vue'
 import RivenRunePage from './RivenRunePage.vue'
 import ChampionModel from './ChampionModel.vue'
-const FeaturedRivenModel = defineAsyncComponent(() => import('./LocalChampionModel.vue'))
 import {
   abilityText,
   cooldownText,
@@ -35,6 +35,8 @@ import {
   type Item,
 } from '@/lib/data-dragon'
 
+const FeaturedRivenModel = defineAsyncComponent(() => import('./LocalChampionModel.vue'))
+const featuredModelReady = ref(false)
 const activeSection = ref('riven-destaque')
 const steps = ref<HTMLElement>()
 const guideLinks = [
@@ -411,11 +413,10 @@ void loadPatch()
         :key="link.id"
         type="button"
         :aria-label="index === 0 ? 'Ir para destaque' : 'Ir para matchups'"
+        :title="link.name"
         :aria-current="activeSection === link.id ? 'step' : undefined"
         @click="jumpTo(link.id)"
-      >
-        <span class="riven-progress-number" aria-hidden="true">0{{ index + 1 }}</span>
-      </button>
+      ></button>
     </nav>
 
     <div ref="steps" class="riven-steps" @scroll.passive="updateNavigation" @wheel="onStepsWheel">
@@ -467,9 +468,17 @@ void loadPatch()
             </p>
           </div>
           <div class="riven-feature-art" aria-hidden="true">
+            <img
+              v-show="!featuredModelReady"
+              class="riven-feature-poster"
+              :src="rivenPoster"
+              alt=""
+              fetchpriority="high"
+            />
             <FeaturedRivenModel
               source="/models/riven-pacto-quebrado.glb"
               champion="Riven Pacto Quebrado"
+              @ready="featuredModelReady = true"
             />
           </div>
           <div class="riven-hot-tip-build">
