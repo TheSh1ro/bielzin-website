@@ -25,6 +25,7 @@ import YouTubeTrack from '@/components/YouTubeTrack.vue'
 import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
+import { readVisitCount, recordEntrance } from '@/lib/visits'
 import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import '@/assets/riven-experiment.css'
 
@@ -71,6 +72,19 @@ const rivenBack = ref<HTMLAnchorElement>()
 const activeSection = ref<Section>(sectionFromLocation())
 const sectionIndex = computed(() => sections.findIndex(({ id }) => id === activeSection.value))
 const entered = ref(rivenOpen.value || Number.isFinite(window.history.state?.rivenReturnScroll))
+const leagueMounted = ref(false)
+const visitCount = ref<number>()
+const numberFormat = new Intl.NumberFormat('pt-BR')
+let visitRequestStarted = false
+
+watchEffect(() => {
+  if (!entered.value || rivenOpen.value) return
+  leagueMounted.value = true
+  if (visitRequestStarted) return
+  visitRequestStarted = true
+  void readVisitCount().then((count) => (visitCount.value = count))
+})
+
 const profileTitle = document.title
 watchEffect(() => {
   document.title = rivenOpen.value ? 'Riven · bielzin' : profileTitle
@@ -363,6 +377,8 @@ async function enter() {
   if (entered.value) return
   entering.value = motionEnabled
   if (startWithSound.value) void playAudio()
+  visitRequestStarted = true
+  void recordEntrance().then((count) => (visitCount.value = count))
   entered.value = true
   if (youtubeId) {
     await startYouTube()
@@ -643,6 +659,9 @@ function finishEntrance() {
               </li>
             </ul>
           </section>
+          <p v-if="visitCount !== undefined" class="profile-visits">
+            {{ numberFormat.format(visitCount) }} {{ visitCount === 1 ? 'visita' : 'visitas' }}
+          </p>
         </div>
 
         <div ref="content" class="content" :class="`section-direction-${sectionDirection}`">
@@ -686,7 +705,7 @@ function finishEntrance() {
                   </div>
                 </a>
 
-                <LeagueTracker />
+                <LeagueTracker v-if="leagueMounted" />
               </section>
 
               <OsuProfile />
@@ -896,7 +915,12 @@ function finishEntrance() {
         </div>
       </main>
     </Transition>
-    <Transition name="riven-page" type="animation" persisted @after-leave="rivenMounted = rivenOpen">
+    <Transition
+      name="riven-page"
+      type="animation"
+      persisted
+      @after-leave="rivenMounted = rivenOpen"
+    >
       <main
         v-if="rivenMounted"
         v-show="rivenOpen"

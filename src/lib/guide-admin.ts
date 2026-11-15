@@ -1,4 +1,9 @@
+import { createClient } from '@supabase/supabase-js'
 import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from './riven-guide'
+import { apiHeaders, backendUrl, publishableKey } from './supabase'
+
+export const adminClient =
+  backendUrl && publishableKey ? createClient(backendUrl, publishableKey) : null
 
 export type RuneChoice = { id: number; name: string; icon: string }
 export type GuideCatalog = {
@@ -17,6 +22,20 @@ export type GuideContent = {
   defaults: { build: GuideBuild; runes: GuideRunes; itemization?: Itemization | null }
   matchups: Partial<Record<string, GuideMatchup>>
 }
+export type AdminGuide = GuideContent & {
+  catalog: GuideCatalog
+  revisions: Partial<Record<string, string>>
+}
+export type SavedEntry<T> = { data: T; revision: string }
+
+export class GuideRequestError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message)
+  }
+}
 export function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value))
 }
@@ -26,30 +45,27 @@ export const normalized = (text: string) =>
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
 
-export async function guideRequest<T>(path: string, payload?: unknown): Promise<T> {
-  const response = await fetch(
-    '/api/guide' + path,
-    payload === undefined
-      ? {}
-      : {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        },
-  ).catch(() => {
-    throw new Error('Não foi possível acessar o tracker local. Verifique se ele está rodando.')
+export async function guideRequest<T>(path: string, method = 'GET', payload?: unknown): Promise<T> {
+  const session = (await adminClient?.auth.getSession())?.data.session
+  if (!session) throw new GuideRequestError(401, 'Sua sessão expirou. Entre novamente.')
+  const headers = apiHeaders()
+  headers.set('Authorization', 'Bearer ' + session.access_token)
+  if (payload !== undefined) headers.set('Content-Type', 'application/json')
+  const response = await fetch(backendUrl + '/functions/v1/guide-admin' + path, {
+    method,
+    headers,
+    body: payload === undefined ? undefined : JSON.stringify(payload),
+    signal: AbortSignal.timeout(12000),
+  }).catch(() => {
+    throw new GuideRequestError(503, 'Não foi possível acessar o painel. Tente novamente.')
   })
   const data = await response.json().catch(() => ({}))
   if (!response.ok) {
-    const field = data.detail?.[0]?.loc?.slice(1).join('.')
-    const fields: Record<string, string> = {
-      'build.start': 'Selecione pelo menos um item inicial.',
-      'build.core': 'Selecione pelo menos um item na ordem de compra.',
-    }
-    throw new Error(
-      typeof data.detail === 'string'
-        ? data.detail
-        : (fields[field] ?? 'Não foi possível concluir. Verifique os campos e tente novamente.'),
+    throw new GuideRequestError(
+      response.status,
+      typeof data.message === 'string'
+        ? data.message
+        : 'Não foi possível concluir. Tente novamente.',
     )
   }
   return data as T

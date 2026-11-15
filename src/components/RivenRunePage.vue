@@ -41,20 +41,25 @@ const page = computed(() => guideRunePage(props.champion))
 const paths = computed(() => [
   {
     label: 'Primária',
-    style: page.value.primary,
-    slots: page.value.primary?.slots ?? [],
-    selected: page.value.selection.primary,
+    style: page.value?.primary,
+    slots: page.value?.primary?.slots ?? [],
+    selected: page.value?.selection.primary ?? [],
   },
   {
     label: 'Secundária',
-    style: page.value.secondary,
-    slots: page.value.secondary?.slots.slice(1) ?? [],
-    selected: page.value.selection.secondary,
+    style: page.value?.secondary,
+    slots: page.value?.secondary?.slots.slice(1) ?? [],
+    selected: page.value?.selection.secondary ?? [],
   },
 ])
 </script>
 <template>
-  <div ref="root" class="rune-page" :style="{ '--rune-available': `${availableHeight}px` }">
+  <div
+    v-if="page"
+    ref="root"
+    class="rune-page"
+    :style="{ '--rune-available': `${availableHeight}px` }"
+  >
     <section
       v-for="path in paths"
       :key="path.label"

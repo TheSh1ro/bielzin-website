@@ -91,32 +91,73 @@ const gameCatalog = {
 }
 
 async function setup(page, configure) {
-  const state = { guide: structuredClone(seed), fail: false, saves: [] }
+  const state = {
+    guide: structuredClone(seed),
+    revisions: {},
+    fail: false,
+    conflict: false,
+    saves: [],
+  }
   configure?.(state.guide)
-  await page.route('**/api/guide**', async (route) => {
-    const pathname = new URL(route.request().url()).pathname.replace(/^\/api/, '')
+  await page.route('**/auth/v1/token?grant_type=password', (route) =>
+    route.fulfill({
+      json: {
+        access_token: 'test-access-token',
+        refresh_token: 'test-refresh-token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        user: { id: 'test-editor', aud: 'authenticated', email: 'editor@exemplo.test' },
+      },
+    }),
+  )
+  await page.route('**/functions/v1/guide-admin**', async (route) => {
+    const pathname = new URL(route.request().url()).pathname.replace(
+      '/functions/v1/guide-admin',
+      '/guide',
+    )
     if (pathname === '/guide/catalog') return route.fulfill({ json: gameCatalog })
     if (pathname === '/guide' && route.request().method() === 'GET')
-      return route.fulfill({ json: state.guide })
+      return route.fulfill({
+        json: { ...state.guide, catalog: gameCatalog, revisions: state.revisions },
+      })
     if (route.request().method() === 'PUT') {
-      const data = route.request().postDataJSON()
+      const { data, revision } = route.request().postDataJSON()
       state.saves.push({ pathname, data })
       if (state.hold) await state.hold
       if (state.fail)
         return route.fulfill({
           status: 422,
-          json: { detail: 'Falha de validação' },
+          json: { message: 'Falha de validação' },
         })
-      if (pathname.endsWith('/defaults')) state.guide.defaults = data
-      else state.guide.matchups[pathname.split('/').pop()] = data
-      return route.fulfill({ json: data })
+      const entry = pathname.split('/').pop()
+      if (state.conflict || revision !== (state.revisions[entry] ?? null))
+        return route.fulfill({ status: 409, json: { message: 'O guia mudou em outra aba.' } })
+      if (entry === 'defaults') state.guide.defaults = data
+      else state.guide.matchups[entry] = data
+      state.revisions[entry] = String(state.saves.length)
+      return route.fulfill({ json: { data, revision: state.revisions[entry] } })
     }
     return route.fulfill({ status: 404 })
   })
   await page.goto('/admin')
+  await page.getByLabel('E-mail').fill('editor@exemplo.test')
+  await page.getByLabel('Senha').fill('senha-teste')
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Padrões do guia', exact: true })).toBeVisible()
   return state
 }
+
+test('preserva o rascunho quando outra sessão salva o mesmo matchup', async ({ page }) => {
+  const state = await setup(page)
+  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  state.conflict = true
+  await page.getByLabel('Dica 1', { exact: true }).fill('Meu rascunho')
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText(
+    'O guia mudou em outra aba.',
+  )
+  await expect(page.getByLabel('Dica 1', { exact: true })).toHaveValue('Meu rascunho')
+  expect(state.guide.matchups.Ahri.tips).toEqual([''])
+})
 
 test('edita, salva, recarrega e restaura herança independente', async ({ page }) => {
   const state = await setup(page)

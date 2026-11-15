@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "snapshot:lol": "node scripts/snapshot-lol.mjs",
     "snapshot:osu": "node scripts/snapshot-osu.mjs",
     "snapshot:chess": "node scripts/snapshot-chess.mjs",
     "dev": "vite",
@@ -13,11 +12,12 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint .",
-    "test": "node --test tests/*.test.mjs && playwright test",
+    "test": "playwright test",
     "format": "prettier --write src/ scripts/ tests/ playwright.config.ts",
     "format:check": "prettier --check src/ scripts/ tests/ playwright.config.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
     "lucide-vue-next": "^0.563.0",
     "three": "^0.187.0",
     "vue": "^3.5.26"

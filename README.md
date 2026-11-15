@@ -1,26 +1,14 @@
 # bielzin
 
-## Tracker de League of Legends
-
-A aba Jogos lê o snapshot real em `src/data/lol-tracker.json`. O site não faz chamadas à Riot e não recebe a chave. Os ícones da coleta ficam em `public/media/lol/`.
-
-Para atualizar localmente no PowerShell:
-
-```powershell
-$env:RIOT_API_KEY = 'sua-chave'
-npm run snapshot:lol
-Remove-Item Env:RIOT_API_KEY
-```
-
-O padrão é `bielzin#sh1ro`, servidor BR. Para adicionar outra conta BR ao mesmo JSON: `npm run snapshot:lol -- "Nome" "TAG"`. O seletor de contas aparece quando houver mais de uma conta coletada. A chave é usada somente no processo local; não use variáveis `VITE_*` para ela.
-
-Cada coleta busca até 40 partidas ranqueadas recentes e guarda a última leitura de elo e LP de cada dia por fila, no horário de Brasília. O histórico também inclui registros importados do LeagueOfGraphs. Campeões, KDA e vitórias recentes são calculados a partir das partidas da coleta, com remakes excluídos. Os totais por fila vêm da Riot. Gere e publique o site novamente após atualizar o JSON.
-
 Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `npm run dev` para abrir a prévia e `npm run build` para gerar o site.
 
-## Guia de Riven
+## Supabase
 
-O guia lê `src/data/riven-guide.json`, exportado do PostgreSQL do projeto vizinho `bielzin-tracker`. Edite matchups, padrões de itens e runas no painel local em **http://127.0.0.1:5173/admin**. Inicie o tracker com Docker e rode `npm run dev` neste projeto. A rota `/admin` existe apenas no desenvolvimento e seu código é excluído do build público. As chamadas `/api/guide` passam pelo proxy do Vite até a API do tracker em `127.0.0.1:8765`, mantendo as escritas na mesma origem. A publicação do tracker atualiza esse arquivo junto com os dados do LoL; o site público não acessa a API local. Para conferir alterações antes de publicar, execute `guide-export` conforme o README do tracker e abra a prévia deste site. O snapshot é gerado e não deve ser editado manualmente.
+Copie `.env.example` para `.env.local` e informe a URL e a chave **publicável** do projeto. Configure essas mesmas variáveis no Vercel para produção. O repositório `bielzin-tracker` contém o backend e o procedimento de implantação.
+
+- `/admin` aceita a conta cadastrada no Supabase Auth e autorizada no banco. Cada salvamento fica disponível imediatamente no guia público. Reabra o guia ou volte à aba para ler a atualização.
+- A seção League of Legends atualiza o perfil, as últimas 40 partidas ranqueadas e o histórico de elo pelo Supabase. O site carrega os ícones no Data Dragon.
+- O total abaixo de **Conexões** conta um navegador uma vez por perfil de armazenamento. A visita é registrada no clique de entrada.
 
 ## Perfil de osu!
 

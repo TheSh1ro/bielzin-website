@@ -17,7 +17,8 @@ import {
   guideMatchup,
   guideVisible,
   guideItemization,
-  watchLocalGuide,
+  guideState,
+  refreshGuide,
 } from '@/lib/riven-guide'
 import RivenItemization from './RivenItemization.vue'
 import RivenBootsGuide from './RivenBootsGuide.vue'
@@ -183,14 +184,18 @@ const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Cami
 const version = ref('')
 const allChampions = shallowRef<ChampionSummary[]>([])
 const roster = computed(() => allChampions.value.filter(({ id }) => guideVisible(id)))
-let stopLocalGuide = () => {}
 onMounted(() => {
-  stopLocalGuide = watchLocalGuide()
+  void refreshGuide()
+  window.addEventListener('focus', refreshGuide)
+  document.addEventListener('visibilitychange', refreshGuide)
 })
-onUnmounted(() => stopLocalGuide())
+onUnmounted(() => {
+  window.removeEventListener('focus', refreshGuide)
+  document.removeEventListener('visibilitychange', refreshGuide)
+})
 watch(roster, (champions) => {
-  if (!champions.some(({ id }) => id === selectedId.value))
-    selectedId.value = champions[0]?.id ?? ''
+  if (champions.length && !champions.some(({ id }) => id === selectedId.value))
+    selectedId.value = champions[0]!.id
 })
 const items = shallowRef<Record<string, Item>>({})
 const dataState = ref<'loading' | 'ready' | 'error'>('loading')
@@ -206,9 +211,6 @@ async function loadPatch() {
     void loadItems()
     const { data } = await riotData<ChampionSummary>(v, 'champion')
     allChampions.value = Object.values(data).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
-    if (!roster.value.some(({ id }) => id === selectedId.value)) {
-      selectedId.value = roster.value[0]?.id ?? ''
-    }
     dataState.value = 'ready'
   } catch {
     dataState.value = 'error'
@@ -317,11 +319,13 @@ const itemGroups = computed(() => [
   {
     name: recommendedRoute.value ? 'Início' : 'Início e botas',
     ids: [
-      ...build.value.start,
-      ...(!recommendedRoute.value && build.value.boots ? [build.value.boots] : []),
+      ...(build.value?.start ?? []),
+      ...(!recommendedRoute.value && build.value?.boots ? [build.value.boots] : []),
     ],
   },
-  ...(!recommendedRoute.value ? [{ name: 'Ordem de compra', ids: build.value.core }] : []),
+  ...(!recommendedRoute.value && build.value
+    ? [{ name: 'Ordem de compra', ids: build.value.core }]
+    : []),
 ])
 const assessment = computed(() => [
   { label: 'Early game', value: matchup.value?.early },
@@ -536,17 +540,25 @@ void loadPatch()
             </h1>
             <span v-if="version" class="riven-patch">Patch BR · {{ version }}</span>
           </div>
-          <p v-if="dataState === 'loading'" class="riven-feedback" role="status">
-            Carregando campeões…
+          <p
+            v-if="dataState === 'loading' || guideState === 'loading'"
+            class="riven-feedback"
+            role="status"
+          >
+            Carregando matchups…
           </p>
           <div v-else-if="dataState === 'error'" class="riven-feedback" role="status">
             <p>O catálogo de campeões está indisponível.</p>
             <button type="button" @click="loadPatch">Tentar novamente</button>
           </div>
+          <div v-else-if="guideState === 'error'" class="riven-feedback" role="status">
+            <p>Os matchups estão indisponíveis.</p>
+            <button type="button" @click="refreshGuide">Tentar novamente</button>
+          </div>
           <p v-else-if="!roster.length" class="riven-feedback" role="status">
             Nenhum matchup disponível no momento.
           </p>
-          <div v-else-if="selected" class="riven-matchup">
+          <div v-else-if="selected && build" class="riven-matchup">
             <aside class="riven-matchup-identity" aria-label="Oponente e avaliação">
               <div class="riven-controls">
                 <div

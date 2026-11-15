@@ -1,16 +1,71 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import { ArrowUpRight, ChevronDown } from 'lucide-vue-next'
-import snapshot from '@/data/lol-tracker.json'
+import { publicRpc } from '@/lib/supabase'
 import LeagueRankChart from './LeagueRankChart.vue'
 
 const matchPageSize = 6
+type Rank = {
+  queueType: string
+  tier: string
+  division: string
+  leaguePoints: number
+  wins: number
+  losses: number
+}
+type Match = {
+  id: string
+  queueId: number
+  startedAt: string
+  durationSeconds: number
+  championName: string
+  championIcon: string
+  win: boolean
+  remake: boolean
+  kills: number
+  deaths: number
+  assists: number
+  cs: number
+  visionScore: number
+  role: string
+  damage: number
+}
+type Account = {
+  id: string
+  gameName: string
+  tagLine: string
+  level: number
+  region: string
+  collectedAt: string
+  profileIconId: number
+  dataDragonVersion: string
+  ranks: Rank[]
+  rankHistory: (Rank & { recordedAt: string })[]
+  matches: Match[]
+}
+const accounts = shallowRef<Account[]>([])
+const state = ref<'loading' | 'ready' | 'error'>('loading')
+async function loadTracker() {
+  state.value = 'loading'
+  try {
+    const data = await publicRpc<{ accounts: Account[] }>('get_lol_tracker')
+    accounts.value = data.accounts
+    state.value = 'ready'
+  } catch {
+    state.value = 'error'
+  }
+}
+onMounted(loadTracker)
+
 const accountIndex = ref(0)
 const queue = ref(420)
 const visibleCount = ref(matchPageSize)
 const moreButton = ref<HTMLButtonElement | null>(null)
 const lessButton = ref<HTMLButtonElement | null>(null)
-const account = computed(() => snapshot.accounts[accountIndex.value])
+const account = computed(() => accounts.value[accountIndex.value])
+function trackerIcon(type: 'profileicon' | 'champion', file: string) {
+  return `https://ddragon.leagueoflegends.com/cdn/${account.value?.dataDragonVersion}/img/${type}/${encodeURIComponent(file)}`
+}
 const queueType = computed(() => (queue.value === 420 ? 'RANKED_SOLO_5x5' : 'RANKED_FLEX_SR'))
 const matches = computed(
   () => account.value?.matches.filter((match) => match.queueId === queue.value) ?? [],
@@ -137,7 +192,7 @@ async function collapseMatches() {
 
     <div class="account-heading">
       <img
-        :src="`/media/lol/profile-${account.profileIconId}.png`"
+        :src="trackerIcon('profileicon', account.profileIconId + '.png')"
         alt=""
         width="52"
         height="52"
@@ -149,10 +204,10 @@ async function collapseMatches() {
         </h5>
         <p>{{ account.region }} <span aria-hidden="true">·</span> Nível {{ account.level }}</p>
       </div>
-      <label v-if="snapshot.accounts.length > 1" class="account-picker"
+      <label v-if="accounts.length > 1" class="account-picker"
         >Conta
         <select v-model="accountIndex">
-          <option v-for="(entry, index) in snapshot.accounts" :key="entry.puuid" :value="index">
+          <option v-for="(entry, index) in accounts" :key="entry.id" :value="index">
             {{ entry.gameName }}#{{ entry.tagLine }}
           </option>
         </select>
@@ -252,7 +307,7 @@ async function collapseMatches() {
         <ol class="champion-list">
           <li v-for="champion in champions" :key="champion.name">
             <img
-              :src="`/media/lol/${champion.icon}`"
+              :src="trackerIcon('champion', champion.icon)"
               alt=""
               width="36"
               height="36"
@@ -294,7 +349,7 @@ async function collapseMatches() {
               }}<time :datetime="match.startedAt">{{ dateLabel(match.startedAt) }}</time></span
             >
             <img
-              :src="`/media/lol/${match.championIcon}`"
+              :src="trackerIcon('champion', match.championIcon)"
               :alt="match.championName"
               :title="match.championName"
               width="32"
@@ -344,7 +399,12 @@ async function collapseMatches() {
     <header class="tracker-heading">
       <h4 id="tracker-title">Meu perfil</h4>
     </header>
-    <p class="empty">Nenhuma conta no tracker.</p>
+    <p v-if="state === 'loading'" class="empty" role="status">Carregando histórico de LoL…</p>
+    <div v-else-if="state === 'error'" role="status">
+      <p class="empty">O histórico de LoL está indisponível.</p>
+      <button type="button" class="more-matches" @click="loadTracker">Tentar novamente</button>
+    </div>
+    <p v-else class="empty">Nenhuma conta no tracker.</p>
   </section>
 </template>
 

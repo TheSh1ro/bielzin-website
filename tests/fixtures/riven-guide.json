@@ -86,7 +86,7 @@
       "routes": [
         {
           "id": "axioma",
-          "when": "Para buscar snowball cedo com um primeiro item forte e barato, muitas vezes voltando da base com seu item fechado antes que seu adversário consiga fechar o dele. Perde um pouco da eficiência se o oponente for priorizar armadura nas primeiras compras anulando sua letalidade.",
+          "when": "Para buscar snowball cedo com um primeiro item forte e barato, pressionando a lane ou criando jogadas na jungle inimiga, no rio e em roamings. Perde um pouco da eficiência se o oponente for priorizar armadura nas primeiras compras anulando sua letalidade.",
           "items": [
             6696,
             6333,
@@ -94,14 +94,14 @@
             6694,
             3026
           ],
-          "title": "Axioma: forte cedo e baixo custo",
+          "title": "Axioma: forte cedo e barato",
           "reason": "O Brutalizador já oferece AD, CDR e letalidade. Ao fechar Axioma, você mantém esses atributos e recupera parte do cooldown do R ao participar de abates. A vantagem não precisa vir só de stompar a lane: procure oportunidades no mapa.\n\nObserve as compras do oponente antes de decidir o primeiro item. Se ele voltar com Bota 1 e Couraça de Pano, você pode mudar para Cutelo ou outro item, mas se tiver gold para comprar Brutalizador, prefira seguir itemizando Axioma.\n\nComo Axioma não dá HP nem resistência, Dança da Morte ajuda a aguentar mais dano. Fome Eterna complementa com CDR baseado no AD extra e mais omnivamp ao participar de um abate.",
           "followup": "Depois de Axioma, Dança da Morte e Fome Eterna, adapte os últimos espaços ao time inimigo: penetração, defesa, corta-cura ou quebra-escudo.",
           "components": []
         },
         {
           "id": "cutelo",
-          "when": "Para trocas longas e all-ins, principalmente contra quem está comprando armadura, ou quando você precisa de mais HP para aguentar dano nas trocas. A desvantagem atual é que os componentes que fazem o item não são tão bons, mas o item fechado é o que oferece os melhores atributos para a Riven tornando mais fácil seu papel na partida.",
+          "when": "Para trocas longas e all-ins, principalmente contra quem está comprando armadura, ou quando você precisa de mais HP para aguentar dano nas trocas.",
           "items": [
             3071,
             6333,
@@ -116,7 +116,7 @@
         },
         {
           "id": "fome",
-          "when": "No top, é uma opção quando você acredita que vai ter uma lane estável onde você consiga mirar no spike de três itens durante o mid game, ou mesmo em algumas lanes mais chatas onde não vale a pena mirar em itemização buscando vantagem em cima do inimigo, e sim olhar mais para o jogo no geral.",
+          "when": "No top, é uma opção quando você acredita que vai ter uma lane estável onde você consiga mirar no spike de três itens durante o mid game.  ",
           "items": [
             2517,
             6333,
@@ -131,7 +131,7 @@
         },
         {
           "id": "eclipse",
-          "when": "Para lanes onde riven pretende buscar trocas curtas e poke. Eclipse se torna mais forte ainda quando se está em vantagem, já que torna as trocas muito desconfortáveis pro laner inimigo mesmo em baixo da torre. Também é útil contra campeões que vão acumular vida ao longo da partida, devido a passiva de dano baseado em % da vida.",
+          "when": "Para trocas curtas e poke, especialmente em uma lane que você já está ganhando, já que torna as trocas muito injustas pro laner inimigo. Também é útil contra campeões que vão acumular vida ao longo da partida, devido a passiva do eclipse.",
           "items": [
             6692,
             6333,
@@ -2167,10 +2167,6 @@
           {
             "item": 3155,
             "condition": "Compre para aguentar o dano AP e conseguir trocar, a partir daqui você terá vantagem na lane."
-          },
-          {
-            "item": 3111,
-            "condition": "Passos de mercúrio pode ser uma boa solução para reduzir o dano e o tempo da cegueira do teemo, caso ele esteja rushando botas."
           }
         ]
       }

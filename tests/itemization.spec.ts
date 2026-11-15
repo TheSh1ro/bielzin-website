@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 
 const snapshot = JSON.parse(
-  readFileSync(new URL('../src/data/riven-guide.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('./fixtures/riven-guide.json', import.meta.url), 'utf8'),
 )
 
 for (const width of [1280, 390]) {
@@ -50,12 +50,6 @@ for (const width of [1280, 390]) {
         components: [{ item: 3155, condition: 'Compre antes do primeiro item.' }],
       },
     }
-    await page.route('**/src/data/riven-guide.json*', (route) =>
-      route.fulfill({
-        contentType: 'text/javascript',
-        body: 'export default ' + JSON.stringify(data),
-      }),
-    )
     await page.route('**/realms/br.json', (route) => route.fulfill({ json: { v: '16.22.1' } }))
     await page.route('**/cdn/16.22.1/data/pt_BR/champion.json', (route) =>
       route.fulfill({
@@ -104,7 +98,7 @@ for (const width of [1280, 390]) {
     await page.route('https://modelviewer.lol/embed?**', (route) =>
       route.fulfill({ contentType: 'text/html', body: '<html><body>3D fixture</body></html>' }),
     )
-    await page.route('**/api/guide', (route) => route.fulfill({ json: data }))
+    await page.route('**/rest/v1/rpc/get_riven_guide', (route) => route.fulfill({ json: data }))
     await page.goto('/riven')
     await page.getByRole('button', { name: 'Matchups', exact: true }).click()
     await expect(page.getByRole('img', { name: 'Modelo 3D animado de Renekton' })).toBeVisible()

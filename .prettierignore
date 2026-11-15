@@ -1,2 +1,2 @@
-# Generated from the local guide database; keep the export deterministic.
-src/data/riven-guide.json
+# Legacy export used only as a browser test fixture.
+tests/fixtures/riven-guide.json

@@ -9,8 +9,10 @@ import {
   clone,
   normalized,
   guideRequest,
+  type AdminGuide,
   type GuideContent,
   type GuideCatalog,
+  type SavedEntry,
 } from '@/lib/guide-admin'
 import '@/assets/admin.css'
 import {
@@ -30,7 +32,10 @@ import {
   ArrowUpRight,
 } from 'lucide-vue-next'
 
+const props = defineProps<{ initial: AdminGuide; sessionMessage: string }>()
+const emit = defineEmits<{ logout: [] }>()
 const guide = ref<GuideContent>()
+const revisions = { ...props.initial.revisions }
 const catalog = ref<GuideCatalog>()
 const selected = ref('defaults')
 const empty = (): GuideMatchup => ({
@@ -294,20 +299,9 @@ function onTabKey(event: KeyboardEvent) {
   void selectSection(ids[next]!, true)
 }
 async function load() {
-  status('Carregando configurações…')
-  try {
-    const [content, game] = await Promise.all([
-      guideRequest<GuideContent>(''),
-      guideRequest<GuideCatalog>('/catalog'),
-    ])
-    if (disposed) return
-    guide.value = content
-    catalog.value = game
-    await navigate('defaults')
-    if (game.warning) status(game.warning, true)
-  } catch (error) {
-    if (!disposed) status((error as Error).message, true)
-  }
+  guide.value = clone({ defaults: props.initial.defaults, matchups: props.initial.matchups })
+  catalog.value = props.initial.catalog
+  await navigate('defaults')
 }
 function save(): Promise<void> {
   cancelScheduledSave()
@@ -320,16 +314,25 @@ function save(): Promise<void> {
       // Serializa gravações e inclui edições feitas enquanto a requisição estava em andamento.
       while (dirty.value && !disposed) {
         const submitted = clone(payload.value)
-        if (isDefault.value)
-          guide.value!.defaults = await guideRequest<GuideContent['defaults']>(
+        const entry = selected.value
+        const body = { data: submitted, revision: revisions[entry] ?? null }
+        if (isDefault.value) {
+          const result = await guideRequest<SavedEntry<GuideContent['defaults']>>(
             '/defaults',
-            submitted,
+            'PUT',
+            body,
           )
-        else
-          guide.value!.matchups[selected.value] = await guideRequest<GuideMatchup>(
-            '/matchups/' + selected.value,
-            submitted,
+          guide.value!.defaults = result.data
+          revisions[entry] = result.revision
+        } else {
+          const result = await guideRequest<SavedEntry<GuideMatchup>>(
+            '/matchups/' + entry,
+            'PUT',
+            body,
           )
+          guide.value!.matchups[entry] = result.data
+          revisions[entry] = result.revision
+        }
         baseline.value = JSON.stringify(submitted)
       }
       status('Salvo automaticamente')
@@ -344,16 +347,20 @@ function save(): Promise<void> {
   return saveTask
 }
 async function refresh() {
-  if (!catalog.value) return load()
   refreshing.value = true
   try {
-    catalog.value = await guideRequest<GuideCatalog>('/catalog?refresh=true')
+    catalog.value = await guideRequest<GuideCatalog>('/catalog', 'POST')
     status(catalog.value.warning ?? 'Catálogo atualizado.', !!catalog.value.warning)
   } catch (error) {
     status((error as Error).message, true)
   } finally {
     refreshing.value = false
   }
+}
+async function logout() {
+  if (dirty.value || saving.value) await save()
+  if (dirty.value && !confirm('Há alterações pendentes. Sair e descartar o rascunho?')) return
+  emit('logout')
 }
 function pick(action: (id: number) => void, category?: 'boots') {
   itemCategory.value = category
@@ -474,13 +481,15 @@ onBeforeUnmount(() => {
         <span class="editor-breadcrumb"
           >Guia de Riven <span>/</span> {{ isDefault ? 'Padrões' : title }}</span
         >
-        <div class="autosave-state" :class="{ error: failed }">
+        <div class="autosave-state" :class="{ error: failed || sessionMessage }">
           <p role="status" aria-label="Salvamento" aria-live="polite">
             <RefreshCw v-if="saving" :size="14" class="spinning" /><Check
               v-else-if="guide && !dirty && !failed"
               :size="14"
             /><span>{{
-              message || (dirty ? 'Aguardando para salvar…' : 'Salvo automaticamente')
+              sessionMessage ||
+              message ||
+              (dirty ? 'Aguardando para salvar…' : 'Salvo automaticamente')
             }}</span>
           </p>
           <button
@@ -492,6 +501,7 @@ onBeforeUnmount(() => {
             Tentar novamente
           </button>
         </div>
+        <button type="button" class="secondary-button" @click="logout">Sair</button>
       </header>
       <div class="admin-content">
         <div class="editor-heading">

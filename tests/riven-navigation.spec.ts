@@ -1,6 +1,10 @@
 import { expect, test, type Page } from '@playwright/test'
+import guide from './fixtures/riven-guide.json' with { type: 'json' }
 
 test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } })
+test.beforeEach(async ({ page }) => {
+  await page.route('**/rest/v1/rpc/get_riven_guide', (route) => route.fulfill({ json: guide }))
+})
 
 async function enterGames(page: Page) {
   await page.goto('/')

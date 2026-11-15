@@ -1,4 +1,4 @@
-/* Editor local: tipografia e tons do guia público. */
+/* Tipografia e tons do guia público. */
 .admin-page {
   --admin-bg: #0d0b10;
   --admin-surface: #151219;
@@ -46,6 +46,32 @@
 .admin-page .muted,
 .admin-page .field-help {
   color: var(--admin-muted);
+}
+.admin-page.admin-session {
+  grid-template-columns: minmax(0, 24rem);
+  place-content: center;
+  padding: 24px;
+}
+.admin-session-content,
+.admin-login,
+.admin-login label {
+  display: grid;
+  gap: 12px;
+}
+.admin-session h1 {
+  font-size: 1.125rem;
+}
+.admin-login input {
+  width: 100%;
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: var(--admin-text);
+  background: var(--admin-surface);
+}
+.admin-session-actions {
+  display: flex;
+  gap: 8px;
 }
 .admin-page .admin-sidebar {
   position: sticky;

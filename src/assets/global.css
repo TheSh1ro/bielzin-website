@@ -593,6 +593,12 @@ section[id] {
   padding: 4px 8px 8px;
   font-size: 1rem;
 }
+.profile-visits {
+  padding-inline: 8px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
 .rotation-track {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

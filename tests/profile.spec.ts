@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import tracker from './fixtures/lol-tracker.json' with { type: 'json' }
 
 test('ajusta o volume na entrada e controla a trilha pelo topo do perfil', async ({ page }) => {
   await page.goto('/')
@@ -60,12 +61,9 @@ test('troca a faixa em rotação no mesmo player e mantém o volume', async ({ p
 test('abre o perfil mesmo quando o tracker não tem contas', async ({ page }) => {
   const errors: Error[] = []
   page.on('pageerror', (error) => errors.push(error))
-  await page.route(/\/src\/data\/lol-tracker\.json(?:\?|$)/, async (route) => {
-    await route.fulfill({
-      contentType: 'application/javascript',
-      body: 'export default { schemaVersion: 1, accounts: [] }',
-    })
-  })
+  await page.route('**/rest/v1/rpc/get_lol_tracker', (route) =>
+    route.fulfill({ json: { accounts: [] } }),
+  )
 
   await page.goto('/')
   await page.getByRole('button', { name: 'Entrar no perfil' }).click()
@@ -77,7 +75,8 @@ test('abre o perfil mesmo quando o tracker não tem contas', async ({ page }) =>
   expect(errors).toEqual([])
 })
 
-test('mostra o snapshot atual e devolve o foco ao trocar de seção', async ({ page }) => {
+test('mostra o histórico do Supabase e devolve o foco ao trocar de seção', async ({ page }) => {
+  await page.route('**/rest/v1/rpc/get_lol_tracker', (route) => route.fulfill({ json: tracker }))
   await page.goto('/')
   await page.getByRole('button', { name: 'Entrar no perfil' }).click()
 
