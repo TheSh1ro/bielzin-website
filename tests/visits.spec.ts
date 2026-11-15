@@ -54,3 +54,36 @@ test('o perfil abre com o contador indisponível', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'bielzin', exact: true })).toBeVisible()
   await expect(page.locator('.profile-visits')).toHaveCount(0)
 })
+
+test('envia os detalhes para um navegador que já foi contado pelo modelo anterior', async ({
+  page,
+}) => {
+  const legacyId = 'fe4cac07-2de7-4147-b3c2-4de575e93e79'
+  let submittedId
+  await page.route('**/api/visit', (route) => {
+    submittedId = route.request().postDataJSON().id
+    return route.fulfill({ json: 1 })
+  })
+  await page.goto('/')
+  await page.evaluate(
+    (id) =>
+      new Promise<void>((resolve, reject) => {
+        const request = indexedDB.open('bielzin', 1)
+        request.onupgradeneeded = () => request.result.createObjectStore('profile')
+        request.onerror = () => reject(request.error)
+        request.onsuccess = () => {
+          const db = request.result
+          const tx = db.transaction('profile', 'readwrite')
+          tx.objectStore('profile').put({ id, counted: true }, 'visitor')
+          tx.oncomplete = () => {
+            db.close()
+            resolve()
+          }
+        }
+      }),
+    legacyId,
+  )
+  await page.getByRole('button', { name: 'Entrar no perfil' }).click()
+  await expect(page.locator('.profile-visits')).toHaveText('1 visita')
+  expect(submittedId).toBe(legacyId)
+})

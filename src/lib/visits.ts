@@ -1,6 +1,6 @@
 import { backendConfigured, publicRpc } from './supabase'
 
-type Visitor = { id: string; counted: boolean }
+type Visitor = { id: string; counted: boolean; detailsRecorded?: boolean }
 
 function useVisitor(update: (visitor?: Visitor) => Visitor) {
   return new Promise<Visitor>((resolve, reject) => {
@@ -44,7 +44,7 @@ export async function recordEntrance(): Promise<number | undefined> {
   const visitor = await useVisitor(
     (stored) => stored ?? { id: crypto.randomUUID(), counted: false },
   ).catch(() => undefined)
-  if (!visitor || visitor.counted) return readVisitCount()
+  if (!visitor || visitor.detailsRecorded) return readVisitCount()
 
   try {
     const response = await fetch('/api/visit', {
@@ -57,7 +57,9 @@ export async function recordEntrance(): Promise<number | undefined> {
     const count: unknown = await response.json()
     if (typeof count !== 'number') return readVisitCount()
     // The saved ID also makes a retry safe if the response or this local write is lost.
-    void useVisitor(() => ({ id: visitor.id, counted: true })).catch(() => {})
+    void useVisitor(() => ({ id: visitor.id, counted: true, detailsRecorded: true })).catch(
+      () => {},
+    )
     return count
   } catch {
     return readVisitCount()
