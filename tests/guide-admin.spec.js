@@ -144,6 +144,7 @@ async function setup(page, configure) {
   await page.getByLabel('Senha').fill('senha-teste')
   await page.getByRole('button', { name: 'Entrar', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Padrões do guia', exact: true })).toBeVisible()
+  await expect(page.getByRole('tablist', { name: 'Conteúdo para editar' })).toBeVisible()
   return state
 }
 
@@ -181,9 +182,7 @@ test('edita, salva, recarrega e restaura herança independente', async ({ page }
   await page.getByLabel('Buscar item').fill('Carrasco')
   await page.getByRole('button', { name: 'Chamado do Carrasco', exact: true }).click()
   await page.getByLabel('Quando usar').fill('Contra cura')
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.saves.at(-1).data.build.start).toEqual([1055, 2003])
   expect(state.saves.at(-1).data.visible).toBe(false)
   expect(state.saves.at(-1).data.runes).toBeNull()
@@ -208,9 +207,7 @@ test('edita, salva, recarrega e restaura herança independente', async ({ page }
     .filter({ has: page.getByRole('heading', { name: 'Itens', exact: true }) })
   await items.getByRole('button', { name: 'Restaurar itens padrão', exact: true }).click()
   await page.getByRole('button', { name: 'Restaurar padrão', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.saves.at(-1).data.build).toBeNull()
   expect(state.saves.at(-1).data.runes).toBeNull()
 })
@@ -227,9 +224,7 @@ test('preserva formulário em erro e avisa ao sair com alterações', async ({ p
   await expect(page.getByRole('heading', { name: 'Ahri', exact: true })).toBeVisible()
   state.fail = false
   await page.getByRole('button', { name: 'Tentar novamente', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   await page.getByRole('button', { name: 'Novo campeão', exact: true }).click()
   await expect(page.getByLabel('Early game', { exact: true }).locator('option:checked')).toHaveText(
     'A avaliar',
@@ -267,9 +262,7 @@ test('seleciona runas por ícone, mantém combinações válidas e cabe no celul
     .getByRole('group', { name: 'Fragmento 1', exact: true })
     .getByRole('button', { name: 'Fragmento 5005', exact: true })
     .click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.saves.at(-1).data.runes.secondary).toEqual([9105, 8299])
   expect(state.saves.at(-1).data.runes.shards[0]).toBe(5005)
   await page.setViewportSize({ width: 1500, height: 900 })
@@ -307,9 +300,7 @@ test('filtra visibilidade, reordena itens e fecha o seletor sem alterar a build'
     .click()
   await page.getByRole('button', { name: 'Trocar: Lâmina de Doran', exact: true }).click()
   await page.getByRole('button', { name: 'Fechar seleção de item', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.saves.at(-1).data.build.core).toEqual([6610, 2517, 6333])
   expect(state.saves.at(-1).data.build.start).toEqual([1055])
 })
@@ -326,9 +317,7 @@ test('seletor de botas inclui convencionais sem botas no nome e separa aprimorad
   await page.getByLabel('Buscar item').fill('botas')
   await expect(shop.getByRole('button', { name: 'Passos de Mercúrio', exact: true })).toBeVisible()
   await shop.getByRole('button', { name: 'Passos de Mercúrio', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.saves.at(-1).data.build.boots).toBe(3111)
 })
 
@@ -354,9 +343,7 @@ test('serializa edições durante uma gravação e persiste o texto mais recente
   await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Salvando')
   state.hold = undefined
   release()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.saves).toHaveLength(2)
   expect(state.guide.matchups.Ahri.tips[0]).toBe('Edição mais recente')
   await page.reload()
@@ -372,18 +359,14 @@ test('adiciona, reordena e remove dicas com salvamento automático', async ({ pa
   await page.getByLabel('Dica 2', { exact: true }).fill('Segunda dica')
   await page.getByRole('button', { name: 'Mover dica 2 para cima', exact: true }).click()
   await expect(page.getByLabel('Dica 1', { exact: true })).toHaveValue('Segunda dica')
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.tips).toEqual(['Segunda dica', 'Primeira dica'])
   await page.reload()
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await expect(page.getByLabel('Dica 2', { exact: true })).toHaveValue('Primeira dica')
   await page.getByRole('button', { name: 'Remover dica 1', exact: true }).click()
   await page.getByRole('button', { name: 'Remover dica 1', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.tips).toEqual([])
   await expect(page.getByText('Nenhuma dica adicionada.')).toBeVisible()
 })
@@ -416,9 +399,7 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
   await page.getByRole('button', { name: 'Adicionar item da rota 1', exact: true }).click()
   await page.getByLabel('Buscar item').fill('Céu')
   await page.getByRole('button', { name: 'Céu Dividido', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.defaults.itemization.routes[0].items).toEqual([2517, 6333, 6610])
   await page.reload()
   await page.locator('summary').filter({ hasText: 'Rota base' }).click()
@@ -433,9 +414,7 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
   await page.getByLabel('Buscar item').fill('Carrasco')
   await page.getByRole('button', { name: 'Chamado do Carrasco', exact: true }).click()
   await page.getByLabel('componente da lane 1 · Quando e por quê').fill('Antes do núcleo')
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.build).toBeNull()
   expect(state.guide.matchups.Ahri.lanePlan.components[0]).toEqual({
     item: 3123,
@@ -448,9 +427,7 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
     'Antes do núcleo',
   )
   await page.getByRole('button', { name: 'Remover componente da lane 1', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText(
-    'Salvo automaticamente',
-  )
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.lanePlan.components).toEqual([])
   expect(state.guide.defaults.itemization.routes[0].reason).toBe('Sinergia editada')
 })
@@ -479,7 +456,7 @@ test('confirma resets por grupo, permite cancelar e desfazer sem perder o confro
   await expect(page.getByRole('button', { name: 'Restaurar itens padrão' })).toBeVisible()
   await page.getByRole('button', { name: 'Restaurar itens padrão' }).click()
   await page.getByRole('button', { name: 'Restaurar padrão', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Salvo automaticamente')
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Alterações salvas')
   expect(state.guide.matchups.Renekton).toMatchObject({
     build: null,
     runes,
@@ -489,12 +466,12 @@ test('confirma resets por grupo, permite cancelar e desfazer sem perder o confro
     lanePlan: { reason: 'Plano preservado' },
   })
   await page.getByRole('button', { name: 'Desfazer', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Salvo automaticamente')
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Alterações salvas')
   expect(state.guide.matchups.Renekton.build).toEqual(build)
   await page.getByRole('tab', { name: /^Runas/ }).click()
   await page.getByRole('button', { name: 'Restaurar runas padrão' }).click()
   await page.getByRole('button', { name: 'Restaurar padrão', exact: true }).click()
-  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Salvo automaticamente')
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Alterações salvas')
   expect(state.guide.matchups.Renekton.build).toEqual(build)
   expect(state.guide.matchups.Renekton.runes).toBeNull()
   await page.reload()
@@ -547,8 +524,8 @@ test('separa padrões por assunto, navega com teclado e protege builds em uso', 
   await expect(page.getByRole('button', { name: 'Ahri', exact: true })).toBeVisible()
 })
 
-test('lista detalhes novos de visitas e carrega a próxima página no admin', async ({ page }) => {
-  await setup(page)
+test('abre visitas no painel, mantém o editor e permite repetir a paginação', async ({ page }) => {
+  const state = await setup(page)
   const visit = {
     id: 'c19273ec-aba8-4c8e-bb62-80b071e724ff',
     visitedAt: '2026-11-15T19:00:00Z',
@@ -556,19 +533,43 @@ test('lista detalhes novos de visitas e carrega a próxima página no admin', as
     region: 'SP',
     userAgent: 'Mozilla/5.0 (teste)',
   }
+  let failedOnce = false
   await page.route('**/functions/v1/guide-admin/visits*', (route) => {
     const cursor = new URL(route.request().url()).searchParams.get('before')
+    if (cursor && !failedOnce) {
+      failedOnce = true
+      return route.fulfill({ status: 503, json: { message: 'Visitas indisponíveis no momento.' } })
+    }
     return route.fulfill({
       json: cursor
         ? { items: [{ ...visit, id: 'older', city: null, region: null }], next: null }
         : { items: [visit], next: { before: visit.visitedAt, id: visit.id } },
     })
   })
-  await page.getByRole('link', { name: 'Visitas', exact: true }).click()
+  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toBeEmpty()
+  await page.getByLabel('Dica 1', { exact: true }).fill('Edição antes de abrir visitas')
+  const nav = page.getByRole('navigation', { name: 'Seções do painel' })
+  const visitsLink = nav.getByRole('link', { name: 'Visitas', exact: true })
+  await visitsLink.click()
+  await expect(page).toHaveURL(/\/admin\?aba=visitas$/)
+  await expect(visitsLink).toHaveAttribute('aria-current', 'page')
+  await expect(page.getByRole('heading', { name: 'Visitas', exact: true })).toBeVisible()
   await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
   await expect(page.getByRole('cell', { name: 'Mozilla/5.0 (teste)' })).toBeVisible()
   await expect(page.locator('time').first()).toContainText('16:00')
   await page.getByRole('button', { name: 'Carregar mais' }).click()
+  await expect(page.getByRole('alert')).toHaveText('Visitas indisponíveis no momento.')
+  await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
+  await page.getByRole('button', { name: 'Tentar novamente' }).click()
   await expect(page.getByRole('cell', { name: 'Indisponível' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Carregar mais' })).toHaveCount(0)
+  await page.goBack()
+  await expect(page.getByRole('heading', { name: 'Ahri', exact: true })).toBeVisible()
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Alterações salvas')
+  expect(state.guide.matchups.Ahri.tips).toEqual(['Edição antes de abrir visitas'])
+  await page.goForward()
+  await expect(visitsLink).toHaveAttribute('aria-current', 'page')
+  await page.reload()
+  await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
 })

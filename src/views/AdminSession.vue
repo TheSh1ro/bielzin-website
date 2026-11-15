@@ -1,32 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref, shallowRef } from 'vue'
+import { onMounted, ref } from 'vue'
 import AdminView from './AdminView.vue'
-import AdminVisits from './AdminVisits.vue'
-import type { VisitPage } from '@/lib/guide-admin'
-import { adminClient, guideRequest, type AdminGuide } from '@/lib/guide-admin'
+import { adminClient } from '@/lib/guide-admin'
 import '@/assets/admin.css'
 
-const guide = shallowRef<AdminGuide>()
-const visits = shallowRef<VisitPage>()
-const showVisits = new URLSearchParams(window.location.search).get('aba') === 'visitas'
 const signedIn = ref(false)
 const email = ref('')
 const password = ref('')
 const busy = ref(true)
 const message = ref('')
-
-async function load() {
-  busy.value = true
-  message.value = ''
-  try {
-    if (showVisits) visits.value = await guideRequest<VisitPage>('/visits')
-    else guide.value = await guideRequest<AdminGuide>('')
-  } catch (error) {
-    message.value = (error as Error).message
-  } finally {
-    busy.value = false
-  }
-}
 
 onMounted(async () => {
   document.title = 'Painel · bielzin'
@@ -36,8 +18,7 @@ onMounted(async () => {
     return
   }
   signedIn.value = !!(await adminClient.auth.getSession()).data.session
-  if (signedIn.value) await load()
-  else busy.value = false
+  busy.value = false
 })
 
 async function signIn() {
@@ -58,7 +39,6 @@ async function signIn() {
     }
     signedIn.value = true
     password.value = ''
-    await load()
   } finally {
     busy.value = false
   }
@@ -71,8 +51,6 @@ async function signOut() {
     const { error } = await adminClient.auth.signOut({ scope: 'local' })
     if (error) throw error
     signedIn.value = false
-    guide.value = undefined
-    visits.value = undefined
     message.value = ''
   } catch {
     message.value = 'Não foi possível sair. Tente novamente.'
@@ -83,17 +61,16 @@ async function signOut() {
 </script>
 
 <template>
-  <AdminView v-if="guide" :initial="guide" :session-message="message" @logout="signOut" />
-  <AdminVisits v-else-if="visits" :initial="visits" :session-message="message" @logout="signOut" />
+  <AdminView v-if="signedIn" :session-message="message" :session-busy="busy" @logout="signOut" />
   <main v-else class="admin-page admin-session">
     <div class="admin-session-content">
       <a class="admin-brand" href="/">
-        <span class="brand-mark">bz.</span>
-        <h1>{{ showVisits ? 'Visitas' : 'Guia de Riven' }}</h1>
+        <span class="brand-mark">bz</span>
+        <h1>Painel</h1>
       </a>
       <p v-if="busy" role="status">Carregando painel…</p>
       <p v-if="message" role="alert">{{ message }}</p>
-      <form v-if="adminClient && !signedIn" class="admin-login" @submit.prevent="signIn">
+      <form v-if="adminClient" class="admin-login" @submit.prevent="signIn">
         <label
           >E-mail <input v-model="email" type="email" autocomplete="username" required
         /></label>
@@ -103,10 +80,6 @@ async function signOut() {
         </label>
         <button type="submit" class="secondary-button" :disabled="busy">Entrar</button>
       </form>
-      <div v-else-if="signedIn && !busy" class="admin-session-actions">
-        <button type="button" class="secondary-button" @click="load">Tentar novamente</button>
-        <button type="button" class="secondary-button" @click="signOut">Sair</button>
-      </div>
     </div>
   </main>
 </template>

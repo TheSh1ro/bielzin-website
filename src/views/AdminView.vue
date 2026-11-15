@@ -4,6 +4,7 @@ import GuideBuildEditor from '@/components/GuideBuildEditor.vue'
 import GuideRuneEditor from '@/components/GuideRuneEditor.vue'
 import GuideItemizationEditor from '@/components/GuideItemizationEditor.vue'
 import GuideChoicesEditor from '@/components/GuideChoicesEditor.vue'
+import AdminVisits from './AdminVisits.vue'
 import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from '@/lib/riven-guide'
 import {
   clone,
@@ -14,9 +15,7 @@ import {
   type GuideCatalog,
   type SavedEntry,
 } from '@/lib/guide-admin'
-import '@/assets/admin.css'
 import {
-  ArrowLeft,
   Search,
   RefreshCw,
   SlidersHorizontal,
@@ -30,13 +29,19 @@ import {
   Menu,
   RotateCcw,
   ArrowUpRight,
+  ChartNoAxesColumn,
 } from 'lucide-vue-next'
 
-const props = defineProps<{ initial: AdminGuide; sessionMessage: string }>()
+defineProps<{ sessionMessage: string; sessionBusy: boolean }>()
 const emit = defineEmits<{ logout: [] }>()
 const guide = ref<GuideContent>()
-const revisions = { ...props.initial.revisions }
+let revisions: AdminGuide['revisions'] = {}
 const catalog = ref<GuideCatalog>()
+const isVisitsUrl = () => new URLSearchParams(window.location.search).get('aba') === 'visitas'
+const showVisits = ref(isVisitsUrl())
+const loadingGuide = ref(false)
+const guideError = ref('')
+const mainContent = ref<HTMLElement>()
 const selected = ref('defaults')
 const empty = (): GuideMatchup => ({
   visible: false,
@@ -50,8 +55,9 @@ const draft = ref<GuideMatchup & { itemization?: Itemization | null }>(empty())
 const baseline = ref('')
 const saving = ref(false)
 const refreshing = ref(false)
-const message = ref('Carregando configurações…')
+const message = ref('')
 const failed = ref(false)
+const catalogMessage = ref('')
 const search = ref('')
 const rosterFilter = ref('all')
 const mobileNavigation = ref(false)
@@ -242,7 +248,7 @@ async function navigate(id: string) {
   baseline.value = JSON.stringify(payload.value)
   hydrating = false
   status('')
-  window.scrollTo({ top: 0, behavior: 'instant' })
+  if (!showVisits.value) window.scrollTo({ top: 0, behavior: 'instant' })
 }
 function moveTip(index: number, offset: number) {
   const tips = draft.value.tips
@@ -281,6 +287,39 @@ async function openDefaults(section: string) {
   await navigate('defaults')
   if (isDefault.value) await selectSection(section)
 }
+function syncSection() {
+  showVisits.value = isVisitsUrl()
+  mobileNavigation.value = false
+  if (!showVisits.value && !guide.value) void load()
+}
+async function switchSection(visits: boolean) {
+  if (visits === showVisits.value) {
+    mobileNavigation.value = false
+    if (visits) {
+      await nextTick()
+      mainContent.value?.focus()
+    }
+    return
+  }
+  const url = new URL(window.location.href)
+  if (visits) url.searchParams.set('aba', 'visitas')
+  else url.searchParams.delete('aba')
+  window.history.pushState(null, '', url)
+  syncSection()
+  window.scrollTo({ top: 0, behavior: 'instant' })
+  if (visits && dirty.value) void save()
+  await nextTick()
+  mainContent.value?.focus()
+}
+function openVisits(event: MouseEvent) {
+  if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+  event.preventDefault()
+  void switchSection(true)
+}
+async function openGuide(id: string) {
+  await switchSection(false)
+  if (guide.value) await navigate(id)
+}
 function onTabKey(event: KeyboardEvent) {
   const ids = sections.value.map((section) => section.id)
   const index = ids.indexOf(activeSection.value)
@@ -299,9 +338,21 @@ function onTabKey(event: KeyboardEvent) {
   void selectSection(ids[next]!, true)
 }
 async function load() {
-  guide.value = clone({ defaults: props.initial.defaults, matchups: props.initial.matchups })
-  catalog.value = props.initial.catalog
-  await navigate('defaults')
+  if (loadingGuide.value) return
+  loadingGuide.value = true
+  guideError.value = ''
+  try {
+    const initial = await guideRequest<AdminGuide>('')
+    if (disposed) return
+    guide.value = { defaults: initial.defaults, matchups: initial.matchups }
+    catalog.value = initial.catalog
+    revisions = { ...initial.revisions }
+    await navigate('defaults')
+  } catch (error) {
+    guideError.value = (error as Error).message
+  } finally {
+    loadingGuide.value = false
+  }
 }
 function save(): Promise<void> {
   cancelScheduledSave()
@@ -335,7 +386,7 @@ function save(): Promise<void> {
         }
         baseline.value = JSON.stringify(submitted)
       }
-      status('Salvo automaticamente')
+      status('Alterações salvas')
     } catch (error) {
       status((error as Error).message, true)
     } finally {
@@ -348,11 +399,12 @@ function save(): Promise<void> {
 }
 async function refresh() {
   refreshing.value = true
+  catalogMessage.value = ''
   try {
     catalog.value = await guideRequest<GuideCatalog>('/catalog', 'POST')
-    status(catalog.value.warning ?? 'Catálogo atualizado.', !!catalog.value.warning)
+    catalogMessage.value = catalog.value.warning ?? 'Catálogo atualizado.'
   } catch (error) {
-    status((error as Error).message, true)
+    catalogMessage.value = (error as Error).message
   } finally {
     refreshing.value = false
   }
@@ -380,132 +432,144 @@ function warnOnExit(event: BeforeUnloadEvent) {
   }
 }
 onMounted(() => {
-  document.title = 'Painel · bielzin'
+  window.addEventListener('popstate', syncSection)
   window.addEventListener('beforeunload', warnOnExit)
   void load()
 })
 onBeforeUnmount(() => {
   disposed = true
   cancelScheduledSave()
+  window.removeEventListener('popstate', syncSection)
   window.removeEventListener('beforeunload', warnOnExit)
 })
 </script>
 
 <template>
   <div class="admin-page">
-    <aside id="admin-navigation" class="admin-sidebar" :class="{ 'mobile-open': mobileNavigation }">
-      <a class="admin-brand" href="/"
-        ><span class="brand-mark">bz.</span
-        ><span>Guia de Riven<small>Editor de conteúdo</small></span></a
-      >
+    <header class="admin-toolbar">
       <button
         type="button"
-        class="default-nav"
-        :disabled="!guide || saving"
-        :aria-current="isDefault ? 'page' : undefined"
-        @click="navigate('defaults')"
+        class="icon-button mobile-menu"
+        :aria-expanded="mobileNavigation"
+        aria-controls="admin-navigation"
+        aria-label="Menu do painel"
+        @click="mobileNavigation = !mobileNavigation"
       >
-        <SlidersHorizontal :size="18" /><span
-          >Padrões do guia<small>Builds, botas, itens e runas</small></span
-        >
+        <Menu :size="20" />
       </button>
-      <div class="roster-heading">
-        <span>Matchups</span><span>{{ visibleCount }} incluídos</span>
-      </div>
-      <label class="search-field" for="champion-search"
-        ><Search :size="16" /><input
-          id="champion-search"
-          v-model="search"
-          type="search"
-          placeholder="Buscar campeão"
-          aria-label="Buscar campeão"
-          autocomplete="off"
-      /></label>
-      <div class="roster-filters" aria-label="Filtrar campeões">
-        <button type="button" :aria-pressed="rosterFilter === 'all'" @click="rosterFilter = 'all'">
-          Todos
-        </button>
+      <span class="editor-breadcrumb">
+        {{ showVisits ? 'Painel' : 'Guia de Riven' }}
+        <span aria-hidden="true">/</span>
+        <strong>{{ showVisits ? 'Visitas' : isDefault ? 'Padrões' : title }}</strong>
+      </span>
+      <button
+        type="button"
+        class="secondary-button logout-button"
+        :disabled="sessionBusy"
+        @click="logout"
+      >
+        Sair
+      </button>
+    </header>
+    <aside id="admin-navigation" class="admin-sidebar" :class="{ 'mobile-open': mobileNavigation }">
+      <a class="admin-brand" href="/">
+        <span class="brand-mark" aria-hidden="true">bz</span>
+        <span>Painel<small>bielzin</small></span>
+      </a>
+      <nav class="admin-sections" aria-label="Seções do painel">
         <button
           type="button"
-          :aria-pressed="rosterFilter === 'visible'"
-          @click="rosterFilter = 'visible'"
+          :aria-current="!showVisits && isDefault ? 'page' : undefined"
+          @click="openGuide('defaults')"
         >
-          Incluídos
+          <SlidersHorizontal :size="17" aria-hidden="true" /> Padrões do guia
         </button>
-        <button
-          type="button"
-          :aria-pressed="rosterFilter === 'hidden'"
-          @click="rosterFilter = 'hidden'"
+        <a
+          href="/admin?aba=visitas"
+          :aria-current="showVisits ? 'page' : undefined"
+          @click="openVisits"
         >
-          Ocultos
-        </button>
-      </div>
-      <nav class="champion-list" aria-label="Matchups">
-        <button
-          v-for="champion in champions"
-          :key="champion.id"
-          type="button"
-          :disabled="saving"
-          :aria-current="selected === champion.id ? 'page' : undefined"
-          @click="navigate(champion.id)"
-        >
-          <img :src="champion.icon" alt="" loading="lazy" /><span>{{ champion.name }}</span
-          ><EyeOff
-            v-if="!guide?.matchups[champion.id]?.visible"
-            :size="13"
-            class="roster-hidden"
-            aria-hidden="true"
-          /><span
-            v-if="guide?.matchups[champion.id]?.visible"
-            class="visibility-dot"
-            aria-hidden="true"
-            title="Incluído no guia"
-          />
-        </button>
-        <p v-if="catalog && !champions.length" class="empty-state">Nenhum campeão encontrado.</p>
+          <ChartNoAxesColumn :size="17" aria-hidden="true" /> Visitas
+        </a>
       </nav>
-      <a class="back-link" href="/admin?aba=visitas">Visitas</a>
-      <a class="back-link" href="/riven"><ArrowLeft :size="16" /> Abrir guia</a>
-    </aside>
-    <main class="admin-main">
-      <header class="admin-toolbar">
-        <button
-          type="button"
-          class="icon-button mobile-menu"
-          :aria-expanded="mobileNavigation"
-          aria-controls="admin-navigation"
-          aria-label="Escolher conteúdo"
-          @click="mobileNavigation = !mobileNavigation"
-        >
-          <Menu :size="20" />
-        </button>
-        <span class="editor-breadcrumb"
-          >Guia de Riven <span>/</span> {{ isDefault ? 'Padrões' : title }}</span
-        >
-        <div class="autosave-state" :class="{ error: failed || sessionMessage }">
-          <p role="status" aria-label="Salvamento" aria-live="polite">
-            <RefreshCw v-if="saving" :size="14" class="spinning" /><Check
-              v-else-if="guide && !dirty && !failed"
-              :size="14"
-            /><span>{{
-              sessionMessage ||
-              message ||
-              (dirty ? 'Aguardando para salvar…' : 'Salvo automaticamente')
-            }}</span>
-          </p>
+      <template v-if="catalog">
+        <div class="roster-heading">
+          <span>Matchups</span><span>{{ visibleCount }} incluídos</span>
+        </div>
+        <label class="search-field" for="champion-search"
+          ><Search :size="16" /><input
+            id="champion-search"
+            v-model="search"
+            type="search"
+            placeholder="Buscar campeão"
+            aria-label="Buscar campeão"
+            autocomplete="off"
+        /></label>
+        <div class="roster-filters" aria-label="Filtrar campeões">
           <button
-            v-if="failed && dirty && !saving"
             type="button"
-            class="secondary-button"
-            @click="save"
+            :aria-pressed="rosterFilter === 'all'"
+            @click="rosterFilter = 'all'"
           >
+            Todos
+          </button>
+          <button
+            type="button"
+            :aria-pressed="rosterFilter === 'visible'"
+            @click="rosterFilter = 'visible'"
+          >
+            Incluídos
+          </button>
+          <button
+            type="button"
+            :aria-pressed="rosterFilter === 'hidden'"
+            @click="rosterFilter = 'hidden'"
+          >
+            Ocultos
+          </button>
+        </div>
+        <nav class="champion-list" aria-label="Matchups">
+          <button
+            v-for="champion in champions"
+            :key="champion.id"
+            type="button"
+            :disabled="saving"
+            :aria-current="!showVisits && selected === champion.id ? 'page' : undefined"
+            @click="openGuide(champion.id)"
+          >
+            <img :src="champion.icon" alt="" loading="lazy" /><span>{{ champion.name }}</span
+            ><EyeOff
+              v-if="!guide?.matchups[champion.id]?.visible"
+              :size="13"
+              class="roster-hidden"
+              aria-hidden="true"
+            /><span
+              v-if="guide?.matchups[champion.id]?.visible"
+              class="visibility-dot"
+              aria-hidden="true"
+              title="Incluído no guia"
+            />
+          </button>
+          <p v-if="catalog && !champions.length" class="empty-state">Nenhum campeão encontrado.</p>
+        </nav>
+      </template>
+      <a class="back-link" href="/riven"><ArrowUpRight :size="16" /> Abrir guia</a>
+    </aside>
+    <main ref="mainContent" tabindex="-1" class="admin-main">
+      <p v-if="sessionMessage" class="admin-content session-error" role="alert">
+        {{ sessionMessage }}
+      </p>
+      <AdminVisits v-if="showVisits" />
+      <div v-show="!showVisits" class="admin-content">
+        <div v-if="!guide" class="load-error">
+          <h1>Padrões do guia</h1>
+          <p v-if="loadingGuide" role="status" class="muted">Carregando guia…</p>
+          <p v-else-if="guideError" role="alert">{{ guideError }}</p>
+          <button v-if="guideError" type="button" class="secondary-button" @click="load">
             Tentar novamente
           </button>
         </div>
-        <button type="button" class="secondary-button" @click="logout">Sair</button>
-      </header>
-      <div class="admin-content">
-        <div class="editor-heading">
+        <div v-if="guide" class="editor-heading">
           <div class="editor-identity">
             <img
               v-if="selectedChampion"
@@ -513,16 +577,12 @@ onBeforeUnmount(() => {
               :src="selectedChampion.icon"
               alt=""
             />
-            <div v-else class="default-portrait"><SlidersHorizontal :size="28" /></div>
             <div>
-              <p class="eyebrow">
-                {{ isDefault ? 'BASE DO GUIA' : 'RIVEN × ' + title?.toUpperCase() }}
-              </p>
               <h1>{{ title || 'Carregando…' }}</h1>
               <p class="muted">
                 {{
                   isDefault
-                    ? 'A base compartilhada pelos matchups.'
+                    ? 'Builds, itens e runas usados pelos matchups sem ajustes próprios.'
                     : 'Dificuldade, dicas e ajustes só para este confronto.'
                 }}
               </p>
@@ -540,29 +600,38 @@ onBeforeUnmount(() => {
             ><component :is="draft.visible ? Eye : EyeOff" :size="16"
           /></label>
         </div>
-        <div class="editor-meta">
-          <span class="patch-badge">Patch {{ catalog?.version ?? '…' }}</span
-          ><span>Salvo no tracker local · Vai ao site na próxima publicação</span
-          ><button
-            type="button"
-            class="text-button"
-            :disabled="saving || refreshing"
-            @click="refresh"
-          >
-            <RefreshCw :size="13" :class="{ spinning: refreshing }" />{{
-              refreshing ? 'Atualizando…' : 'Atualizar catálogo'
-            }}
-          </button>
-        </div>
-        <div v-if="!guide && failed" class="load-error">
-          <p>Não foi possível carregar o guia.</p>
-          <button type="button" @click="load">Tentar novamente</button>
+        <div v-if="guide" class="editor-meta">
+          <div class="catalog-tools">
+            <span>Patch {{ catalog?.version ?? '…' }}</span>
+            <button
+              type="button"
+              class="text-button"
+              :disabled="saving || refreshing"
+              @click="refresh"
+            >
+              <RefreshCw :size="13" :class="{ spinning: refreshing }" aria-hidden="true" />{{
+                refreshing ? 'Atualizando…' : 'Atualizar catálogo'
+              }}
+            </button>
+          </div>
+          <div class="autosave-state" :class="{ error: failed }">
+            <p role="status" aria-label="Salvamento">
+              <RefreshCw v-if="saving" :size="14" class="spinning" aria-hidden="true" />
+              <Check v-else-if="message && !dirty && !failed" :size="14" aria-hidden="true" />
+              {{ message || (dirty ? 'Salvamento pendente…' : '') }}
+            </p>
+            <button
+              v-if="failed && dirty && !saving"
+              type="button"
+              class="secondary-button"
+              @click="save"
+            >
+              Tentar novamente
+            </button>
+          </div>
+          <p v-if="catalogMessage" class="catalog-status" role="status">{{ catalogMessage }}</p>
         </div>
         <template v-if="guide && catalog">
-          <p v-if="isDefault" class="scope-note">
-            Alterações aqui valem para os matchups que usam o padrão. Ajustes próprios de cada
-            campeão são mantidos.
-          </p>
           <div v-if="resetUndo" class="reset-feedback" role="status">
             <span>O ajuste foi removido deste matchup.</span
             ><button type="button" class="text-button" @click="undoReset">
