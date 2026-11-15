@@ -32,7 +32,19 @@
         },
         {
           "item": 3026,
-          "condition": "Sempre compre anjo guardião quando achar que está por vir a play que vai decidir a partida, pra melhorar seu engage."
+          "condition": "Sempre compre anjo guardião quando achar que está chegando o momento da jogada que vai decidir a partida."
+        },
+        {
+          "item": 3155,
+          "condition": "Contra laner AP ou alguém forte no time inimigo, mas apenas 1 campeão de dano mágico no time inimigo."
+        },
+        {
+          "item": 3036,
+          "condition": "Pode substituir cutelo ou serylda contra bonecos ou composições que buildem muita vida."
+        },
+        {
+          "item": 3033,
+          "condition": "Combina as funcionalidades de cutelo/serylda e corta cura, liberando slot na build."
         }
       ]
     },
@@ -40,7 +52,7 @@
       "shards": [
         5007,
         5008,
-        5001
+        5011
       ],
       "primary": [
         8010,
@@ -74,7 +86,7 @@
       "routes": [
         {
           "id": "axioma",
-          "when": "Para buscar snowball cedo com um primeiro item forte e barato, pressionando a lane ou criando jogadas na jungle inimiga, no rio e em roams para o mid. Perde eficiência se o oponente priorizar armadura.",
+          "when": "Para buscar snowball cedo com um primeiro item forte e barato, pressionando a lane ou criando jogadas na jungle inimiga, no rio e em roamings. Perde um pouco da eficiência se o oponente for priorizar armadura nas primeiras compras anulando sua letalidade.",
           "items": [
             6696,
             6333,
@@ -82,14 +94,14 @@
             6694,
             3026
           ],
-          "title": "Axioma: forte cedo / barato",
-          "reason": "O Brutalizador já oferece AD, CDR e letalidade. Ao fechar Axioma, você mantém esses atributos e recupera parte do cooldown do R ao participar de abates. A vantagem não precisa vir só de stompar a lane: procure oportunidades no mapa.\n\nObserve as compras do oponente antes de decidir o primeiro item. Se ele voltar com Bota e Armadura de Pano, você pode mudar para Cutelo. Se tiver gold para comprar Brutalizador, prefira seguir itemizando Axioma.\n\nComo Axioma não dá HP nem resistência, Dança da Morte ajuda a aguentar mais dano. Fome Eterna complementa com CDR baseado no AD extra e mais omnivamp ao participar de um abate.",
-          "followup": "Depois de Axioma, Dança da Morte e Fome Eterna, adapte os últimos espaços ao time inimigo: penetração, defesa, corta-cura ou quebra-escudo. A sequência cadastrada é uma referência; ajuste conforme a partida.",
+          "title": "Axioma: forte cedo e barato",
+          "reason": "O Brutalizador já oferece AD, CDR e letalidade. Ao fechar Axioma, você mantém esses atributos e recupera parte do cooldown do R ao participar de abates. A vantagem não precisa vir só de stompar a lane: procure oportunidades no mapa.\n\nObserve as compras do oponente antes de decidir o primeiro item. Se ele voltar com Bota 1 e Couraça de Pano, você pode mudar para Cutelo ou outro item, mas se tiver gold para comprar Brutalizador, prefira seguir itemizando Axioma.\n\nComo Axioma não dá HP nem resistência, Dança da Morte ajuda a aguentar mais dano. Fome Eterna complementa com CDR baseado no AD extra e mais omnivamp ao participar de um abate.",
+          "followup": "Depois de Axioma, Dança da Morte e Fome Eterna, adapte os últimos espaços ao time inimigo: penetração, defesa, corta-cura ou quebra-escudo.",
           "components": []
         },
         {
           "id": "cutelo",
-          "when": "Para trocas longas e all-ins, principalmente contra quem está comprando armadura, ou quando você precisa de mais HP para aguentar o dano enquanto comba.",
+          "when": "Para trocas longas e all-ins, principalmente contra quem está comprando armadura, ou quando você precisa de mais HP para aguentar dano nas trocas.",
           "items": [
             3071,
             6333,
@@ -97,14 +109,14 @@
             3156,
             3026
           ],
-          "title": "Cutelo: trocas longas / all-in",
-          "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e a velocidade de movimento ajuda a grudar ou sair sem tomar dano de graça. Essa base também deixa a Riven mais sólida ao longo da partida.\n\nFortalecer o all-in não significa entrar cegamente: você pode pokear, deixar o inimigo com pouca vida e só então partir para finalizar. Dança da Morte aumenta sua sobrevivência, e Fome Eterna complementa com CDR e sustain.",
-          "followup": "Depois de Cutelo, Dança da Morte e Fome Eterna, adapte os últimos itens ao time inimigo. Faça Malmortius se o dano AP justificar e avalie Anjo Guardião para uma luta decisiva. Encaixe corta-cura ou quebra-escudo quando necessário.",
+          "title": "Cutelo: trocas longas e all-in",
+          "reason": "Com a passiva stackada, Cutelo reduz até 30% da armadura do alvo. O HP ajuda a aguentar a troca, e a velocidade de movimento ajuda a dar spacing ou sair mais fácil do range do inimigo. Por cutelo possuir bastante HP, essa build também deixa a Riven mais parruda facilitando sua gameplay nas lutas em time.\n\nO fato do cutelo tornar seu all-in mais forte não significa que deva fazer isso cegamente com o inimigo full life, você deve pokear, deixar o inimigo com menos vida e só então partir para finalizar.",
+          "followup": "Depois de Cutelo, Dança da Morte e Fome Eterna, adapte os últimos itens ao time inimigo. Faça Malmortius se o dano AP justificar, Anjo Guardião se estiver perto de acontecer uma luta decisiva, corta-cura ou quebra-escudo quando necessário.",
           "components": []
         },
         {
           "id": "fome",
-          "when": "Principalmente no mid, aproveitando o upgrade da missão. No top, é uma opção para lanes estáveis em que você consegue mirar no spike de três itens no mid game.",
+          "when": "No top, é uma opção quando você acredita que vai ter uma lane estável onde você consiga mirar no spike de três itens durante o mid game.  ",
           "items": [
             2517,
             6333,
@@ -112,14 +124,14 @@
             6694,
             3026
           ],
-          "title": "Fome: spike em 3 itens / tenacidade",
-          "reason": "Fome Eterna, Dança da Morte e Malmortius combinam sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha mais omnivamp e limpa o dano acumulado da Dança da Morte, permitindo continuar fightando mesmo com pouco HP.\n\nA proposta fica mais forte no mid com o upgrade da bota, mas também funciona no top sem esse bônus. Você precisa conseguir jogar a lane até chegar aos três itens.",
-          "followup": "Se o time inimigo não tiver dano AP que justifique Malmortius, substitua esse espaço por outro item adequado à partida. Depois do núcleo, ajuste penetração e defesa ao que o time inimigo estiver fazendo.",
+          "title": "Fome: spike em 3 itens e tenacidade",
+          "reason": "Fome Eterna, Dança da Morte e Malmortius combinam muito sustain, CDR e defesa. Depois do primeiro abate na fight, você ganha muito vampirismo e recebe o HP da passiva da Dança da Morte, a interação desses três itens vai te deixar praticamente imortal se jogar da maneira correta.\n\nA proposta fica mais forte no mid com a bota de vampirismo upada, mas também funciona no top.",
+          "followup": "Você pode preferir fazer anjo guardião antes de serylda, ou substituir anjo guardião por corta shield ou corta cura dependendo da partida.",
           "components": []
         },
         {
           "id": "eclipse",
-          "when": "Para trocas curtas e poke, especialmente em uma lane que você já está ganhando. Também é útil contra campeões que vão acumular vida ao longo da partida.",
+          "when": "Para trocas curtas e poke, especialmente em uma lane que você já está ganhando, já que torna as trocas muito injustas pro laner inimigo. Também é útil contra campeões que vão acumular vida ao longo da partida, devido a passiva do eclipse.",
           "items": [
             6692,
             6333,
@@ -127,9 +139,9 @@
             6694,
             3156
           ],
-          "title": "Eclipse: trocas curtas / poke",
-          "reason": "O escudo do Eclipse permite trocar e sair tomando pouco dano, ajudando a anular a resposta do inimigo. Com vantagem, fica mais fácil repetir as trocas sem que ele consiga devolver o dano recebido. A passiva com dano baseado em vida também ajuda contra quem compra HP.\n\nContra Jax, por exemplo, procure Q3 + AA quando o E dele não estiver ativo. Se ele pular em você de E ligado, use W e recue até acabar. Vá ganhando essas trocas até ter dano para matar. Com vantagem, o escudo também ajuda a bater nele debaixo da torre.",
-          "followup": "Depois de Eclipse e Dança da Morte, adapte os próximos espaços: a ordem de Fome Eterna e Serylda pode ser invertida conforme a partida. Só faça Malmortius se o dano AP justificar.\n\nEsta rota exige concessões para encaixar corta-cura, quebra-escudo ou Anjo Guardião: substitua o item menos necessário em vez de seguir a sequência cegamente. Como a build tem menos CDR, Ionianas ajudam bastante.",
+          "title": "Eclipse: trocas curtas e poke",
+          "reason": "Eclipse é um dos itens mais fortes para se começar com riven, principalmente porque o kit da Riven permite fazer trades curtas sem que o inimigo possa devolver muito dano, o que fica ainda mais forte se combinado com a passiva de dano e escudo desse item. Por dança da morte já ser um item defensivo, raramente você vai querer optar por uma bota que não seja a ioniana, senão você pode acabar se tornando muito passivo.\n\nEssa build também pode ser variada com Eclipse > Cutelo em algumas matchups que necessitem de mais dano do que defesa, mas é necessário jogar e experimentar para desenvolver essa consciência.",
+          "followup": "Depois de Eclipse e Dança da Morte, adapte os próximos espaços: a ordem de Fome Eterna e Serylda pode ser invertida conforme a partida.\n\nEsta build exige concessões para encaixar malmortius, corta-cura, quebra-escudo ou Anjo Guardião: vamos conseguir buildar apenas um desses, e nem sempre de último item: geralmente corta shield ou corta cura são feitos no começo do mid game, malmortius ou anjo guardião ficam mais para 4° ou 5° item, se existe a necessidade de buildar um desses mais cedo é porque essa build não é a melhor escolha para a partida em si.",
           "components": []
         }
       ],
@@ -139,7 +151,7 @@
   },
   "matchups": {
     "Aatrox": {
-      "late": "favorable",
+      "late": "even",
       "tips": [
         "Use Q e E para sair das bordas do Q1 e do Q2. No Q3, saia do centro: é ali que ele quer acertar.",
         "Se ele gastar E para acertar um Q, troque antes que o dash volte. Guarde pelo menos um Q ou E para sair do próximo golpe.",
@@ -147,13 +159,18 @@
         "Evite alongar a fight durante o R dele. Se ele fechar armadura cedo e ficar difícil matar, use a pressão para farmar e buscar barricadas."
       ],
       "build": null,
-      "early": "even",
+      "early": "favorable",
       "runes": null,
       "visible": true,
       "lanePlan": {
         "route": "axioma",
         "reason": "",
-        "components": []
+        "components": [
+          {
+            "item": 1001,
+            "condition": "Nessa lane ter bota 1 antes do inimigo é muito bom, permitindo que você desvie das skills ou chegue perto dele sem ter que gastar muitos dashes, maximizando seu dano."
+          }
+        ]
       }
     },
     "Ahri": {
@@ -425,7 +442,12 @@
       "lanePlan": {
         "route": "fome",
         "reason": "",
-        "components": []
+        "components": [
+          {
+            "item": 3155,
+            "condition": "Hexdrinker se faz necessário para tornar a lane phase saudável contra cassiopeia."
+          }
+        ]
       }
     },
     "Chogath": {
@@ -466,7 +488,7 @@
         "Espere os stacks da passiva acabarem antes de trocar de novo. Na metade da lane dele, guarde mobilidade para não ser perseguido de Fantasma."
       ],
       "build": null,
-      "early": "favorable",
+      "early": "even",
       "runes": null,
       "visible": true,
       "lanePlan": {
@@ -475,7 +497,7 @@
         "components": [
           {
             "item": 1001,
-            "condition": "Nessa lane spacing é muito importante, se um lado tiver botas e o outro não, quem não tiver vai sofrer aos poucos até a morte."
+            "condition": "Ter bota 1 antes do Darius permite que você entre, dê dano e saia dele sem que ele possa revidar direito."
           }
         ]
       }
@@ -578,7 +600,7 @@
       "visible": false
     },
     "Fiora": {
-      "late": "even",
+      "late": "unfavorable",
       "tips": [
         "No começo da lane, fique perto dos seus minions e puna quando ela usar Q para entrar. Evite dar uma vital de graça só para começar a troca.",
         "Baite o W antes do all-in. Se entrar de Q3, guarde E para desviar da resposta e não tomar o stun.",
@@ -617,7 +639,7 @@
       "lanePlan": null
     },
     "Gangplank": {
-      "late": "favorable",
+      "late": "unfavorable",
       "tips": [
         "Use E para segurar o poke do Q quando for pegar um minion. Se estiver sem escudo, não entregue HP por um last hit ruim.",
         "Olhe os barris antes de entrar. Quando der para destruir um com AA sem tomar a explosão, você tira boa parte do dano da resposta dele.",
@@ -635,7 +657,7 @@
       }
     },
     "Garen": {
-      "late": "even",
+      "late": "unfavorable",
       "tips": [
         "Use E antes do Q dele acertar para segurar o dano. Depois do silêncio, faça uma troca curta e saia do giro.",
         "Baite o W antes de gastar R2. Bater o combo inteiro na redução de dano e no escudo facilita ele sobreviver.",
@@ -653,7 +675,7 @@
       }
     },
     "Gnar": {
-      "late": "favorable",
+      "late": "even",
       "tips": [
         "Evite gastar todos os Qs só para encostar nele. Se ele ainda tiver E, pode pular para longe e te bater na saída.",
         "Depois que ele gastar o pulo, procure outra troca antes que o E volte. Cuidado com minions perto dele, que ajudam no segundo salto.",
@@ -661,7 +683,7 @@
         "Contra o Mega Gnar, fique longe das paredes e guarde mobilidade para desviar das skills. Espere a forma acabar se não tiver uma entrada boa."
       ],
       "build": null,
-      "early": "unfavorable",
+      "early": "even",
       "runes": null,
       "visible": true,
       "lanePlan": {
@@ -671,7 +693,7 @@
       }
     },
     "Gragas": {
-      "late": "favorable",
+      "late": "even",
       "tips": [
         "Não entre de Q3 enquanto ele tiver E para responder. Baite a barrigada ou espere ele gastar na wave antes de se comprometer.",
         "Se o E dele errar, aproveite para trocar. Minions aliados entre vocês também podem bloquear a barrigada.",
@@ -780,7 +802,7 @@
       }
     },
     "Irelia": {
-      "late": "favorable",
+      "late": "even",
       "tips": [
         "Olhe seus minions com pouco HP: eles mostram para onde ela pode usar Q. Puna com W quando ela vier dar last hit perto de você.",
         "Guarde E ou um Q para desviar do stun. Tomar o E permite que ela te siga por mais tempo na troca.",
@@ -829,7 +851,7 @@
       "visible": false
     },
     "Jax": {
-      "late": "favorable",
+      "late": "unfavorable",
       "tips": [
         "Se ele pular de E ligado, use W e recue de E para sair do alcance do stun. Guarde mobilidade antes de começar a troca.",
         "Não gaste os AAs da passiva enquanto ele estiver desviando com E. Espere acabar para continuar o combo.",
@@ -994,7 +1016,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8345,
+          8347
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -1034,7 +1074,7 @@
       "lanePlan": null
     },
     "Kled": {
-      "late": "favorable",
+      "late": "even",
       "tips": [
         "Desvie do Q e saia do alcance da corda se ela acertar. Continuar batendo preso nela facilita a troca dele.",
         "Espere ele gastar os quatro AAs do W nos minions para trocar. Com W disponível, ele responde mais forte e recupera coragem mais rápido desmontado.",
@@ -1179,7 +1219,7 @@
       "lanePlan": null
     },
     "Malphite": {
-      "late": "unfavorable",
+      "late": "even",
       "tips": [
         "Pressione antes das primeiras compras de armadura. Depois que ele ficar resistente, evite trocar muito HP por pouco dano.",
         "Use E para segurar o Q quando for farmar. Não persiga enquanto ele estiver com a move speed roubada e você sem dash.",
@@ -1208,7 +1248,7 @@
       "lanePlan": null
     },
     "Maokai": {
-      "late": "favorable",
+      "late": "even",
       "tips": [
         "Baite o Q antes de gastar os dashes para entrar. O empurrão pode cortar sua troca e deixar você sem como acompanhar.",
         "Use E para segurar o dano da resposta e faça trocas curtas. Evite soltar skills sem necessidade: elas ajudam a passiva de cura dele a voltar.",
@@ -1281,7 +1321,7 @@
       "lanePlan": null
     },
     "Mordekaiser": {
-      "late": "favorable",
+      "late": "unfavorable",
       "tips": [
         "Guarde Q ou E para desviar do puxão e do Q. Se o Q acertar só você, o dano é maior; perto dos minions, evite dar esse acerto isolado.",
         "Faça uma troca curta e saia antes de ele manter a passiva girando em cima de você.",
@@ -1422,7 +1462,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "cutelo",
@@ -1468,7 +1526,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8316,
+          8345
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -1530,7 +1606,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8347,
+          8345
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "eclipse",
@@ -1600,7 +1694,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5008,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "cutelo",
@@ -1618,7 +1730,25 @@
       ],
       "build": null,
       "early": "favorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -1646,7 +1776,7 @@
         "Depois do 6, guarde E para sair da linha do R. Se o dano mágico estiver te tirando da lane, Hexdrinker pode ajudar a manter HP para lutar."
       ],
       "build": null,
-      "early": "even",
+      "early": "unfavorable",
       "runes": null,
       "visible": true,
       "lanePlan": {
@@ -1670,7 +1800,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8347,
+          8345
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -1729,7 +1877,25 @@
       ],
       "build": null,
       "early": "even",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "eclipse",
@@ -1757,7 +1923,25 @@
       ],
       "build": null,
       "early": "even",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "eclipse",
@@ -1956,7 +2140,25 @@
       ],
       "build": null,
       "early": "unfavorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8347,
+          8345
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -2019,7 +2221,25 @@
       ],
       "build": null,
       "early": "favorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8347,
+          8345
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "eclipse",
@@ -2069,7 +2289,25 @@
       ],
       "build": null,
       "early": "even",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8316,
+          8345
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8300
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -2178,7 +2416,25 @@
       ],
       "build": null,
       "early": "favorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8237,
+          8275
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8200
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
@@ -2214,7 +2470,25 @@
       ],
       "build": null,
       "early": "even",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "eclipse",
@@ -2340,7 +2614,25 @@
       ],
       "build": null,
       "early": "favorable",
-      "runes": null,
+      "runes": {
+        "shards": [
+          5007,
+          5008,
+          5011
+        ],
+        "primary": [
+          8010,
+          9111,
+          9105,
+          8299
+        ],
+        "secondary": [
+          8401,
+          8473
+        ],
+        "primaryStyle": 8000,
+        "secondaryStyle": 8400
+      },
       "visible": true,
       "lanePlan": {
         "route": "axioma",
