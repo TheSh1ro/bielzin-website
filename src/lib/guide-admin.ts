@@ -26,6 +26,17 @@ export type AdminGuide = GuideContent & {
   catalog: GuideCatalog
   revisions: Partial<Record<string, string>>
 }
+export type VisitDetails = {
+  id: string
+  visitedAt: string
+  city: string | null
+  region: string | null
+  userAgent: string | null
+}
+export type VisitPage = {
+  items: VisitDetails[]
+  next: { before: string; id: string } | null
+}
 export type SavedEntry<T> = { data: T; revision: string }
 
 export class GuideRequestError extends Error {

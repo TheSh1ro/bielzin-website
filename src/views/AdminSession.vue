@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef } from 'vue'
 import AdminView from './AdminView.vue'
+import AdminVisits from './AdminVisits.vue'
+import type { VisitPage } from '@/lib/guide-admin'
 import { adminClient, guideRequest, type AdminGuide } from '@/lib/guide-admin'
 import '@/assets/admin.css'
 
 const guide = shallowRef<AdminGuide>()
+const visits = shallowRef<VisitPage>()
+const showVisits = new URLSearchParams(window.location.search).get('aba') === 'visitas'
 const signedIn = ref(false)
 const email = ref('')
 const password = ref('')
@@ -15,7 +19,8 @@ async function load() {
   busy.value = true
   message.value = ''
   try {
-    guide.value = await guideRequest<AdminGuide>('')
+    if (showVisits) visits.value = await guideRequest<VisitPage>('/visits')
+    else guide.value = await guideRequest<AdminGuide>('')
   } catch (error) {
     message.value = (error as Error).message
   } finally {
@@ -67,6 +72,7 @@ async function signOut() {
     if (error) throw error
     signedIn.value = false
     guide.value = undefined
+    visits.value = undefined
     message.value = ''
   } catch {
     message.value = 'Não foi possível sair. Tente novamente.'
@@ -78,11 +84,12 @@ async function signOut() {
 
 <template>
   <AdminView v-if="guide" :initial="guide" :session-message="message" @logout="signOut" />
+  <AdminVisits v-else-if="visits" :initial="visits" :session-message="message" @logout="signOut" />
   <main v-else class="admin-page admin-session">
     <div class="admin-session-content">
       <a class="admin-brand" href="/">
         <span class="brand-mark">bz.</span>
-        <h1>Guia de Riven</h1>
+        <h1>{{ showVisits ? 'Visitas' : 'Guia de Riven' }}</h1>
       </a>
       <p v-if="busy" role="status">Carregando painel…</p>
       <p v-if="message" role="alert">{{ message }}</p>

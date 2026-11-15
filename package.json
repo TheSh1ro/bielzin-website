@@ -13,8 +13,8 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint .",
     "test": "playwright test",
-    "format": "prettier --write src/ scripts/ tests/ playwright.config.ts",
-    "format:check": "prettier --check src/ scripts/ tests/ playwright.config.ts"
+    "format": "prettier --write api/ src/ scripts/ tests/ playwright.config.ts",
+    "format:check": "prettier --check api/ src/ scripts/ tests/ playwright.config.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

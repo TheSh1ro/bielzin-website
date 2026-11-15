@@ -464,6 +464,7 @@ onBeforeUnmount(() => {
         </button>
         <p v-if="catalog && !champions.length" class="empty-state">Nenhum campeão encontrado.</p>
       </nav>
+      <a class="back-link" href="/admin?aba=visitas">Visitas</a>
       <a class="back-link" href="/riven"><ArrowLeft :size="16" /> Abrir guia</a>
     </aside>
     <main class="admin-main">

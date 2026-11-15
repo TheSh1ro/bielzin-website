@@ -546,3 +546,29 @@ test('separa padrões por assunto, navega com teclado e protege builds em uso', 
   await expect(page.getByRole('button', { name: 'Renekton', exact: true })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Ahri', exact: true })).toBeVisible()
 })
+
+test('lista detalhes novos de visitas e carrega a próxima página no admin', async ({ page }) => {
+  await setup(page)
+  const visit = {
+    id: 'c19273ec-aba8-4c8e-bb62-80b071e724ff',
+    visitedAt: '2026-11-15T19:00:00Z',
+    city: 'São Paulo',
+    region: 'SP',
+    userAgent: 'Mozilla/5.0 (teste)',
+  }
+  await page.route('**/functions/v1/guide-admin/visits*', (route) => {
+    const cursor = new URL(route.request().url()).searchParams.get('before')
+    return route.fulfill({
+      json: cursor
+        ? { items: [{ ...visit, id: 'older', city: null, region: null }], next: null }
+        : { items: [visit], next: { before: visit.visitedAt, id: visit.id } },
+    })
+  })
+  await page.getByRole('link', { name: 'Visitas', exact: true }).click()
+  await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
+  await expect(page.getByRole('cell', { name: 'Mozilla/5.0 (teste)' })).toBeVisible()
+  await expect(page.locator('time').first()).toContainText('16:00')
+  await page.getByRole('button', { name: 'Carregar mais' }).click()
+  await expect(page.getByRole('cell', { name: 'Indisponível' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Carregar mais' })).toHaveCount(0)
+})

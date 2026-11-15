@@ -10,8 +10,8 @@ test('só conta ao entrar e reutiliza a mesma visita entre abas e recargas', asy
   await context.route('**/rest/v1/rpc/get_visit_count', (route) =>
     route.fulfill({ json: counted.size }),
   )
-  await context.route('**/rest/v1/rpc/register_visit', (route) => {
-    const id = route.request().postDataJSON().p_id as string
+  await context.route('**/api/visit', (route) => {
+    const id = route.request().postDataJSON().id as string
     ids.push(id)
     counted.add(id)
     return route.fulfill({ json: counted.size })
@@ -35,8 +35,8 @@ test('só conta ao entrar e reutiliza a mesma visita entre abas e recargas', asy
   expect(counted.size).toBe(1)
 
   const independent = await browser.newContext({ baseURL: new URL(nextTab.url()).origin })
-  await independent.route('**/rest/v1/rpc/register_visit', (route) => {
-    counted.add(route.request().postDataJSON().p_id as string)
+  await independent.route('**/api/visit', (route) => {
+    counted.add(route.request().postDataJSON().id as string)
     return route.fulfill({ json: counted.size })
   })
   const newVisitor = await independent.newPage()
@@ -47,6 +47,7 @@ test('só conta ao entrar e reutiliza a mesma visita entre abas e recargas', asy
 })
 
 test('o perfil abre com o contador indisponível', async ({ page }) => {
+  await page.route('**/api/visit', (route) => route.fulfill({ status: 503 }))
   await page.route('**/rest/v1/rpc/*visit*', (route) => route.fulfill({ status: 503 }))
   await page.goto('/')
   await page.getByRole('button', { name: 'Entrar no perfil' }).click()

@@ -47,7 +47,15 @@ export async function recordEntrance(): Promise<number | undefined> {
   if (!visitor || visitor.counted) return readVisitCount()
 
   try {
-    const count = await publicRpc<number>('register_visit', { p_id: visitor.id })
+    const response = await fetch('/api/visit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: visitor.id }),
+      signal: AbortSignal.timeout(6000),
+    })
+    if (!response.ok) return readVisitCount()
+    const count: unknown = await response.json()
+    if (typeof count !== 'number') return readVisitCount()
     // The saved ID also makes a retry safe if the response or this local write is lost.
     void useVisitor(() => ({ id: visitor.id, counted: true })).catch(() => {})
     return count
