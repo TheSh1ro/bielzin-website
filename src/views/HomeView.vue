@@ -85,9 +85,8 @@ watchEffect(() => {
   void readVisitCount().then((count) => (visitCount.value = count))
 })
 
-const profileTitle = document.title
 watchEffect(() => {
-  document.title = rivenOpen.value ? 'Riven · bielzin' : profileTitle
+  document.title = rivenOpen.value ? 'Guia da Riven · bielzin' : 'bielzin · perfil'
 })
 watchEffect(
   () => {

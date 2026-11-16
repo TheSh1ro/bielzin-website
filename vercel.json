@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/riven", "destination": "/riven.html" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
 }
