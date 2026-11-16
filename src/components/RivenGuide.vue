@@ -9,12 +9,15 @@ import {
   shallowRef,
   watch,
 } from 'vue'
-import { ArrowUpRight, ChevronDown, Search, Swords } from 'lucide-vue-next'
+import { ArrowRight, ArrowUpRight, ChevronDown, List, Search, Swords } from 'lucide-vue-next'
 import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import { profile } from '@/profile'
 import {
+  filterChampionText,
   guideBuild,
   guideMatchup,
+  guideOutlookLabel,
+  guideRecommendedRoute,
   guideVisible,
   guideItemization,
   guideState,
@@ -23,6 +26,7 @@ import {
 import RivenItemization from './RivenItemization.vue'
 import RivenBootsGuide from './RivenBootsGuide.vue'
 import RivenRunePage from './RivenRunePage.vue'
+import RivenMatchupOverview from './RivenMatchupOverview.vue'
 import ChampionModel from './ChampionModel.vue'
 import {
   abilityText,
@@ -263,6 +267,7 @@ function onCategoryKey(event: KeyboardEvent, index: number) {
 }
 
 const selectedId = ref('Renekton')
+const overview = ref<InstanceType<typeof RivenMatchupOverview>>()
 const query = ref('')
 const pickerOpen = ref(false)
 const opponentPicker = ref<HTMLElement>()
@@ -307,12 +312,7 @@ const build = computed(() => guideBuild(selectedId.value))
 const selected = computed(() => roster.value.find(({ id }) => id === selectedId.value))
 const matchupReady = computed(() => dataState.value === 'ready' && guideState.value === 'ready')
 const matchup = computed(() => guideMatchup(selectedId.value))
-const recommendedRoute = computed(() => {
-  const itemization = guideItemization.value
-  if (!itemization) return
-  const routeId = matchup.value?.lanePlan?.route ?? itemization.defaultRoute
-  return itemization.routes.find(({ id }) => id === routeId) ?? itemization.routes[0]
-})
+const recommendedRoute = computed(() => guideRecommendedRoute(selectedId.value))
 const alternativeRoutes = computed(
   () => guideItemization.value?.routes.filter(({ id }) => id !== recommendedRoute.value?.id) ?? [],
 )
@@ -333,15 +333,11 @@ const assessment = computed(() => [
   { label: 'Early game', value: matchup.value?.early },
   { label: 'Late game', value: matchup.value?.late },
 ])
-const filterText = (value: string) =>
-  value
-    .normalize('NFD')
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '')
 const opponentList = computed(() => {
-  const term = filterText(query.value)
+  const term = filterChampionText(query.value)
   return roster.value.filter(
-    ({ name, id }) => filterText(name).includes(term) || filterText(id).includes(term),
+    ({ name, id }) =>
+      filterChampionText(name).includes(term) || filterChampionText(id).includes(term),
   )
 })
 
@@ -608,22 +604,22 @@ void loadPatch()
                         unfavorable: stage.value === 'unfavorable',
                       }"
                     >
-                      {{
-                        stage.value === 'favorable'
-                          ? 'Favorável'
-                          : stage.value === 'unfavorable'
-                            ? 'Desfavorável'
-                            : stage.value === 'even'
-                              ? selectedId === 'Riven'
-                                ? 'Espelho'
-                                : 'Equilibrado'
-                              : 'A avaliar'
-                      }}
+                      {{ guideOutlookLabel(stage.value, selectedId) }}
                     </dd>
                   </div>
                 </dl>
               </div>
               <ChampionModel :champion="selected" />
+              <button
+                class="riven-overview-trigger"
+                type="button"
+                aria-haspopup="dialog"
+                @click="overview?.open()"
+              >
+                <List :size="22" aria-hidden="true" />
+                <span>Ver todas as matchups</span>
+                <ArrowRight :size="18" aria-hidden="true" />
+              </button>
             </template>
           </aside>
           <p
@@ -895,6 +891,14 @@ void loadPatch()
         </footer>
       </div>
     </div>
+    <RivenMatchupOverview
+      ref="overview"
+      :champions="roster"
+      :selected-id="selectedId"
+      :version="version"
+      :items="items"
+      @select="selectOpponent"
+    />
   </div>
 </template>
 

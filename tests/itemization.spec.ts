@@ -172,6 +172,34 @@ for (const width of [1280, 390]) {
       'Hexdrinker',
     )
     await expect(page.getByText('Defesa contra ataques básicos.', { exact: true })).toBeVisible()
+    const overviewTrigger = page.getByRole('button', { name: 'Ver todas as matchups' })
+    await overviewTrigger.click()
+    const overview = page.getByRole('dialog', { name: 'Todas as matchups' })
+    const matchups = overview.getByRole('list', { name: 'Matchups', exact: true })
+    await expect(matchups.getByRole('button')).toHaveText(['Jax', 'Renekton', 'Teemo'])
+    await expect(overview.locator('canvas, iframe')).toHaveCount(0)
+    const jax = matchups
+      .locator(':scope > li')
+      .filter({ has: page.getByRole('button', { name: 'Jax', exact: true }) })
+    await expect(
+      jax.getByRole('list', { name: 'Itens da build' }).getByRole('img').first(),
+    ).toHaveAccessibleName('Eclipse')
+    await expect(jax.getByRole('list', { name: 'Primárias' }).getByRole('img')).toHaveCount(4)
+    await expect(jax.getByRole('list', { name: 'Secundárias' }).getByRole('img')).toHaveCount(2)
+    await expect(jax.getByRole('list', { name: 'Fragmentos' }).getByRole('img')).toHaveCount(3)
+    await expect(overview.getByRole('img', { name: /Ionianas|Hexdrinker/ })).toHaveCount(0)
+    const search = overview.getByRole('searchbox')
+    await search.fill('sem resultado')
+    await expect(overview.getByRole('status')).toHaveText('Nenhum campeão encontrado.')
+    await search.press('Escape')
+    await expect(overview).toBeHidden()
+    await expect(overviewTrigger).toBeFocused()
+    await overviewTrigger.click()
+    await search.fill('jax')
+    await expect(matchups.getByRole('button')).toHaveText(['Jax'])
+    await overview.getByRole('button', { name: 'Jax' }).click()
+    await expect(overview).toBeHidden()
+    await expect(page.getByRole('button', { name: 'Oponente Jax' })).toBeVisible()
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true)

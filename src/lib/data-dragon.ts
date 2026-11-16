@@ -19,6 +19,7 @@ export type Item = {
   gold: { total: number }
   image: GameImage
   maps: Record<string, boolean>
+  tags?: string[]
   inStore?: boolean
 }
 

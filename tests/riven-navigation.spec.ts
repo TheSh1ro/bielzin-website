@@ -172,6 +172,16 @@ for (const width of [1280, 390]) {
       .toBeLessThan(2)
 
     await page.getByRole('tab', { name: 'Itemização', exact: true }).click()
+    if (width === 1280) {
+      const identity = page.getByRole('complementary', { name: 'Oponente e avaliação' })
+      const top = (await identity.boundingBox())!.y
+      await panels.nth(1).evaluate((element) => {
+        element.scrollTop = 80
+      })
+      await expect
+        .poll(async () => Math.abs((await identity.boundingBox())!.y - top))
+        .toBeLessThan(1)
+    }
     await panels.nth(1).evaluate((element) => {
       element.scrollTop = 350
     })

@@ -83,6 +83,33 @@ export function guideVisible(id: string) {
   return guideMatchup(id)?.visible === true
 }
 
+export function guideRecommendedRoute(id: string) {
+  const itemization = guideItemization.value
+  if (!itemization) return
+  const routeId = guideMatchup(id)?.lanePlan?.route ?? itemization.defaultRoute
+  return itemization.routes.find(({ id }) => id === routeId) ?? itemization.routes[0]
+}
+
+export function guideOutlookLabel(outlook?: GuideMatchup['early'], id?: string) {
+  switch (outlook) {
+    case 'favorable':
+      return 'Favorável'
+    case 'unfavorable':
+      return 'Desfavorável'
+    case 'even':
+      return id === 'Riven' ? 'Espelho' : 'Equilibrado'
+    default:
+      return 'A avaliar'
+  }
+}
+
+export function filterChampionText(value: string) {
+  return value
+    .normalize('NFD')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+}
+
 export function guideBuild(id: string) {
   const override = guideMatchup(id)?.build
   const build = override ?? guide.value?.defaults.build
