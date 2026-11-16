@@ -174,9 +174,12 @@ onMounted(() => {
 
 const goldFormat = new Intl.NumberFormat('pt-BR')
 const greavesSynergies = [
-  { id: 2517, summary: 'Dá CDR com base no AD extra e mais omnivamp após participar de um abate.' },
-  { id: 6333, summary: 'Segura parte do burst. No abate, limpa o dano acumulado e recupera HP.' },
-  { id: 3156, summary: 'Contra burst AP: escudo mágico e mais omnivamp quando a passiva ativa.' },
+  {
+    id: 2517,
+    summary: 'Dá CDR com base no AD extra e mais vampirismo após participar de um abate.',
+  },
+  { id: 6333, summary: 'Segura parte do burst. No abate, reseta o dano acumulado e recupera HP.' },
+  { id: 3156, summary: 'Contra burst AP: escudo mágico e mais vampirismo quando a passiva ativa.' },
 ]
 
 const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
@@ -449,9 +452,9 @@ void loadPatch()
           </header>
           <div class="riven-hot-tip-copy">
             <p class="riven-feature-lead">
-              <strong>O upgrade da missão do mid faz a diferença nas fights longas.</strong>
-              Combine Caminho Imortal, Fome Eterna e Dança da Morte para continuar fightando e
-              recuperar HP enquanto bate.
+              <strong>A bota vermelha está completamente broken na Riven</strong>
+              A combinação de Caminho Imortal, Fome Eterna, Dança da Morte e Malmortius é muito
+              forte, tornando a Riven praticamente imortal.
             </p>
             <dl class="riven-greaves-effects" aria-label="Efeitos do Caminho Imortal por vida">
               <div>
@@ -463,12 +466,11 @@ void loadPatch()
                 <dd><strong>+12%</strong> de cura e escudo</dd>
               </div>
             </dl>
-            <h3 class="riven-feature-followup">O primeiro abate é o que vira a fight.</h3>
+            <h3 class="riven-feature-followup">Se posicione em busca do primeiro abate</h3>
             <p>
-              Participar de um abate ativa o omnivamp extra da Fome Eterna e faz a Dança da Morte
-              limpar o dano acumulado e curar. Contra burst AP, Malmortius ajuda a sobreviver com o
-              escudo mágico e mais omnivamp. É essa combinação que permite continuar batendo mesmo
-              com pouco HP.
+              Participar de um abate ativa o vampirismo da Fome Eterna e as curas da Dança da Morte
+              e do Triunfo. Abaixo de 50% de vida, Malmortius concede vampirismo extra e escudo
+              mágico. A bota evoluída amplifica todos esses efeitos.
             </p>
           </div>
           <div class="riven-feature-art" aria-hidden="true">
