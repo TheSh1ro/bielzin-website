@@ -9,7 +9,7 @@ test('atualiza o guia ao voltar para a aba e preserva conteúdo se a API cair', 
     route.fulfill({
       json: {
         data: Object.fromEntries(
-          ['Renekton', 'Aatrox'].map((id) => [
+          ['Renekton', 'Darius', 'Aatrox'].map((id) => [
             id,
             {
               id,
@@ -30,6 +30,13 @@ test('atualiza o guia ao voltar para a aba e preserva conteúdo se a API cair', 
   )
   await page.goto('/riven')
   await page.getByRole('button', { name: 'Matchups', exact: true }).click()
+  await page.getByRole('button', { name: 'Oponente Renekton', exact: true }).click()
+  const opponents = page.getByRole('list', { name: 'Campeões' }).getByRole('button')
+  await expect(opponents).toHaveText(['Aatrox', 'Darius', 'Renekton'])
+  const search = page.getByRole('searchbox', { name: 'Buscar campeão' })
+  await search.fill('a')
+  await expect(opponents).toHaveText(['Aatrox', 'Darius'])
+  await search.press('Escape')
   await page.getByRole('tab', { name: 'Dicas', exact: true }).click()
   const tips = page.getByRole('list', { name: 'Dicas do matchup' })
   await expect(tips).toContainText(data.matchups.Renekton.tips[0]!)
@@ -37,6 +44,7 @@ test('atualiza o guia ao voltar para a aba e preserva conteúdo se a API cair', 
   await page.evaluate(() => window.dispatchEvent(new Event('focus')))
   await expect(tips).toHaveText('Dica salva com a página aberta.')
   data.matchups.Renekton.visible = false
+  data.matchups.Darius.visible = false
   data.matchups.Aatrox.tips = ['Outro campeão depois de ocultar o anterior.']
   await page.evaluate(() => window.dispatchEvent(new Event('focus')))
   await expect(page.getByRole('button', { name: 'Oponente Aatrox', exact: true })).toBeVisible()

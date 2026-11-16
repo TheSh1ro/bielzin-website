@@ -182,8 +182,6 @@ const greavesSynergies = [
   { id: 3156, summary: 'Contra burst AP: escudo mágico e mais vampirismo quando a passiva ativa.' },
 ]
 
-const featured = ['Renekton', 'Darius', 'Fiora', 'Jax', 'Aatrox', 'Garen', 'Camille', 'Poppy']
-
 const version = ref('')
 const allChampions = shallowRef<ChampionSummary[]>([])
 const roster = computed(() => allChampions.value.filter(({ id }) => guideVisible(id)))
@@ -339,18 +337,11 @@ const filterText = (value: string) =>
     .normalize('NFD')
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '')
-const results = computed(() => {
+const opponentList = computed(() => {
   const term = filterText(query.value)
   return roster.value.filter(
     ({ name, id }) => filterText(name).includes(term) || filterText(id).includes(term),
   )
-})
-const opponentList = computed(() => {
-  if (query.value.trim()) return results.value
-  const suggestions = featured.flatMap(
-    (id) => roster.value.find((champion) => champion.id === id) ?? [],
-  )
-  return [...suggestions, ...roster.value.filter(({ id }) => !featured.includes(id))]
 })
 
 const enemy = shallowRef<Champion>()
