@@ -52,8 +52,8 @@ async function save() {
     <label>
       Vínculo
       <select v-model="ownership">
-        <option value="owner">Owner</option>
-        <option value="others">Others</option>
+        <option value="owner">Dono</option>
+        <option value="others">Outros</option>
       </select>
     </label>
     <label>

@@ -187,7 +187,7 @@ onBeforeUnmount(() => {
               </template>
             </span>
             <span class="vault-ownership" :class="{ 'is-owner': account.ownership === 'owner' }">
-              {{ account.ownership === 'owner' ? 'Owner' : 'Others' }}
+              {{ account.ownership === 'owner' ? 'Dono' : 'Outros' }}
             </span>
             <ChevronDown class="vault-chevron" :size="18" aria-hidden="true" />
           </button>
