@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { ArrowUpRight, ChevronDown, Copy, Plus, Shield } from 'lucide-vue-next'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { ArrowUpRight, ChevronDown, Copy, Minus, Plus, Shield } from 'lucide-vue-next'
 import { AdminRequestError } from '@/lib/admin-api'
 import { leagueProfileUrl, rankLabel, tierNames } from '@/lib/league'
 import { vaultRequest, type Credentials, type VaultAccount } from '@/lib/lol-vault'
 import LeagueAccountForm from './LeagueAccountForm.vue'
 
 const emit = defineEmits<{ 'access-denied': [] }>()
-const queues = [
-  { label: 'Solo / Duo', type: 'RANKED_SOLO_5x5' },
-  { label: 'Flex', type: 'RANKED_FLEX_SR' },
-] as const
+const tiers = Object.keys(tierNames)
+const divisions = ['IV', 'III', 'II', 'I']
+const masterIndex = tiers.indexOf('MASTER')
 const dateFormat = new Intl.DateTimeFormat('pt-BR', {
   dateStyle: 'short',
   timeStyle: 'short',
@@ -19,6 +18,27 @@ const dateFormat = new Intl.DateTimeFormat('pt-BR', {
 const numberFormat = new Intl.NumberFormat('pt-BR')
 
 const accounts = ref<VaultAccount[]>([])
+const rankedAccounts = computed(() =>
+  accounts.value
+    .map((account) => ({
+      account,
+      rank: account.profile?.ranks.find(({ queueType }) => queueType === 'RANKED_SOLO_5x5'),
+    }))
+    .sort((a, b) => {
+      const left = a.rank
+      const right = b.rank
+      const alphabetical = () => a.account.riotId.localeCompare(b.account.riotId, 'pt-BR')
+      if (!left || !right) return Number(!!right) - Number(!!left) || alphabetical()
+      const leftTier = tiers.indexOf(left.tier)
+      const rightTier = tiers.indexOf(right.tier)
+      if (leftTier !== rightTier) return rightTier - leftTier
+      const divisionDifference =
+        leftTier < masterIndex
+          ? divisions.indexOf(right.division) - divisions.indexOf(left.division)
+          : 0
+      return divisionDifference || right.leaguePoints - left.leaguePoints || alphabetical()
+    }),
+)
 const openId = ref<string>()
 const editor = ref<string>()
 const loading = ref(false)
@@ -151,7 +171,7 @@ onBeforeUnmount(() => {
     <p v-else-if="!accounts.length && !editor" class="vault-message">Nenhuma conta cadastrada.</p>
 
     <ul v-if="accounts.length" class="vault-list" aria-label="Contas de League of Legends">
-      <li v-for="account in accounts" :key="account.id" class="vault-account">
+      <li v-for="{ account, rank } in rankedAccounts" :key="account.id" class="vault-account">
         <h3>
           <button
             type="button"
@@ -180,11 +200,21 @@ onBeforeUnmount(() => {
               <span v-else>{{ collectionStatus(account) }}</span>
             </span>
             <span class="vault-solo">
-              <template v-for="rank in account.profile?.ranks" :key="rank.queueType">
-                <span v-if="rank.queueType === 'RANKED_SOLO_5x5'">
-                  {{ rankLabel(rank) }} · {{ numberFormat.format(rank.leaguePoints) }} LP
-                </span>
-              </template>
+              <img
+                v-if="rank && tierNames[rank.tier]"
+                :src="`/media/lol/ranks/${rank.tier.toLowerCase()}.png`"
+                alt=""
+                width="30"
+                height="30"
+              />
+              <Minus v-else :size="18" aria-hidden="true" />
+              <span class="vault-solo-label">
+                {{
+                  rank
+                    ? `${rankLabel(rank)} · ${numberFormat.format(rank.leaguePoints)} LP`
+                    : 'Sem ranking'
+                }}
+              </span>
             </span>
             <span class="vault-ownership" :class="{ 'is-owner': account.ownership === 'owner' }">
               {{ account.ownership === 'owner' ? 'Dono' : 'Outros' }}
@@ -195,42 +225,18 @@ onBeforeUnmount(() => {
 
         <div :id="`details-${account.id}`" :hidden="openId !== account.id">
           <div v-if="openId === account.id" class="vault-details">
-            <div v-if="account.profile" class="vault-ranks">
-              <div v-for="queue in queues" :key="queue.type" class="vault-rank">
-                <h4>{{ queue.label }}</h4>
-                <template
-                  v-for="rank in account.profile.ranks.filter(
-                    (item) => item.queueType === queue.type,
-                  )"
-                  :key="rank.queueType"
+            <div v-if="account.profile" class="vault-rank">
+              <h4>Solo / Duo</h4>
+              <p v-if="rank" class="vault-score vault-rank-mobile">
+                {{ rankLabel(rank) }} · {{ numberFormat.format(rank.leaguePoints) }} LP
+              </p>
+              <p v-if="rank" class="vault-score">
+                <span>{{ rank.wins }}V / {{ rank.losses }}D</span>
+                <span
+                  >{{ Math.round((rank.wins / Math.max(1, rank.wins + rank.losses)) * 100) }}%</span
                 >
-                  <p class="vault-rank-value">
-                    <img
-                      v-if="tierNames[rank.tier]"
-                      :src="`/media/lol/ranks/${rank.tier.toLowerCase()}.png`"
-                      alt=""
-                      width="28"
-                      height="28"
-                    />
-                    <strong>{{ rankLabel(rank) }}</strong>
-                    <span>{{ numberFormat.format(rank.leaguePoints) }} LP</span>
-                  </p>
-                  <p class="vault-score">
-                    <span>{{ rank.wins }}V / {{ rank.losses }}D</span
-                    ><span
-                      >{{
-                        Math.round((rank.wins / Math.max(1, rank.wins + rank.losses)) * 100)
-                      }}%</span
-                    >
-                  </p>
-                </template>
-                <p
-                  v-if="!account.profile.ranks.some((rank) => rank.queueType === queue.type)"
-                  class="vault-score"
-                >
-                  Sem ranking
-                </p>
-              </div>
+              </p>
+              <p v-else class="vault-score">Sem ranking</p>
             </div>
             <div v-if="account.profile" class="vault-profile-links">
               <time :datetime="account.profile.collectedAt">{{
@@ -371,15 +377,11 @@ onBeforeUnmount(() => {
   padding: 12px;
   border-top: 1px solid var(--vault-border);
 }
-.vault-ranks {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
 .vault-rank {
-  display: grid;
-  align-content: start;
-  gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 10px;
   border: 1px solid var(--vault-border);
 }
@@ -388,7 +390,7 @@ onBeforeUnmount(() => {
   font-weight: 500;
   color: var(--muted);
 }
-.vault-rank-value,
+.vault-solo,
 .vault-score,
 .vault-profile-links,
 .vault-actions {
@@ -401,8 +403,11 @@ onBeforeUnmount(() => {
 .vault-profile-links {
   justify-content: space-between;
 }
-.vault-rank-value span {
-  font-size: 0.8125rem;
+.vault-solo img {
+  flex: none;
+}
+.vault-rank .vault-rank-mobile {
+  display: none;
 }
 .vault-profile-links a,
 .league-vault :deep(button:not(.vault-summary)) {
@@ -437,15 +442,27 @@ onBeforeUnmount(() => {
 }
 @media (max-width: 420px) {
   .vault-summary {
-    grid-template-columns: 38px minmax(0, 1fr) auto 18px;
+    grid-template-columns: 38px minmax(0, 1fr) 26px auto 18px;
     gap: 8px;
   }
-  .vault-solo {
-    display: none;
+  .vault-solo-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  .vault-rank-value img {
-    width: 22px;
-    height: 22px;
+  .vault-solo img {
+    width: 26px;
+    height: 26px;
+  }
+  .vault-rank {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .vault-rank .vault-rank-mobile {
+    display: block;
   }
 }
 </style>

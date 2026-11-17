@@ -92,7 +92,7 @@ test('abre detalhes, busca credenciais sob demanda e remove o conteúdo ao sair'
   await expect(summary).toContainText('Dono')
   await summary.click()
   await expect(page.getByText('30V / 20D')).toBeVisible()
-  await expect(page.getByText('Sem ranking')).toBeVisible()
+  await expect(page.getByText('Solo / Duo', { exact: true })).toBeVisible()
   expect(credentialReads).toBe(0)
 
   await page.getByRole('button', { name: 'Revelar login e senha' }).click()
@@ -118,4 +118,46 @@ test('abre detalhes, busca credenciais sob demanda e remove o conteúdo ao sair'
   })
   await expect(page.getByRole('tab', { name: /^Contas/ })).toHaveCount(0)
   await expect(page.getByText('senha-demo')).toHaveCount(0)
+})
+
+test('ordena apenas pelo elo de Solo/Duo e mantém o ícone em telas estreitas', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await seedSession(page)
+  const items = [
+    ['Só Flex', 'CHALLENGER', 'I', 1500, 'RANKED_FLEX_SR'],
+    ['Ouro com mais LP', 'GOLD', 'III', 90, 'RANKED_SOLO_5x5'],
+    ['Ouro com menos LP', 'GOLD', 'III', 18, 'RANKED_SOLO_5x5'],
+    ['Ouro divisão maior', 'GOLD', 'II', 0, 'RANKED_SOLO_5x5'],
+    ['Mestre', 'MASTER', 'I', 0, 'RANKED_SOLO_5x5'],
+  ].map(([gameName, tier, division, leaguePoints, queueType], index) => ({
+    ...account,
+    id: `${id.slice(0, -1)}${index}`,
+    riotId: `${gameName}#BR1`,
+    profile: {
+      ...account.profile,
+      gameName,
+      ranks: [{ ...account.profile.ranks[0], tier, division, leaguePoints, queueType }],
+    },
+  }))
+  await page.route('**/functions/v1/lol-vault**', (route) =>
+    route.fulfill({
+      json: route.request().url().endsWith('/access') ? { allowed: true } : { items },
+    }),
+  )
+  await openProfile(page)
+  await page.getByRole('tab', { name: /^Contas/ }).click()
+  const panel = page.getByRole('tabpanel', { name: /^Contas/ })
+  await expect(panel.locator('.vault-identity strong')).toHaveText([
+    'Mestre#BR1',
+    'Ouro divisão maior#BR1',
+    'Ouro com mais LP#BR1',
+    'Ouro com menos LP#BR1',
+    'Só Flex#BR1',
+  ])
+  await expect(panel.locator('button').getByText('Ouro II · 0 LP')).toHaveCount(1)
+  await expect(panel.locator('img[src="/media/lol/ranks/master.png"]')).toBeVisible()
+  const unranked = panel.getByRole('button', { name: /Só Flex.*Sem ranking/ })
+  await unranked.click()
+  await expect(panel.getByRole('heading', { name: 'Flex', exact: true })).toHaveCount(0)
+  await expect(panel.locator('img[src="/media/lol/ranks/challenger.png"]')).toHaveCount(0)
 })
