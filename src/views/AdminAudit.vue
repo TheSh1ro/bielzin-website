@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { ChevronDown, SlidersHorizontal } from 'lucide-vue-next'
 import { guideRequest } from '@/lib/guide-admin'
 
 const actions: Record<string, string> = {
   panel_entered: 'Entrou no painel',
-  user_invited: 'Enviou convite',
+  user_invited: 'Preparou convite',
   role_changed: 'Alterou cargo',
   matchup_saved: 'Editou matchup',
   defaults_saved: 'Editou padrões do guia',
@@ -23,6 +24,27 @@ const fields: Record<string, string> = {
   runes: 'Runas',
   lanePlan: 'Plano da lane',
   itemization: 'Builds e botas',
+  core: 'Itens principais',
+  start: 'Itens iniciais',
+  boots: 'Botas',
+  situational: 'Situacionais',
+  components: 'Compras antecipadas',
+  route: 'Rota',
+  reason: 'Explicação',
+  condition: 'Quando e por quê',
+  title: 'Título',
+  item: 'Item',
+  routes: 'Rotas',
+  defaultRoute: 'Rota padrão',
+  items: 'Sequência de itens',
+  when: 'Quando usar',
+  followup: 'Continuação',
+  bootsNote: 'Orientação de botas',
+  primaryStyle: 'Árvore primária',
+  secondaryStyle: 'Árvore secundária',
+  primary: 'Runas primárias',
+  secondary: 'Runas secundárias',
+  shards: 'Fragmentos',
 }
 type AuditEvent = {
   id: string
@@ -38,6 +60,7 @@ const actor = ref('')
 const action = ref('')
 const start = ref('')
 const end = ref('')
+const showFilters = ref(false)
 const next = ref<string | null>(null)
 const activeQuery = ref('')
 const loading = ref(false)
@@ -56,9 +79,43 @@ function displayValue(field: string, value: unknown) {
   if (value === 'favorable') return 'Favorável'
   if (value === 'even') return 'Equilibrado'
   if (value === 'unfavorable') return 'Desfavorável'
-  if (Array.isArray(value) && value.every((entry) => typeof entry === 'string'))
-    return value.join('\n') || '—'
-  return typeof value === 'string' ? value : JSON.stringify(value, null, 2)
+  if (Array.isArray(value)) return value.join('\n') || '—'
+  return String(value)
+}
+
+type FieldChange = { label: string; before: string; after: string }
+
+function describeChanges(changes: NonNullable<AuditEvent['changes']>) {
+  const result: FieldChange[] = []
+  function compare(field: string, label: string, before: unknown, after: unknown) {
+    if (JSON.stringify(before) === JSON.stringify(after)) return
+    if (
+      [before, after].some(
+        (value) =>
+          value !== null &&
+          typeof value === 'object' &&
+          (!Array.isArray(value) || value.some((entry) => entry && typeof entry === 'object')),
+      )
+    ) {
+      const previous = (before ?? {}) as Record<string, unknown>
+      const current = (after ?? {}) as Record<string, unknown>
+      for (const key of new Set([...Object.keys(previous), ...Object.keys(current)])) {
+        const name = /^\d+$/.test(key) ? String(Number(key) + 1) : (fields[key] ?? key)
+        compare(key, label + ' › ' + name, previous[key], current[key])
+      }
+    } else {
+      result.push({ label, before: displayValue(field, before), after: displayValue(field, after) })
+    }
+  }
+  for (const [field, change] of Object.entries(changes)) {
+    compare(field, fields[field] ?? field, change.before, change.after)
+  }
+  return result
+}
+
+function clearFilters() {
+  actor.value = action.value = start.value = end.value = ''
+  void load()
 }
 
 async function load(append = false) {
@@ -71,7 +128,6 @@ async function load(append = false) {
     if (end.value) query.set('end', end.value)
     activeQuery.value = query.toString()
     next.value = null
-    events.value = []
   }
   loading.value = true
   error.value = ''
@@ -93,57 +149,91 @@ onMounted(load)
 
 <template>
   <section class="admin-content" aria-labelledby="audit-title">
-    <h1 id="audit-title">Auditoria</h1>
-    <form class="management-form" @submit.prevent="load()">
-      <label>E-mail ou UUID <input v-model="actor" type="search" maxlength="254" /></label>
-      <label>
-        Ação
-        <select v-model="action">
-          <option value="">Todas</option>
-          <option v-for="(label, kind) in actions" :key="kind" :value="kind">{{ label }}</option>
-        </select>
-      </label>
-      <label>De <input v-model="start" type="date" /></label>
-      <label>Até <input v-model="end" type="date" :min="start || undefined" /></label>
-      <button type="submit" class="secondary-button" :disabled="loading">Filtrar</button>
-    </form>
+    <header class="management-heading"><h1 id="audit-title">Auditoria</h1></header>
+    <div class="audit-tools">
+      <select v-model="action" aria-label="Tipo de ação" :disabled="loading" @change="load()">
+        <option value="">Todas as ações</option>
+        <option v-for="(label, kind) in actions" :key="kind" :value="kind">{{ label }}</option>
+      </select>
+      <button
+        class="secondary-button"
+        type="button"
+        aria-controls="audit-filters"
+        :aria-expanded="showFilters"
+        @click="showFilters = !showFilters"
+      >
+        <SlidersHorizontal :size="14" aria-hidden="true" /> Autor e período
+      </button>
+      <form
+        id="audit-filters"
+        v-show="showFilters"
+        class="management-form audit-filters"
+        @submit.prevent="load()"
+      >
+        <label>E-mail ou UUID <input v-model="actor" type="search" maxlength="254" /></label>
+        <label>De <input v-model="start" type="date" /></label>
+        <label>Até <input v-model="end" type="date" :min="start || undefined" /></label>
+        <button type="submit" class="secondary-button" :disabled="loading">Filtrar</button>
+      </form>
+      <button
+        v-if="activeQuery"
+        type="button"
+        class="text-button audit-clear"
+        :disabled="loading"
+        @click="clearFilters"
+      >
+        Limpar filtros
+      </button>
+    </div>
     <p v-if="error" class="management-error" role="alert">{{ error }}</p>
     <ol v-if="events.length" class="management-list" aria-label="Eventos de auditoria">
       <li v-for="event in events" :key="event.id" class="audit-row">
-        <strong>{{ actions[event.action] ?? event.action }}</strong>
-        <span v-if="event.target">
-          · {{ event.action === 'defaults_saved' ? 'Padrões do guia' : event.target }}</span
-        >
-        <p class="muted">
-          {{ event.actorEmail ?? event.actorId }} ·
-          <time :datetime="event.at">{{ dateTime.format(new Date(event.at)) }}</time>
-        </p>
+        <div class="audit-event">
+          <div>
+            <strong>{{ actions[event.action] ?? event.action }}</strong>
+            <span v-if="event.target && event.action !== 'defaults_saved'" class="muted">
+              · {{ event.target }}</span
+            >
+            <small>{{ event.actorEmail ?? event.actorId }}</small>
+          </div>
+          <time class="muted" :datetime="event.at">{{ dateTime.format(new Date(event.at)) }}</time>
+        </div>
         <details v-if="event.changes">
-          <summary>Ver alterações</summary>
-          <section v-for="(change, field) in event.changes" :key="field" class="audit-field">
-            <h3>{{ fields[field] ?? field }}</h3>
+          <summary class="management-disclosure">
+            <ChevronDown :size="14" aria-hidden="true" /> Ver alterações
+          </summary>
+          <section
+            v-for="change in describeChanges(event.changes)"
+            :key="change.label"
+            class="audit-field"
+          >
+            <h3>{{ change.label }}</h3>
             <div class="audit-values">
               <div>
                 <small>Antes</small>
-                <pre>{{ displayValue(field, change.before) }}</pre>
+                <p>{{ change.before }}</p>
               </div>
               <div>
                 <small>Depois</small>
-                <pre>{{ displayValue(field, change.after) }}</pre>
+                <p>{{ change.after }}</p>
               </div>
             </div>
           </section>
         </details>
       </li>
     </ol>
-    <p v-else-if="!loading && !error" class="muted">Nenhuma ação registrada para este filtro.</p>
-    <p v-if="loading" role="status" class="muted">Carregando auditoria…</p>
+    <p v-else-if="!loading && !error" class="management-empty muted">
+      {{ activeQuery ? 'Nenhuma ação corresponde aos filtros.' : 'Nenhuma ação registrada.' }}
+    </p>
+    <p v-if="loading && !events.length" role="status" class="management-empty muted">
+      Carregando auditoria…
+    </p>
     <button
-      v-if="next"
+      v-if="next || error"
       type="button"
       class="secondary-button management-more"
       :disabled="loading"
-      @click="load(true)"
+      @click="load(!!next)"
     >
       {{ error ? 'Tentar novamente' : 'Carregar mais' }}
     </button>
@@ -151,19 +241,46 @@ onMounted(load)
 </template>
 
 <style scoped>
+.audit-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) auto 1fr;
+  align-items: start;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+.audit-tools > select {
+  min-height: 38px;
+  font-size: 13px;
+}
+.audit-filters {
+  grid-column: 1 / -1;
+  padding-block: 8px;
+}
+.audit-clear {
+  grid-column: 3;
+  grid-row: 1;
+  min-height: 38px;
+  justify-self: end;
+}
 .audit-row {
   padding: 16px;
   overflow-wrap: anywhere;
 }
-.audit-row .muted {
-  font-size: 13px;
+.audit-event {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
 }
-details {
+.audit-event time {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.audit-row details {
   margin-top: 8px;
 }
 summary {
   cursor: pointer;
-  color: var(--admin-accent);
 }
 .audit-field {
   margin-block: 12px;
@@ -177,10 +294,33 @@ summary {
 .audit-values > div {
   min-width: 0;
   border: 1px solid var(--admin-line);
+  border-radius: 4px;
+  background: var(--admin-bg);
   padding: 8px 10px;
 }
-pre {
+.audit-values p {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .audit-tools {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .audit-clear {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    justify-self: start;
+  }
+  .audit-tools .audit-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .audit-filters > :first-child {
+    grid-column: 1 / -1;
+  }
+  .audit-filters > button {
+    grid-column: 2;
+    justify-self: end;
+  }
 }
 </style>

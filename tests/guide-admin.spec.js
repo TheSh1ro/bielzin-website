@@ -163,8 +163,23 @@ async function setup(page, configure, role = 'admin') {
 
 test('mostra os atalhos de administração com a resposta antiga do guia', async ({ page }) => {
   await setup(page, undefined, 'legacy')
-  await expect(page.getByRole('button', { name: 'Padrões do guia' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Visitas' })).toBeVisible()
+  const matchups = page.getByRole('navigation', { name: 'Matchups', exact: true })
+  await expect(matchups.getByRole('button', { name: 'Padrões do guia' })).toBeVisible()
+  const nav = page.getByRole('navigation', { name: 'Seções do painel' })
+  const trigger = nav.getByRole('button', { name: /Trocar seção.*Matchups/ })
+  const visits = nav.getByRole('link', { name: 'Visitas' })
+  const listBefore = await matchups.boundingBox()
+  await expect(visits).toBeHidden()
+  await trigger.click()
+  await expect(visits).toBeVisible()
+  expect(await matchups.boundingBox()).toEqual(listBefore)
+  await visits.focus()
+  await page.keyboard.press('Escape')
+  await expect(visits).toBeHidden()
+  await expect(trigger).toBeFocused()
+  await trigger.click()
+  await page.getByRole('heading', { name: 'Padrões do guia', exact: true }).click()
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false')
 })
 
 test('editor salva um matchup e cadastra uma conta privada pelo menu do painel', async ({
@@ -188,10 +203,11 @@ test('editor salva um matchup e cadastra uma conta privada pelo menu do painel',
   })
   const state = await setup(page, undefined, 'editor')
   const nav = page.getByRole('navigation', { name: 'Seções do painel' })
+  await nav.getByRole('button', { name: /Trocar seção/ }).click()
   await expect(nav.getByRole('link', { name: 'Visitas' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: 'Usuários' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: 'Auditoria' })).toHaveCount(0)
-  await expect(nav.getByRole('button', { name: 'Padrões do guia' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Padrões do guia' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: /Minhas contas/ })).toBeVisible()
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Atualizar catálogo' })).toHaveCount(0)
@@ -201,7 +217,9 @@ test('editor salva um matchup e cadastra uma conta privada pelo menu do painel',
     .toEqual(['/guide/matchups/Ahri'])
 
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.getByRole('banner').getByRole('link', { name: 'Minhas contas' }).click()
+  await page.getByRole('button', { name: 'Menu do painel' }).click()
+  await nav.getByRole('button', { name: /Trocar seção/ }).click()
+  await nav.getByRole('link', { name: 'Minhas contas' }).click()
   await expect(page).toHaveURL(/\/admin\?aba=contas$/)
   await expect(page.getByRole('heading', { name: 'Minhas contas' })).toBeVisible()
   await page.getByRole('button', { name: 'Adicionar conta' }).click()
@@ -628,33 +646,35 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
   await expect(page.getByRole('status', { name: 'Salvamento' })).toBeEmpty()
   await page.getByLabel('Dica 1', { exact: true }).fill('Edição antes de abrir visitas')
   const nav = page.getByRole('navigation', { name: 'Seções do painel' })
-  const visitsLink = nav.getByRole('link', { name: 'Visitas', exact: true })
-  await visitsLink.click()
+  const sectionTrigger = nav.getByRole('button', { name: /Trocar seção/ })
+  await sectionTrigger.click()
+  await nav.getByRole('link', { name: 'Visitas', exact: true }).click()
   await expect(page).toHaveURL(/\/admin\?aba=visitas$/)
-  await expect(visitsLink).toHaveAttribute('aria-current', 'page')
+  await expect(sectionTrigger).toHaveAccessibleName(/Visitas/)
+  await expect(sectionTrigger).toHaveAttribute('aria-expanded', 'false')
   await expect(page.getByRole('heading', { name: 'Visitas', exact: true })).toBeVisible()
-  await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
-  await expect(page.getByRole('cell', { name: 'Mozilla/5.0 (teste)' })).toBeVisible()
+  await expect(page.getByText('São Paulo, SP', { exact: true })).toBeVisible()
   await expect(page.locator('time').first()).toContainText('16:00')
   await page.locator('summary').filter({ hasText: 'Credenciais recusadas' }).click()
   await expect(page.getByText('16:00:10', { exact: true })).toBeVisible()
+  await expect(page.getByText('Mozilla/5.0 (teste)', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Carregar mais' }).click()
   await expect(page.getByRole('alert')).toHaveText('Visitas indisponíveis no momento.')
-  await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
+  await expect(page.getByText('São Paulo, SP', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Tentar novamente' }).click()
-  await expect(page.getByRole('cell', { name: 'Indisponível' })).toBeVisible()
+  await expect(page.getByText('Localização indisponível', { exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Carregar mais' })).toHaveCount(0)
   await page.goBack()
   await expect(page.getByRole('heading', { name: 'Ahri', exact: true })).toBeVisible()
   await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Alterações salvas')
   expect(state.guide.matchups.Ahri.tips).toEqual(['Edição antes de abrir visitas'])
   await page.goForward()
-  await expect(visitsLink).toHaveAttribute('aria-current', 'page')
+  await expect(sectionTrigger).toHaveAccessibleName(/Visitas/)
   await page.reload()
-  await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
+  await expect(page.getByText('São Paulo, SP', { exact: true })).toBeVisible()
 })
 
-test('convida, reenvia e revoga cargos pelo painel, com auditoria filtrável', async ({ page }) => {
+test('gera e copia o link, reenvia por e-mail e revoga cargos pelo painel', async ({ page }) => {
   await setup(page)
   const user = {
     id: 'new-user',
@@ -665,6 +685,7 @@ test('convida, reenvia e revoga cargos pelo painel, com auditoria filtrável', a
     self: false,
   }
   const invitations = []
+  const inviteUrl = 'https://bielzin.xyz/admin/convite#token_hash=convite-de-teste'
   const changes = []
   let invited = false
   await page.route('**/functions/v1/guide-admin/users**', (route) => {
@@ -672,7 +693,7 @@ test('convida, reenvia e revoga cargos pelo painel, com auditoria filtrável', a
     if (path.endsWith('/invite')) {
       invitations.push(route.request().postDataJSON())
       invited = true
-      return route.fulfill({ json: { id: user.id } })
+      return route.fulfill({ json: { id: user.id, inviteUrl } })
     }
     if (path.endsWith('/role')) {
       changes.push(route.request().postDataJSON())
@@ -701,22 +722,38 @@ test('convida, reenvia e revoga cargos pelo painel, com auditoria filtrável', a
     })
   })
 
+  const sectionTrigger = page.getByRole('button', { name: /Trocar seção/ })
+  await sectionTrigger.click()
   await page.getByRole('link', { name: 'Usuários' }).click()
+  await page.getByRole('button', { name: 'Convidar usuário' }).click()
   await page.getByLabel('E-mail do convite').fill(user.email)
-  await page.getByRole('button', { name: 'Enviar convite' }).click()
-  await expect(page.getByText('Convite enviado.')).toBeVisible()
-  expect(invitations[0]).toEqual({ email: user.email, role: 'editor', resend: false })
-  await page.getByRole('button', { name: 'Reenviar convite' }).click()
+  await page.getByRole('button', { name: 'Gerar link' }).click()
+  await expect(page.getByLabel('Link para ' + user.email)).toHaveValue(inviteUrl)
+  expect(invitations[0]).toEqual({
+    email: user.email,
+    role: 'editor',
+    resend: false,
+    delivery: 'link',
+  })
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.getByRole('button', { name: 'Copiar link' }).click()
+  await expect(page.getByText('Link copiado.', { exact: true })).toBeVisible()
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(inviteUrl)
+  await page.getByRole('button', { name: 'Fechar convite' }).click()
+  await page.getByRole('button', { name: 'Renovar convite' }).click()
+  await page.getByRole('button', { name: 'Enviar por e-mail' }).click()
   await expect(page.getByText('Convite reenviado.')).toBeVisible()
-  expect(invitations[1].resend).toBe(true)
+  expect(invitations[1]).toMatchObject({ resend: true, delivery: 'email' })
 
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByLabel('Cargo de ' + user.email).selectOption('')
   await expect(page.getByText('Cargo atualizado.')).toBeVisible()
   expect(changes).toEqual([{ role: null }])
-  await expect(page.getByRole('button', { name: 'Reenviar convite' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Renovar convite' })).toHaveCount(0)
 
+  await sectionTrigger.click()
   await page.getByRole('link', { name: 'Auditoria' }).click()
+  await page.getByText('Autor e período', { exact: true }).click()
   await page.getByLabel('E-mail ou UUID').fill(user.email)
   await page.getByRole('button', { name: 'Filtrar' }).click()
   await expect(
@@ -726,6 +763,12 @@ test('convida, reenvia e revoga cargos pelo painel, com auditoria filtrável', a
   await expect(page.getByText('Dica antiga')).toBeVisible()
   await expect(page.getByText('Dica nova')).toBeVisible()
   expect(filter).toBe(user.email)
+
+  await page.setViewportSize({ width: 360, height: 800 })
+  const start = await page.getByLabel('De', { exact: true }).boundingBox()
+  const end = await page.getByLabel('Até', { exact: true }).boundingBox()
+  expect(start?.y).toBe(end?.y)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360)
 })
 
 test('solicita e salva a senha em um convite', async ({ page }) => {
@@ -756,5 +799,5 @@ test('solicita e salva a senha em um convite', async ({ page }) => {
   await page.getByLabel('Nova senha').fill('senha-ficticia-segura')
   await page.getByLabel('Confirmar senha').fill('senha-ficticia-segura')
   await page.getByRole('button', { name: 'Salvar senha' }).click()
-  await expect(page.getByRole('status')).toContainText('Senha definida')
+  await expect(page.getByRole('heading', { name: 'Senha definida' })).toBeVisible()
 })

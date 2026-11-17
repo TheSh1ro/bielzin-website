@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { ChevronDown } from 'lucide-vue-next'
 import {
   guideRequest,
   type VisitActivity,
@@ -35,15 +36,24 @@ const screens: Record<VisitActivity, string> = {
 
 function visitSummary(visit: VisitDetails) {
   const kinds = [...new Set(visit.activity?.map(({ kind }) => kind))]
-  const loginOnly =
-    kinds.includes('admin_login') &&
-    !kinds.some(
-      (kind) => kind === 'admin_login_failed' || kind === 'admin_denied' || kind === 'admin_panel',
-    )
-  return kinds
-    .map((kind) => (kind === 'admin_login' && loginOnly ? 'Só abriu o login' : screens[kind]))
-    .join(' · ')
+  const access = kinds.filter(
+    (kind) => kind === 'admin_login_failed' || kind === 'admin_denied' || kind === 'admin_panel',
+  )
+  return {
+    pages: kinds
+      .filter((kind) => kind === 'home' || kind === 'guide')
+      .map((kind) => screens[kind])
+      .join(' · '),
+    access: access.length
+      ? access.map((kind) => screens[kind])
+      : kinds.includes('admin_login')
+        ? ['Só abriu o login']
+        : [],
+  }
 }
+const visitRows = computed(() =>
+  visits.value.map((visit) => ({ visit, summary: visitSummary(visit) })),
+)
 
 async function loadPage() {
   busy.value = true
@@ -66,199 +76,140 @@ onMounted(loadPage)
 
 <template>
   <section class="admin-content" aria-labelledby="visits-title">
-    <header class="editor-heading">
-      <div class="editor-identity">
-        <div>
-          <h1 id="visits-title">Visitas</h1>
-          <p class="muted">Telas acessadas por navegador e dia.</p>
-        </div>
+    <header class="management-heading">
+      <div>
+        <h1 id="visits-title">Visitas</h1>
+        <p class="muted">Por navegador e dia, no horário de Brasília.</p>
       </div>
     </header>
 
-    <div class="visits-panel">
-      <p v-if="busy && !loaded" class="visits-notice muted" role="status">Carregando visitas…</p>
-      <p v-else-if="loaded && !visits.length" class="visits-notice muted">
-        Nenhuma visita com detalhes registrada.
-      </p>
-      <div v-if="visits.length" class="visits-table">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Data e hora <span>(Brasília)</span></th>
-              <th scope="col">Localização <span>(aproximada)</span></th>
-              <th scope="col">Telas e acessos</th>
-              <th scope="col">User-agent</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="visit in visits" :key="visit.id">
-              <td>
-                <time :datetime="visit.visitedAt">
-                  <span>{{ date.format(new Date(visit.visitedAt)) }}</span>
-                  <span class="visit-time">{{ time.format(new Date(visit.visitedAt)) }}</span>
-                </time>
-              </td>
-              <td>{{ [visit.city, visit.region].filter(Boolean).join(', ') || 'Indisponível' }}</td>
-              <td>
-                <details v-if="visit.activity?.length" class="visit-activity">
-                  <summary>{{ visitSummary(visit) }}</summary>
-                  <ol>
-                    <li v-for="event in visit.activity" :key="event.id">
-                      <time :datetime="event.at">{{ eventTime.format(new Date(event.at)) }}</time>
-                      {{ screens[event.kind] }}
-                    </li>
-                  </ol>
-                </details>
-                <span v-else class="muted">Sem histórico de telas</span>
-              </td>
-              <td>{{ visit.userAgent || 'Indisponível' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <p v-if="error" class="management-error" role="alert">{{ error }}</p>
+    <p v-if="busy && !loaded" class="management-empty muted" role="status">Carregando visitas…</p>
+    <p v-else-if="loaded && !visits.length" class="management-empty muted">
+      Nenhuma visita registrada.
+    </p>
+    <ol v-if="visits.length" class="management-list" aria-label="Histórico de visitas">
+      <li v-for="{ visit, summary } in visitRows" :key="visit.id">
+        <details class="visit-entry">
+          <summary class="visit-summary">
+            <time :datetime="visit.visitedAt">
+              {{ date.format(new Date(visit.visitedAt)) }}
+              <span>{{ time.format(new Date(visit.visitedAt)) }}</span>
+            </time>
+            <div class="visit-overview">
+              <div v-if="summary.access.length" class="visit-access">
+                <span v-for="access in summary.access" :key="access">{{ access }}</span>
+              </div>
+              <span v-if="summary.pages">{{ summary.pages }}</span>
+              <span v-else-if="!summary.access.length">Sem histórico de telas</span>
+              <small>{{
+                [visit.city, visit.region].filter(Boolean).join(', ') || 'Localização indisponível'
+              }}</small>
+            </div>
+            <ChevronDown :size="16" aria-hidden="true" />
+          </summary>
+          <div class="visit-details">
+            <ol
+              v-if="visit.activity?.length"
+              class="visit-activity"
+              aria-label="Sequência de telas"
+            >
+              <li v-for="event in visit.activity" :key="event.id">
+                <time :datetime="event.at">{{ eventTime.format(new Date(event.at)) }}</time>
+                {{ screens[event.kind] }}
+              </li>
+            </ol>
+            <small>Navegador</small>
+            <p class="muted">{{ visit.userAgent || 'Indisponível' }}</p>
+          </div>
+        </details>
+      </li>
+    </ol>
 
-      <footer v-if="visits.length || error" class="visits-footer">
-        <p v-if="error" class="visits-error" role="alert">{{ error }}</p>
-        <p v-else-if="visits.length" class="muted" role="status">
-          {{ visits.length }} {{ visits.length === 1 ? 'registro exibido' : 'registros exibidos' }}
-        </p>
-        <button
-          v-if="next || error"
-          type="button"
-          class="secondary-button"
-          :disabled="busy"
-          @click="loadPage"
-        >
-          {{ busy ? 'Carregando…' : error ? 'Tentar novamente' : 'Carregar mais' }}
-        </button>
-      </footer>
-    </div>
+    <button
+      v-if="next || error"
+      type="button"
+      class="secondary-button management-more"
+      :disabled="busy"
+      @click="loadPage"
+    >
+      {{ busy ? 'Carregando…' : error ? 'Tentar novamente' : 'Carregar mais' }}
+    </button>
   </section>
 </template>
 
 <style scoped>
-.visits-panel {
-  border: 1px solid var(--admin-line);
-  border-radius: 8px;
-  background: var(--admin-surface);
-}
-.visits-table {
-  overflow-x: auto;
-  border-radius: 7px 7px 0 0;
-}
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-th,
-td {
-  padding: 16px 20px;
-  text-align: left;
-  vertical-align: top;
-}
-th {
-  background: var(--admin-raised);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-th span {
-  color: var(--admin-muted);
-  font-weight: 400;
-}
-td {
-  border-top: 1px solid var(--admin-line);
-}
-td:first-child,
-td:nth-child(2) {
-  width: 1%;
-  min-width: 11rem;
-}
-time {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  font-variant-numeric: tabular-nums;
-}
-.visit-time,
-td:last-child {
-  color: var(--admin-muted);
-}
-.visit-activity summary {
+.visit-summary {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  list-style: none;
   cursor: pointer;
 }
-.visit-activity ol {
-  margin-top: 8px;
-  font-size: 12px;
+.visit-summary::-webkit-details-marker {
+  display: none;
 }
-.visit-activity li {
+.visit-summary:hover {
+  background: var(--admin-hover);
+}
+.visit-summary:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: -2px;
+}
+.visit-summary time {
+  font-variant-numeric: tabular-nums;
+}
+.visit-summary time span {
+  margin-left: 4px;
+  color: var(--admin-muted);
+}
+.visit-access {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 8px;
-  margin-top: 4px;
+  gap: 2px 12px;
+  font-weight: 600;
+}
+.visit-access + span {
+  font-size: 13px;
+  color: var(--admin-muted);
+}
+.visit-entry[open] .visit-summary > svg {
+  transform: rotate(180deg);
+}
+.visit-details {
+  padding: 0 16px 16px calc(8rem + 28px);
+  overflow-wrap: anywhere;
+}
+.visit-details p {
+  font-size: 12px;
+}
+.visit-activity {
+  margin-bottom: 12px;
+}
+.visit-activity li {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 8px;
+  padding-block: 6px;
 }
 .visit-activity time {
   color: var(--admin-muted);
   font-variant-numeric: tabular-nums;
 }
-td:last-child {
-  font: 12px/1.65 var(--mono);
-  overflow-wrap: anywhere;
-}
-.visits-notice {
-  padding: 24px;
-}
-.visits-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 20px;
-  font-size: 13px;
-}
-.visits-table + .visits-footer {
-  border-top: 1px solid var(--admin-line);
-}
-.visits-footer button {
-  margin-left: auto;
-}
-.visits-error {
-  color: var(--admin-danger);
-}
 @media (max-width: 760px) {
-  table {
-    table-layout: fixed;
-    min-width: 34rem;
+  .visit-summary {
+    grid-template-columns: minmax(0, 1fr) 16px;
+    gap: 4px 12px;
   }
-  th,
-  td,
-  .visits-footer {
-    padding-inline: 10px;
+  .visit-summary time {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: var(--admin-muted);
   }
-  th {
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-  th span {
-    display: block;
-  }
-  th:first-child {
-    width: 6rem;
-  }
-  th:nth-child(2) {
-    width: 30%;
-  }
-  td:first-child,
-  td:nth-child(2) {
-    width: auto;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  time {
-    display: grid;
-    gap: 2px;
-    white-space: nowrap;
+  .visit-details {
+    padding-left: 16px;
   }
 }
 </style>

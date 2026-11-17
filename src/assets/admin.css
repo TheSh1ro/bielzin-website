@@ -160,13 +160,13 @@ html:has(.admin-page) {
   color: var(--admin-muted);
 }
 .admin-page .admin-sections {
-  display: grid;
-  gap: 4px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--admin-line);
+  position: relative;
+  z-index: 1;
+  flex: none;
+  margin-bottom: 20px;
 }
-.admin-page .admin-sections > * {
+.admin-page .section-trigger,
+.admin-page .section-options a {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -178,13 +178,35 @@ html:has(.admin-page) {
   font-size: 13px;
   font-weight: 600;
 }
-.admin-page .admin-sections > :hover {
+.admin-page .section-trigger {
+  width: 100%;
+  border: 1px solid var(--admin-line);
+  background: var(--admin-selected);
+  color: var(--admin-text);
+}
+.admin-page .section-trigger > svg:last-child {
+  margin-left: auto;
+  color: var(--admin-muted);
+}
+.admin-page .section-trigger[aria-expanded='true'] > svg:last-child {
+  transform: rotate(180deg);
+}
+.admin-page .section-trigger:hover,
+.admin-page .section-options a:hover {
   background: var(--admin-hover);
   color: var(--admin-text);
 }
-.admin-page .admin-sections > [aria-current] {
-  background: var(--admin-selected);
-  color: var(--admin-accent);
+.admin-page .section-options {
+  position: absolute;
+  inset: calc(100% + 4px) 0 auto;
+  padding: 4px;
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  background: var(--admin-bg);
+  box-shadow: 0 8px 24px #0006;
+}
+.admin-page .section-options a:focus-visible {
+  outline-offset: -2px;
 }
 .admin-page .roster-heading {
   display: flex;
@@ -279,6 +301,10 @@ html:has(.admin-page) {
 .admin-page .champion-list button:focus-visible {
   outline-offset: -3px;
 }
+.admin-page .champion-list .guide-defaults > svg {
+  flex: none;
+  margin-inline: 5px 6px;
+}
 .admin-page .champion-list img {
   width: 28px;
   height: 28px;
@@ -352,9 +378,6 @@ html:has(.admin-page) {
 }
 .admin-page .logout-button {
   margin-left: auto;
-}
-.admin-page .mobile-accounts {
-  display: none;
 }
 .admin-page .editor-breadcrumb {
   display: flex;
@@ -1188,6 +1211,8 @@ html:has(.admin-page) {
     top: 60px;
     z-index: 6;
     height: auto;
+    max-height: calc(100svh - 60px);
+    overflow-y: auto;
     border-right: 0;
     border-bottom: 1px solid var(--admin-line);
     padding: 16px 20px;
@@ -1213,25 +1238,13 @@ html:has(.admin-page) {
     font-size: 12px;
     gap: 8px;
   }
+  .admin-page .champion-list .guide-defaults {
+    grid-column: 1 / -1;
+  }
   .admin-page .admin-toolbar {
     min-height: 60px;
     padding: 10px 16px;
     gap: 10px;
-  }
-  .admin-page .mobile-accounts {
-    display: inline-flex;
-    align-items: center;
-    min-height: 36px;
-    margin-left: auto;
-    padding: 0 8px;
-    border: 1px solid var(--admin-control-line);
-    border-radius: 5px;
-    color: var(--admin-accent);
-    font-size: 12px;
-    white-space: nowrap;
-  }
-  .admin-page .mobile-accounts + .logout-button {
-    margin-left: 0;
   }
   .admin-page .editor-breadcrumb {
     font-size: 11px;
@@ -1782,19 +1795,45 @@ html:has(.admin-page) {
   }
 }
 
+.admin-page .management-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.admin-page .management-heading h1 {
+  margin-bottom: 0;
+}
+.admin-page .management-heading p {
+  margin-top: 4px;
+  font-size: 13px;
+}
+.admin-page .management-search {
+  max-width: 24rem;
+  margin-bottom: 16px;
+}
 .admin-page .management-form {
   display: flex;
   align-items: end;
   flex-wrap: wrap;
   gap: 12px;
-  margin: 20px 0;
+  margin: 0;
 }
-.admin-page .management-form label {
+.admin-page .management-invite {
+  display: grid;
+  gap: 16px;
+}
+.admin-page .reset-dialog .dialog-heading h2 {
+  margin: 0;
+}
+.admin-page :is(.management-form, .management-invite) label {
   display: grid;
   gap: 6px;
   min-width: 0;
 }
-.admin-page .management-form input {
+.admin-page :is(.management-form, .management-invite) input {
   min-height: 44px;
   min-width: 0;
   padding: 8px 12px;
@@ -1811,23 +1850,43 @@ html:has(.admin-page) {
   border-radius: 6px;
   background: var(--admin-surface);
 }
-.admin-page .management-list li + li {
+.admin-page .management-list > li + li {
   border-top: 1px solid var(--admin-line);
 }
 .admin-page .management-row {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10rem 7rem;
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
 }
 .admin-page .management-row > div {
-  flex: 1 1 12rem;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .admin-page .management-row select {
-  width: auto;
+  min-height: 38px;
+  font-size: 13px;
+}
+.admin-page .management-row .text-button {
+  justify-self: end;
+  text-align: right;
+}
+.admin-page .management-empty {
+  padding: 16px 0;
+  border-block-start: 1px solid var(--admin-line);
+}
+.admin-page .management-disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  font-size: 12px;
+  color: var(--admin-muted);
+  cursor: pointer;
+}
+.admin-page details[open] > .management-disclosure svg {
+  transform: rotate(180deg);
 }
 .admin-page .management-more {
   margin-top: 16px;
@@ -1838,4 +1897,16 @@ html:has(.admin-page) {
 }
 .admin-page .management-error {
   color: var(--admin-danger);
+}
+@media (max-width: 760px) {
+  .admin-page .management-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+  }
+  .admin-page .management-row > div {
+    grid-column: 1 / -1;
+  }
+  .admin-page .management-row select {
+    max-width: 10rem;
+  }
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createClient } from '@supabase/supabase-js'
 import { ref } from 'vue'
+import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
 import { authStorageKey, backendUrl, publishableKey } from '@/lib/supabase'
 import '@/assets/admin.css'
 
@@ -80,8 +81,8 @@ async function setPassword() {
 <template>
   <main class="admin-page admin-session">
     <div class="admin-session-content">
-      <h1>Definir senha</h1>
-      <p v-if="complete" role="status">Senha definida. Entre no painel com seu e-mail e senha.</p>
+      <h1>{{ complete ? 'Senha definida' : 'Definir senha' }}</h1>
+      <p v-if="complete" class="muted" role="status">Entre com seu e-mail e a nova senha.</p>
       <p v-else-if="error || unavailable" class="login-error" role="alert">
         {{ error || 'Convite inválido ou vencido. Peça um novo convite.' }}
       </p>
@@ -93,8 +94,10 @@ async function setPassword() {
             type="password"
             autocomplete="new-password"
             minlength="8"
+            aria-describedby="invite-password-hint"
             required
           />
+          <small id="invite-password-hint">Use pelo menos 8 caracteres.</small>
         </label>
         <label>
           Confirmar senha
@@ -110,7 +113,12 @@ async function setPassword() {
           {{ busy ? 'Salvando…' : 'Salvar senha' }}
         </button>
       </form>
-      <a class="back-link" href="/admin">Ir para o login</a>
+      <a v-if="complete" class="secondary-button reset-confirm" href="/admin"
+        >Entrar no painel <ArrowRight :size="16" aria-hidden="true"
+      /></a>
+      <a v-else class="back-link" href="/admin"
+        ><ArrowLeft :size="16" aria-hidden="true" /> Voltar ao login</a
+      >
     </div>
   </main>
 </template>

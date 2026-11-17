@@ -39,6 +39,7 @@ import {
   UsersRound,
   ClipboardList,
   LockKeyhole,
+  Swords,
 } from 'lucide-vue-next'
 
 defineProps<{ sessionMessage: string; sessionBusy: boolean }>()
@@ -52,6 +53,11 @@ const adminSections = [
   { id: 'visitas', title: 'Visitas', icon: ChartNoAxesColumn, component: AdminVisits },
 ] as const
 type PanelSection = 'guia' | 'contas' | (typeof adminSections)[number]['id']
+const panelSections = [
+  { id: 'guia', title: 'Matchups', icon: Swords },
+  { id: 'contas', title: 'Minhas contas', icon: LockKeyhole },
+  ...adminSections,
+] as const
 function sectionFromUrl(): PanelSection {
   const tab = new URLSearchParams(window.location.search).get('aba')
   return tab === 'contas' ? tab : (adminSections.find(({ id }) => id === tab)?.id ?? 'guia')
@@ -61,6 +67,15 @@ const managementSection = computed(() => adminSections.find(({ id }) => id === p
 const showGuide = computed(() => panelSection.value === 'guia')
 const panelRole = ref<AdminGuide['role']>()
 const isAdmin = computed(() => panelRole.value === 'admin')
+const currentSection = computed(() => panelSections.find(({ id }) => id === panelSection.value)!)
+const sectionOptions = computed(() =>
+  panelSections.filter(
+    ({ id }) => id !== panelSection.value && (isAdmin.value || id === 'guia' || id === 'contas'),
+  ),
+)
+const sectionNavigation = ref<HTMLElement>()
+const sectionTrigger = ref<HTMLButtonElement>()
+const sectionMenuOpen = ref(false)
 const loadingGuide = ref(false)
 const guideError = ref('')
 const mainContent = ref<HTMLElement>()
@@ -326,11 +341,13 @@ async function selectSection(id: string, focus = false) {
   }
 }
 function syncSection() {
+  sectionMenuOpen.value = false
   panelSection.value = sectionFromUrl()
   mobileNavigation.value = false
   if (!showGuide.value && dirty.value) void save()
 }
 async function switchSection(section: PanelSection) {
+  sectionMenuOpen.value = false
   if (section === panelSection.value) {
     mobileNavigation.value = false
     if (section !== 'guia') {
@@ -347,6 +364,20 @@ async function switchSection(section: PanelSection) {
   window.scrollTo({ top: 0, behavior: 'instant' })
   await nextTick()
   mainContent.value?.focus()
+}
+function closeSectionMenuOutside(target: EventTarget | null) {
+  if (!(target instanceof Node) || !sectionNavigation.value?.contains(target)) {
+    sectionMenuOpen.value = false
+  }
+}
+function onSectionPointerDown(event: PointerEvent) {
+  if (sectionMenuOpen.value) closeSectionMenuOutside(event.target)
+}
+function onSectionEscape(event: KeyboardEvent) {
+  if (!sectionMenuOpen.value) return
+  event.stopPropagation()
+  sectionMenuOpen.value = false
+  sectionTrigger.value?.focus()
 }
 function openPanelSection(event: MouseEvent, section: PanelSection) {
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
@@ -486,6 +517,7 @@ function warnOnExit(event: BeforeUnloadEvent) {
   }
 }
 onMounted(() => {
+  window.addEventListener('pointerdown', onSectionPointerDown)
   window.addEventListener('popstate', syncSection)
   window.addEventListener('beforeunload', warnOnExit)
   void load()
@@ -520,14 +552,6 @@ onBeforeUnmount(() => {
             : (managementSection?.title ?? (isDefault ? 'Padrões' : title || 'Matchups'))
         }}</strong>
       </span>
-      <a
-        v-if="panelRole && panelSection !== 'contas'"
-        class="mobile-accounts"
-        href="/admin?aba=contas"
-        @click="openPanelSection($event, 'contas')"
-      >
-        Minhas contas
-      </a>
       <button
         type="button"
         class="secondary-button logout-button"
@@ -541,34 +565,37 @@ onBeforeUnmount(() => {
       <a class="admin-brand" href="/">
         <span>Painel<small>bielzin</small></span>
       </a>
-      <nav v-if="panelRole" class="admin-sections" aria-label="Seções do painel">
+      <nav
+        v-if="panelRole"
+        ref="sectionNavigation"
+        class="admin-sections"
+        aria-label="Seções do painel"
+        @focusout="closeSectionMenuOutside($event.relatedTarget)"
+        @keydown.esc="onSectionEscape"
+      >
         <button
-          v-if="isAdmin"
+          ref="sectionTrigger"
           type="button"
-          :aria-current="showGuide && isDefault ? 'page' : undefined"
-          @click="openGuide('defaults')"
+          class="section-trigger"
+          :aria-label="'Trocar seção · ' + currentSection.title"
+          :aria-expanded="sectionMenuOpen"
+          aria-controls="admin-section-options"
+          @click="sectionMenuOpen = !sectionMenuOpen"
         >
-          <SlidersHorizontal :size="17" aria-hidden="true" /> Padrões do guia
+          <component :is="currentSection.icon" :size="17" aria-hidden="true" />
+          {{ currentSection.title }}
+          <ChevronDown :size="16" aria-hidden="true" />
         </button>
-        <a
-          href="/admin?aba=contas"
-          :aria-current="panelSection === 'contas' ? 'page' : undefined"
-          @click="openPanelSection($event, 'contas')"
-        >
-          <LockKeyhole :size="17" aria-hidden="true" />
-          <span>Minhas contas<small>Logins e elos do LoL</small></span>
-        </a>
-        <template v-if="isAdmin">
+        <div v-show="sectionMenuOpen" id="admin-section-options" class="section-options">
           <a
-            v-for="section in adminSections"
+            v-for="section in sectionOptions"
             :key="section.id"
-            :href="'/admin?aba=' + section.id"
-            :aria-current="panelSection === section.id ? 'page' : undefined"
+            :href="section.id === 'guia' ? '/admin' : '/admin?aba=' + section.id"
             @click="openPanelSection($event, section.id)"
           >
             <component :is="section.icon" :size="17" aria-hidden="true" /> {{ section.title }}
           </a>
-        </template>
+        </div>
       </nav>
       <template v-if="catalog">
         <div class="roster-heading">
@@ -607,6 +634,15 @@ onBeforeUnmount(() => {
           </button>
         </div>
         <nav class="champion-list" aria-label="Matchups">
+          <button
+            v-if="isAdmin"
+            type="button"
+            class="guide-defaults"
+            :aria-current="showGuide && isDefault ? 'page' : undefined"
+            @click="openGuide('defaults')"
+          >
+            <SlidersHorizontal :size="17" aria-hidden="true" /> Padrões do guia
+          </button>
           <button
             v-for="champion in champions"
             :key="champion.id"
@@ -650,7 +686,11 @@ onBeforeUnmount(() => {
       <template v-else-if="managementSection">
         <component :is="managementSection.component" v-if="isAdmin" />
         <p v-else class="admin-content" role="alert">
-          {{ managementSection.title }} são restritas à administração.
+          {{
+            panelSection === 'visitas'
+              ? 'Visitas são restritas à administração.'
+              : 'Esta seção é restrita à administração.'
+          }}
         </p>
       </template>
       <LeagueAccounts
@@ -1124,3 +1164,4 @@ onBeforeUnmount(() => {
     </dialog>
   </div>
 </template>
+window.removeEventListener('pointerdown', onSectionPointerDown)
