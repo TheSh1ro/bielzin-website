@@ -27,9 +27,10 @@ import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
 import { authStorageKey } from '@/lib/supabase'
-import { readVisitCount, recordEntrance } from '@/lib/visits'
 import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import '@/assets/riven-experiment.css'
+
+defineProps<{ visitCount?: number }>()
 
 const loadRiven = () => import('@/components/RivenGuide.vue')
 const RivenGuide = defineAsyncComponent(loadRiven)
@@ -91,9 +92,7 @@ const sectionIndex = computed(() =>
 )
 const entered = ref(rivenOpen.value || Number.isFinite(window.history.state?.rivenReturnScroll))
 const leagueMounted = ref(false)
-const visitCount = ref<number>()
 const numberFormat = new Intl.NumberFormat('pt-BR')
-let visitRequestStarted = false
 let stopWatchingSession: (() => void) | undefined
 let accessCheck = 0
 let disposed = false
@@ -146,11 +145,7 @@ function checkForAdminSession() {
 }
 
 watchEffect(() => {
-  if (!entered.value || rivenOpen.value) return
-  leagueMounted.value = true
-  if (visitRequestStarted) return
-  visitRequestStarted = true
-  void readVisitCount().then((count) => (visitCount.value = count))
+  if (entered.value && !rivenOpen.value) leagueMounted.value = true
 })
 
 watchEffect(() => {
@@ -348,8 +343,6 @@ async function enter() {
   if (entered.value) return
   entering.value = motionEnabled
   if (startWithSound.value) void playAudio()
-  visitRequestStarted = true
-  void recordEntrance().then((count) => (visitCount.value = count))
   entered.value = true
   if (youtubeId) {
     await startYouTube()

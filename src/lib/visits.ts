@@ -43,7 +43,7 @@ function getVisitor() {
   })
 }
 
-export async function recordEntrance(): Promise<number | undefined> {
+export async function recordSiteVisit(): Promise<number | undefined> {
   if (!backendConfigured) return
   const visitor = await getVisitor().catch(() => undefined)
   if (!visitor) return readVisitCount()
@@ -64,6 +64,6 @@ export async function recordEntrance(): Promise<number | undefined> {
   }
 }
 
-export function readVisitCount() {
+function readVisitCount() {
   return publicRpc<number>('get_visit_count').catch(() => undefined)
 }

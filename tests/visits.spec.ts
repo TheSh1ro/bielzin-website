@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('só conta uma vez por dia de Brasília entre abas e recargas', async ({
+test('conta acessos diretos e deduplica entre páginas, abas e recargas no dia de Brasília', async ({
   browser,
   context,
   page,
@@ -19,13 +19,14 @@ test('só conta uma vez por dia de Brasília entre abas e recargas', async ({
   })
   const nextTab = await context.newPage()
   await Promise.all([page.goto('/'), nextTab.goto('/')])
-  expect(ids).toEqual([])
+  await expect.poll(() => ids.length).toBe(2)
   await Promise.all([
     page.getByRole('button', { name: 'Entrar no perfil' }).press('Enter'),
     nextTab.getByRole('button', { name: 'Entrar no perfil' }).click(),
   ])
   await expect(page.locator('.connections + .profile-visits')).toHaveText('1 visita')
   await expect(nextTab.locator('.profile-visits')).toHaveText('1 visita')
+  expect(ids).toHaveLength(2)
   expect(new Set(ids).size).toBe(1)
 
   await page.reload()
@@ -33,12 +34,15 @@ test('só conta uma vez por dia de Brasília entre abas e recargas', async ({
   await expect(page.locator('.profile-visits')).toHaveText('1 visita')
   await page.goto('/riven')
   await expect(page.getByRole('main', { name: 'Guia da Riven' })).toBeVisible()
+  await expect.poll(() => ids.length).toBe(4)
   expect(counted.size).toBe(1)
 
   day = 12
-  await page.goto('/')
-  await page.getByRole('button', { name: 'Entrar no perfil' }).click()
+  await page.reload()
+  await expect.poll(() => counted.size).toBe(2)
+  await page.getByRole('link', { name: 'Voltar ao perfil' }).click()
   await expect(page.locator('.profile-visits')).toHaveText('2 visitas')
+  expect(ids).toHaveLength(5)
   expect(new Set(ids).size).toBe(1)
 
   const independent = await browser.newContext({ baseURL: new URL(nextTab.url()).origin })
@@ -47,8 +51,8 @@ test('só conta uma vez por dia de Brasília entre abas e recargas', async ({
     return route.fulfill({ json: counted.size })
   })
   const newVisitor = await independent.newPage()
-  await newVisitor.goto('/')
-  await newVisitor.getByRole('button', { name: 'Entrar no perfil' }).click()
+  await newVisitor.goto('/riven')
+  await newVisitor.getByRole('link', { name: 'Voltar ao perfil' }).click()
   await expect(newVisitor.locator('.profile-visits')).toHaveText('3 visitas')
   await independent.close()
 })
@@ -71,7 +75,10 @@ test('envia os detalhes para um navegador que já foi contado pelo modelo anteri
     submittedId = route.request().postDataJSON().id
     return route.fulfill({ json: 1 })
   })
-  await page.goto('/')
+  await page.route('**/preparar-visitante', (route) =>
+    route.fulfill({ contentType: 'text/html', body: '' }),
+  )
+  await page.goto('/preparar-visitante')
   await page.evaluate(
     (id) =>
       new Promise<void>((resolve, reject) => {
@@ -90,6 +97,7 @@ test('envia os detalhes para um navegador que já foi contado pelo modelo anteri
       }),
     legacyId,
   )
+  await page.goto('/')
   await page.getByRole('button', { name: 'Entrar no perfil' }).click()
   await expect(page.locator('.profile-visits')).toHaveText('1 visita')
   expect(submittedId).toBe(legacyId)
