@@ -32,7 +32,7 @@ async function expectIndicatorAligned(page: Page) {
     .toBeLessThan(2)
 }
 
-test('alinha o destaque com as duas abas no topo e no menu lateral', async ({ page }) => {
+test('mantém as abas horizontais no topo e fora da tela ao rolar', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await enterGames(page)
   const games = page.getByRole('tab', { name: /Jogos/ })
@@ -45,9 +45,10 @@ test('alinha o destaque com as duas abas no topo e no menu lateral', async ({ pa
   await expectIndicatorAligned(page)
 
   await page.evaluate(() => window.scrollTo(0, 600))
-  await expect(page.getByRole('tablist')).toHaveAttribute('aria-orientation', 'vertical')
-  await expectIndicatorAligned(page)
-  await development.press('ArrowUp')
+  const tabs = page.getByRole('tablist', { name: 'Explorar perfil' })
+  await expect(tabs).not.toBeInViewport()
+  await expect(tabs).toHaveAttribute('aria-orientation', 'horizontal')
+  await development.press('ArrowLeft')
   await expect(games).toBeFocused()
   await expectIndicatorAligned(page)
 })

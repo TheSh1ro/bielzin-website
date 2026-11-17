@@ -336,7 +336,6 @@ h3 {
 .section-switcher-slot {
   grid-column: 1 / -1;
   min-width: 0;
-  min-height: 102px;
 }
 .section-switcher {
   position: relative;
@@ -347,41 +346,6 @@ h3 {
   background: var(--page);
   box-shadow: 0 12px 32px #0005;
   scroll-margin-top: 12px;
-  transform-origin: top left;
-}
-.section-switcher.is-docked {
-  --dock-width: 124px;
-  position: fixed;
-  top: 8svh;
-  right: max(16px, calc((100vw - var(--layout-max-width)) / 4 - var(--dock-width) / 2));
-  width: var(--dock-width);
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(var(--section-count, 2), minmax(0, 1fr));
-  height: 84svh;
-}
-.section-switcher.is-docked .section-switcher-indicator {
-  transform: translateY(calc(var(--section-index) * 100%));
-}
-.section-switcher.is-docked .section-tab {
-  flex-direction: column;
-  justify-content: center;
-  gap: clamp(8px, 2vh, 20px);
-  padding: 8px 12px;
-  text-align: center;
-}
-.section-switcher.is-docked .section-tab strong {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: clamp(0.9rem, 2vh, 1.125rem);
-  letter-spacing: 0.015em;
-}
-.section-switcher.is-docked .section-tab > svg {
-  width: 30px;
-  height: 30px;
-}
-.section-switcher.is-docked .section-tab small,
-.section-switcher.is-docked .section-tab-arrow {
-  display: none;
 }
 .section-switcher-indicator {
   position: absolute;
@@ -509,7 +473,6 @@ h3 {
   }
   .section-switcher-slot {
     grid-row: 2;
-    min-height: 0;
   }
   .layout > .content {
     grid-row: 3;

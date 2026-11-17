@@ -181,94 +181,7 @@ const soundAction = computed(() => {
 })
 const sectionDirection = ref('forward')
 const sectionSwitcher = ref<HTMLElement>()
-const switcherSlot = ref<HTMLElement>()
-const content = ref<HTMLElement>()
-const switcherDocked = ref(false)
-let dockAnimation: Animation | undefined
-let dockTarget = false
-let dockRevision = 0
-const dockDetails: Animation[] = []
-let scrollFrame = 0
-
-async function updateSwitcher() {
-  if (!switcherSlot.value || !sectionSwitcher.value) return
-  const shouldDock =
-    window.innerWidth >= 1440 && switcherSlot.value.getBoundingClientRect().top < -48
-  if (shouldDock === dockTarget) return
-  dockTarget = shouldDock
-  const revision = ++dockRevision
-  dockAnimation?.cancel()
-  dockDetails.splice(0).forEach((animation) => animation.cancel())
-  const element = sectionSwitcher.value
-  if (motionEnabled) {
-    // Close in place before changing layouts. Nothing travels across the content.
-    dockAnimation = element.animate(
-      shouldDock
-        ? [
-            { clipPath: 'inset(0%)', transform: 'translateY(0)', opacity: 1 },
-            { clipPath: 'inset(46% 8%)', transform: 'translateY(-24px)', opacity: 0 },
-          ]
-        : [
-            { clipPath: 'inset(0%)', transform: 'translateX(0)', opacity: 1 },
-            { clipPath: 'inset(46% 0%)', transform: 'translateX(32px)', opacity: 0 },
-          ],
-      { duration: 120, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' },
-    )
-    try {
-      await dockAnimation.finished
-    } catch {
-      return
-    }
-    if (revision !== dockRevision) return
-  }
-  switcherDocked.value = shouldDock
-  await nextTick()
-  if (revision !== dockRevision || !sectionSwitcher.value) return
-  dockAnimation?.cancel()
-  if (motionEnabled) {
-    dockAnimation = element.animate(
-      shouldDock
-        ? [
-            { clipPath: 'inset(49% 0%)', transform: 'translateX(32px)', opacity: 0 },
-            { clipPath: 'inset(38% 0%)', transform: 'translateX(0)', opacity: 1, offset: 0.32 },
-            { clipPath: 'inset(0%)', transform: 'translateX(0)', opacity: 1 },
-          ]
-        : [
-            { clipPath: 'inset(0% 44%)', transform: 'translateY(-16px)', opacity: 0 },
-            { clipPath: 'inset(0%)', transform: 'translateY(0)', opacity: 1 },
-          ],
-      { duration: 360, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
-    )
-    element
-      .querySelectorAll('.section-tab > span, .section-tab > svg:not(.section-tab-arrow)')
-      .forEach((detail, index) => {
-        dockDetails.push(
-          detail.animate(
-            [
-              { opacity: 0, transform: `translate${shouldDock ? 'Y' : 'X'}(12px)` },
-              { opacity: 1, transform: 'translate(0)' },
-            ],
-            {
-              duration: 220,
-              delay: 80 + index * 25,
-              easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-              fill: 'backwards',
-            },
-          ),
-        )
-      })
-  }
-}
-
-function scheduleSwitcher() {
-  cancelAnimationFrame(scrollFrame)
-  scrollFrame = requestAnimationFrame(() => {
-    void updateSwitcher()
-  })
-}
 onMounted(() => {
-  window.addEventListener('scroll', scheduleSwitcher, { passive: true })
-  window.addEventListener('resize', scheduleSwitcher)
   window.addEventListener('popstate', syncSection)
   if (!rivenOpen.value && entered.value) void restoreGamesPosition()
   window.addEventListener('storage', checkForAdminSession)
@@ -278,13 +191,7 @@ onBeforeUnmount(() => {
   disposed = true
   stopWatchingSession?.()
   window.removeEventListener('storage', checkForAdminSession)
-  window.removeEventListener('scroll', scheduleSwitcher)
-  window.removeEventListener('resize', scheduleSwitcher)
   window.removeEventListener('popstate', syncSection)
-  cancelAnimationFrame(scrollFrame)
-  dockAnimation?.cancel()
-  dockRevision++
-  dockDetails.forEach((animation) => animation.cancel())
 })
 const sectionTabs = ref<HTMLButtonElement[]>([])
 
@@ -297,7 +204,6 @@ function syncSection() {
   } else {
     activeSection.value = sectionFromLocation()
     if (wasRivenOpen) void restoreGamesPosition()
-    scheduleSwitcher()
   }
 }
 
@@ -337,24 +243,16 @@ async function selectSection(section: Section, scroll = false) {
 
   await nextTick()
   if (scroll) sectionTabs.value[targetIndex]?.focus({ preventScroll: true })
-  if (switcherDocked.value && content.value) {
-    window.scrollTo({
-      top: window.scrollY + content.value.getBoundingClientRect().top - 24,
-      behavior: 'instant',
-    })
-    return
-  }
   if (scroll || (sectionSwitcher.value?.getBoundingClientRect().top ?? 0) <= 12) {
     sectionSwitcher.value?.scrollIntoView({ block: 'start', behavior: 'instant' })
   }
 }
 
 function onSectionKeydown(event: KeyboardEvent) {
-  const direction = switcherDocked.value ? ['ArrowUp', 'ArrowDown'] : ['ArrowLeft', 'ArrowRight']
-  if (![...direction, 'Home', 'End'].includes(event.key)) return
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
   event.preventDefault()
   const count = sections.value.length
-  let index = (sectionIndex.value + (event.key === direction[0] ? -1 : 1) + count) % count
+  let index = (sectionIndex.value + (event.key === 'ArrowLeft' ? -1 : 1) + count) % count
   if (event.key === 'Home') index = 0
   if (event.key === 'End') index = count - 1
   selectSection(sections.value[index]!.id)
@@ -572,14 +470,14 @@ function finishEntrance() {
         :inert="rivenOpen || entering"
         :aria-hidden="rivenOpen || undefined"
       >
-        <div ref="switcherSlot" class="section-switcher-slot">
+        <div class="section-switcher-slot">
           <div
             ref="sectionSwitcher"
             class="section-switcher"
-            :class="{ 'is-docked': switcherDocked, 'has-accounts': canAccessAccounts }"
+            :class="{ 'has-accounts': canAccessAccounts }"
             role="tablist"
             aria-label="Explorar perfil"
-            :aria-orientation="switcherDocked ? 'vertical' : 'horizontal'"
+            aria-orientation="horizontal"
             :style="{ '--section-index': sectionIndex, '--section-count': sections.length }"
             @keydown="onSectionKeydown"
           >
@@ -737,7 +635,7 @@ function finishEntrance() {
           </p>
         </div>
 
-        <div ref="content" class="content" :class="`section-direction-${sectionDirection}`">
+        <div class="content" :class="`section-direction-${sectionDirection}`">
           <Transition name="section-slide">
             <section
               v-if="activeSection === 'games'"
