@@ -161,10 +161,19 @@ async function setup(page, configure, role = 'admin') {
   return state
 }
 
+async function openHiddenMatchup(page, name) {
+  await page.getByRole('button', { name: 'Todos', exact: true }).click()
+  await page.getByRole('button', { name, exact: true }).click()
+}
+
 test('mostra os atalhos de administração com a resposta antiga do guia', async ({ page }) => {
   await setup(page, undefined, 'legacy')
   const matchups = page.getByRole('navigation', { name: 'Matchups', exact: true })
-  await expect(matchups.getByRole('button', { name: 'Padrões do guia' })).toBeVisible()
+  const defaults = page.getByRole('button', { name: 'Padrões do guia' })
+  const search = page.getByRole('searchbox', { name: 'Buscar campeão' })
+  await expect(defaults).toBeVisible()
+  await expect(search).toBeVisible()
+  expect((await defaults.boundingBox()).y).toBeLessThan((await search.boundingBox()).y)
   const nav = page.getByRole('navigation', { name: 'Seções do painel' })
   const trigger = nav.getByRole('button', { name: /Trocar seção.*Matchups/ })
   const visits = nav.getByRole('link', { name: 'Visitas' })
@@ -180,6 +189,34 @@ test('mostra os atalhos de administração com a resposta antiga do guia', async
   await trigger.click()
   await page.getByRole('heading', { name: 'Padrões do guia', exact: true }).click()
   await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  await page.getByRole('button', { name: 'Atualizar dados do jogo' }).click()
+  await expect(page.getByText('Dados do jogo atualizados.', { exact: true })).toBeVisible()
+})
+
+test('sincroniza padrões e matchups com a URL e o histórico', async ({ page }) => {
+  await setup(page)
+  await expect(page).toHaveURL(/\/admin\?aba=matchups&matchup=Default$/)
+
+  await page.goto('/admin?aba=matchups')
+  await expect(page).toHaveURL(/\/admin\?aba=matchups$/)
+  await expect(page.getByRole('heading', { name: 'Matchups', exact: true })).toBeVisible()
+
+  await openHiddenMatchup(page, 'Ahri')
+  await expect(page).toHaveURL(/\/admin\?aba=matchups&matchup=Ahri$/)
+  await page.getByRole('button', { name: 'Renekton', exact: true }).click()
+  await expect(page).toHaveURL(/\/admin\?aba=matchups&matchup=Renekton$/)
+
+  await page.goBack()
+  await expect(page.getByRole('heading', { name: 'Ahri', exact: true })).toBeVisible()
+  await page.goForward()
+  await expect(page.getByRole('heading', { name: 'Renekton', exact: true })).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Renekton', exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Padrões do guia' }).click()
+  await expect(page).toHaveURL(/\/admin\?aba=matchups&matchup=Default$/)
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Padrões do guia', exact: true })).toBeVisible()
 })
 
 test('editor salva um matchup e cadastra uma conta privada pelo menu do painel', async ({
@@ -209,8 +246,8 @@ test('editor salva um matchup e cadastra uma conta privada pelo menu do painel',
   await expect(nav.getByRole('link', { name: 'Auditoria' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Padrões do guia' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: /Minhas contas/ })).toBeVisible()
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Atualizar catálogo' })).toHaveCount(0)
+  await openHiddenMatchup(page, 'Ahri')
+  await expect(page.getByRole('button', { name: 'Atualizar dados do jogo' })).toHaveCount(0)
   await page.getByRole('checkbox', { name: 'Mostrar este campeão na lista pública' }).click()
   await expect
     .poll(() => state.saves.map((entry) => entry.pathname))
@@ -232,11 +269,14 @@ test('editor salva um matchup e cadastra uma conta privada pelo menu do painel',
 
   await page.goto('/admin?aba=visitas')
   await expect(page.getByRole('alert')).toHaveText('Visitas são restritas à administração.')
+  await page.goto('/admin?aba=matchups&matchup=Default')
+  await expect(page).toHaveURL(/\/admin\?aba=matchups$/)
+  await expect(page.getByRole('heading', { name: 'Matchups', exact: true })).toBeVisible()
 })
 
 test('preserva o rascunho quando outra sessão salva o mesmo matchup', async ({ page }) => {
   const state = await setup(page)
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   state.conflict = true
   await page.getByLabel('Dica 1', { exact: true }).fill('Meu rascunho')
   await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText(
@@ -244,6 +284,17 @@ test('preserva o rascunho quando outra sessão salva o mesmo matchup', async ({ 
   )
   await expect(page.getByLabel('Dica 1', { exact: true })).toHaveValue('Meu rascunho')
   expect(state.guide.matchups.Ahri.tips).toEqual([''])
+
+  const dialog = page.waitForEvent('dialog').then((prompt) => prompt.dismiss())
+  await Promise.all([dialog, page.goBack()])
+  await expect(page).toHaveURL(/\/admin\?aba=matchups&matchup=Ahri$/)
+  await expect(page.getByLabel('Dica 1', { exact: true })).toHaveValue('Meu rascunho')
+
+  state.conflict = false
+  await page.getByRole('button', { name: 'Tentar novamente' }).click()
+  await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Alterações salvas')
+  await page.goBack()
+  await expect(page).toHaveURL(/\/admin\?aba=matchups&matchup=Default$/)
 })
 
 test('edita, salva, recarrega e restaura herança independente', async ({ page }) => {
@@ -273,7 +324,6 @@ test('edita, salva, recarrega e restaura herança independente', async ({ page }
   expect(state.saves.at(-1).data.visible).toBe(false)
   expect(state.saves.at(-1).data.runes).toBeNull()
   await page.reload()
-  await page.getByRole('button', { name: 'Renekton', exact: true }).click()
   await expect(page.getByLabel('Mostrar este campeão na lista pública')).not.toBeChecked()
   await expect(page.getByLabel('Dica 1', { exact: true })).toHaveValue('Dica atualizada')
   await expect(page.getByLabel('Early game', { exact: true })).toHaveValue('even')
@@ -300,7 +350,7 @@ test('edita, salva, recarrega e restaura herança independente', async ({ page }
 
 test('preserva formulário em erro e avisa ao sair com alterações', async ({ page }) => {
   const state = await setup(page)
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   state.fail = true
   await page.getByLabel('Dica 1', { exact: true }).fill('Não perder este texto')
   await expect(page.getByRole('status', { name: 'Salvamento' })).toHaveText('Falha de validação')
@@ -311,7 +361,7 @@ test('preserva formulário em erro e avisa ao sair com alterações', async ({ p
   state.fail = false
   await page.getByRole('button', { name: 'Tentar novamente', exact: true }).click()
   await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
-  await page.getByRole('button', { name: 'Novo campeão', exact: true }).click()
+  await openHiddenMatchup(page, 'Novo campeão')
   await expect(page.getByLabel('Early game', { exact: true }).locator('option:checked')).toHaveText(
     'A avaliar',
   )
@@ -377,7 +427,10 @@ test('filtra visibilidade, reordena itens e fecha o seletor sem alterar a build'
   page,
 }) => {
   const state = await setup(page)
-  await page.getByRole('button', { name: 'Incluídos', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Incluídos', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   await expect(page.getByRole('button', { name: 'Novo campeão', exact: true })).toHaveCount(0)
   await page.getByRole('button', { name: 'Todos', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Novo campeão', exact: true })).toBeVisible()
@@ -410,7 +463,7 @@ test('seletor de botas inclui convencionais sem botas no nome e separa aprimorad
 test('salva ao trocar de campeão sem descartar a edição pendente', async ({ page }) => {
   const state = await setup(page)
   await expect(page.getByRole('button', { name: 'Salvar alterações' })).toHaveCount(0)
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   await page.getByLabel('Dica 1', { exact: true }).fill('Salva ao navegar')
   await page.getByRole('button', { name: 'Renekton', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Renekton', exact: true })).toBeVisible()
@@ -422,7 +475,7 @@ test('serializa edições durante uma gravação e persiste o texto mais recente
   state.hold = new Promise((resolve) => {
     release = resolve
   })
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   await page.getByLabel('Dica 1', { exact: true }).fill('Primeira edição')
   await expect.poll(() => state.saves.length).toBe(1)
   await page.getByLabel('Dica 1', { exact: true }).fill('Edição mais recente')
@@ -433,13 +486,12 @@ test('serializa edições durante uma gravação e persiste o texto mais recente
   expect(state.saves).toHaveLength(2)
   expect(state.guide.matchups.Ahri.tips[0]).toBe('Edição mais recente')
   await page.reload()
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await expect(page.getByLabel('Dica 1', { exact: true })).toHaveValue('Edição mais recente')
 })
 
 test('adiciona, reordena e remove dicas com salvamento automático', async ({ page }) => {
   const state = await setup(page)
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   await page.getByLabel('Dica 1', { exact: true }).fill('Primeira dica')
   await page.getByRole('button', { name: 'Adicionar dica', exact: true }).click()
   await page.getByLabel('Dica 2', { exact: true }).fill('Segunda dica')
@@ -448,7 +500,6 @@ test('adiciona, reordena e remove dicas com salvamento automático', async ({ pa
   await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.tips).toEqual(['Segunda dica', 'Primeira dica'])
   await page.reload()
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await expect(page.getByLabel('Dica 2', { exact: true })).toHaveValue('Primeira dica')
   await page.getByRole('button', { name: 'Remover dica 1', exact: true }).click()
   await page.getByRole('button', { name: 'Remover dica 1', exact: true }).click()
@@ -492,7 +543,7 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
   await expect(page.getByLabel('Explicação da build', { exact: true })).toHaveValue(
     'Sinergia editada',
   )
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   await page.getByRole('tab', { name: /^Itens/ }).click()
   const routePicker = page.getByRole('group', { name: 'Rota indicada para a lane' })
   const routeOption = routePicker.getByRole('radio', { name: 'Rota base' })
@@ -513,7 +564,6 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
     condition: 'Antes do núcleo',
   })
   await page.reload()
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await page.getByRole('tab', { name: /^Itens/ }).click()
   await expect(routeOption).toBeChecked()
   await expect(page.getByLabel('item 1 · Quando e por quê')).toHaveValue('Antes do núcleo')
@@ -642,7 +692,7 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
         : { items: [visit], next: { before: visit.visitedAt, id: visit.id } },
     })
   })
-  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await openHiddenMatchup(page, 'Ahri')
   await expect(page.getByRole('status', { name: 'Salvamento' })).toBeEmpty()
   await page.getByLabel('Dica 1', { exact: true }).fill('Edição antes de abrir visitas')
   const nav = page.getByRole('navigation', { name: 'Seções do painel' })

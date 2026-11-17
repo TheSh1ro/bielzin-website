@@ -276,7 +276,8 @@ html:has(.admin-page) {
   scrollbar-width: thin;
   scrollbar-color: var(--admin-control-line) transparent;
 }
-.admin-page .champion-list button {
+.admin-page .champion-list button,
+.admin-page .guide-defaults {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -289,19 +290,25 @@ html:has(.admin-page) {
   margin: 2px 0;
   color: var(--admin-text);
 }
-.admin-page .champion-list button:hover {
+.admin-page .champion-list button:hover,
+.admin-page .guide-defaults:hover {
   background: var(--admin-hover);
   color: var(--admin-text);
 }
-.admin-page .champion-list button[aria-current] {
+.admin-page .champion-list button[aria-current],
+.admin-page .guide-defaults[aria-current] {
   color: var(--admin-accent);
   background: var(--admin-selected);
   border-left-color: var(--admin-accent);
 }
-.admin-page .champion-list button:focus-visible {
+.admin-page .champion-list button:focus-visible,
+.admin-page .guide-defaults:focus-visible {
   outline-offset: -3px;
 }
-.admin-page .champion-list .guide-defaults > svg {
+.admin-page .guide-defaults {
+  margin: 0 0 8px;
+}
+.admin-page .guide-defaults > svg {
   flex: none;
   margin-inline: 5px 6px;
 }
@@ -1237,9 +1244,6 @@ html:has(.admin-page) {
     padding: 6px;
     font-size: 12px;
     gap: 8px;
-  }
-  .admin-page .champion-list .guide-defaults {
-    grid-column: 1 / -1;
   }
   .admin-page .admin-toolbar {
     min-height: 60px;

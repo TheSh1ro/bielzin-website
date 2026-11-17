@@ -58,11 +58,19 @@ const panelSections = [
   { id: 'contas', title: 'Minhas contas', icon: LockKeyhole },
   ...adminSections,
 ] as const
-function sectionFromUrl(): PanelSection {
-  const tab = new URLSearchParams(window.location.search).get('aba')
+function sectionFromUrl(url: URL): PanelSection {
+  const tab = url.searchParams.get('aba')
   return tab === 'contas' ? tab : (adminSections.find(({ id }) => id === tab)?.id ?? 'guia')
 }
-const panelSection = ref(sectionFromUrl())
+function panelUrl(section: PanelSection, entry = '') {
+  const url = new URL(window.location.href)
+  url.searchParams.set('aba', section === 'guia' ? 'matchups' : section)
+  url.searchParams.delete('matchup')
+  if (section === 'guia' && entry)
+    url.searchParams.set('matchup', entry === 'defaults' ? 'Default' : entry)
+  return url
+}
+const panelSection = ref(sectionFromUrl(new URL(window.location.href)))
 const managementSection = computed(() => adminSections.find(({ id }) => id === panelSection.value))
 const showGuide = computed(() => panelSection.value === 'guia')
 const panelRole = ref<AdminGuide['role']>()
@@ -96,7 +104,7 @@ const message = ref('')
 const failed = ref(false)
 const catalogMessage = ref('')
 const search = ref('')
-const rosterFilter = ref('all')
+const rosterFilter = ref('visible')
 const mobileNavigation = ref(false)
 const activeSection = ref('routes')
 const sections = computed(() =>
@@ -279,21 +287,18 @@ watch(
   },
   { flush: 'sync' },
 )
-async function navigate(id: string) {
-  if (id === 'defaults' && !isAdmin.value) return
-  if (id === selected.value && baseline.value) {
-    mobileNavigation.value = false
-    return
-  }
+let navigationVersion = 0
+let panelHistoryIndex = window.history.state?.panelHistoryIndex ?? 0
+async function navigate(id: string, version: number) {
+  if (id === selected.value) return true
   if (dirty.value || saving.value) await save()
-  if (disposed || (dirty.value && !confirm('Não foi possível salvar. Descartar as alterações?')))
-    return
+  if (disposed || version !== navigationVersion) return false
+  if (dirty.value && !confirm('Não foi possível salvar. Descartar as alterações?')) return false
   cancelScheduledSave()
   hydrating = true
   const wasDefault = isDefault.value
   selected.value = id
   resetUndo.value = undefined
-  mobileNavigation.value = false
   if (
     wasDefault !== isDefault.value ||
     !sections.value.some((section) => section.id === activeSection.value)
@@ -302,10 +307,10 @@ async function navigate(id: string) {
   draft.value = isDefault.value
     ? { ...empty(), ...clone(guide.value!.defaults) }
     : clone(guide.value!.matchups[id] ?? empty())
-  baseline.value = JSON.stringify(payload.value)
+  baseline.value = id ? JSON.stringify(payload.value) : ''
   hydrating = false
   status('')
-  if (showGuide.value) window.scrollTo({ top: 0, behavior: 'instant' })
+  return true
 }
 function moveTip(index: number, offset: number) {
   const tips = draft.value.tips
@@ -340,30 +345,59 @@ async function selectSection(id: string, focus = false) {
     document.getElementById('tab-' + id)?.focus()
   }
 }
-function syncSection() {
-  sectionMenuOpen.value = false
-  panelSection.value = sectionFromUrl()
-  mobileNavigation.value = false
-  if (!showGuide.value && dirty.value) void save()
+function guideEntryFromUrl(url: URL) {
+  const tab = url.searchParams.get('aba')
+  if (tab === null) return isAdmin.value ? 'defaults' : ''
+  if (tab !== 'matchups') return ''
+  const matchup = url.searchParams.get('matchup')
+  if (matchup === 'Default') return isAdmin.value ? 'defaults' : ''
+  return catalog.value?.champions.find(({ id }) => id === matchup)?.id ?? ''
 }
-async function switchSection(section: PanelSection) {
+async function applyNavigation(url: URL, mode: 'push' | 'replace') {
+  const version = ++navigationVersion
+  const historyIndex = window.history.state?.panelHistoryIndex
+  const section = sectionFromUrl(url)
+  const entry = section === 'guia' ? guideEntryFromUrl(url) : ''
   sectionMenuOpen.value = false
-  if (section === panelSection.value) {
-    mobileNavigation.value = false
-    if (section !== 'guia') {
-      await nextTick()
-      mainContent.value?.focus()
+  const sectionChanged = section !== panelSection.value
+  const changed = sectionChanged || (section === 'guia' && entry !== selected.value)
+  if (section === 'guia' && !(await navigate(entry, version))) {
+    if (!disposed && version === navigationVersion && mode === 'replace') {
+      if (typeof historyIndex === 'number' && historyIndex !== panelHistoryIndex) {
+        window.history.go(panelHistoryIndex - historyIndex)
+      } else {
+        window.history.replaceState(
+          { ...window.history.state, panelHistoryIndex },
+          '',
+          panelUrl(panelSection.value, selected.value),
+        )
+      }
     }
     return
   }
-  const url = new URL(window.location.href)
-  if (section === 'guia') url.searchParams.delete('aba')
-  else url.searchParams.set('aba', section)
-  window.history.pushState(null, '', url)
-  syncSection()
+  if (disposed || version !== navigationVersion) return
+  panelSection.value = section
+  mobileNavigation.value = false
+  if (!showGuide.value && dirty.value) void save()
+  const target = panelUrl(section, entry)
+  panelHistoryIndex = historyIndex ?? 0
+  if (mode === 'push' && target.href !== window.location.href) {
+    panelHistoryIndex++
+    window.history.pushState({ panelHistoryIndex }, '', target)
+  } else if (target.href !== window.location.href || historyIndex === undefined) {
+    window.history.replaceState({ ...window.history.state, panelHistoryIndex }, '', target)
+  }
+  if (!changed) return
   window.scrollTo({ top: 0, behavior: 'instant' })
-  await nextTick()
-  mainContent.value?.focus()
+  if (mode === 'push' && sectionChanged) {
+    await nextTick()
+    if (version === navigationVersion) mainContent.value?.focus()
+  }
+}
+function syncSection() {
+  const url = new URL(window.location.href)
+  if (guide.value) void applyNavigation(url, 'replace')
+  else panelSection.value = sectionFromUrl(url)
 }
 function closeSectionMenuOutside(target: EventTarget | null) {
   if (!(target instanceof Node) || !sectionNavigation.value?.contains(target)) {
@@ -379,14 +413,16 @@ function onSectionEscape(event: KeyboardEvent) {
   sectionMenuOpen.value = false
   sectionTrigger.value?.focus()
 }
+function sectionUrl(section: PanelSection) {
+  return panelUrl(section, section === 'guia' ? selected.value : '')
+}
 function openPanelSection(event: MouseEvent, section: PanelSection) {
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
   event.preventDefault()
-  void switchSection(section)
+  void applyNavigation(sectionUrl(section), 'push')
 }
-async function openGuide(id: string) {
-  await switchSection('guia')
-  if (guide.value) await navigate(id)
+function openGuide(id: string) {
+  if (guide.value) void applyNavigation(panelUrl('guia', id), 'push')
 }
 function onTabKey(event: KeyboardEvent) {
   const ids = sections.value.map((section) => section.id)
@@ -428,7 +464,7 @@ async function load() {
     guide.value = { defaults: initial.defaults, matchups: initial.matchups }
     catalog.value = initial.catalog
     revisions = { ...initial.revisions }
-    if (isAdmin.value) await navigate('defaults')
+    await applyNavigation(new URL(window.location.href), 'replace')
     if (!disposed) void reportAccess('admin_panel')
   } catch (error) {
     guideError.value = (error as Error).message
@@ -487,7 +523,7 @@ async function refresh() {
   catalogMessage.value = ''
   try {
     catalog.value = await guideRequest<GuideCatalog>('/catalog', 'POST')
-    catalogMessage.value = catalog.value.warning ?? 'Catálogo atualizado.'
+    catalogMessage.value = catalog.value.warning ?? 'Dados do jogo atualizados.'
   } catch (error) {
     catalogMessage.value = (error as Error).message
   } finally {
@@ -590,7 +626,7 @@ onBeforeUnmount(() => {
           <a
             v-for="section in sectionOptions"
             :key="section.id"
-            :href="section.id === 'guia' ? '/admin' : '/admin?aba=' + section.id"
+            :href="sectionUrl(section.id).href"
             @click="openPanelSection($event, section.id)"
           >
             <component :is="section.icon" :size="17" aria-hidden="true" /> {{ section.title }}
@@ -601,6 +637,15 @@ onBeforeUnmount(() => {
         <div class="roster-heading">
           <span>Matchups</span><span>{{ visibleCount }} incluídos</span>
         </div>
+        <button
+          v-if="isAdmin"
+          type="button"
+          class="guide-defaults"
+          :aria-current="showGuide && isDefault ? 'page' : undefined"
+          @click="openGuide('defaults')"
+        >
+          <SlidersHorizontal :size="17" aria-hidden="true" /> Padrões do guia
+        </button>
         <label class="search-field" for="champion-search"
           ><Search :size="16" /><input
             id="champion-search"
@@ -634,15 +679,6 @@ onBeforeUnmount(() => {
           </button>
         </div>
         <nav class="champion-list" aria-label="Matchups">
-          <button
-            v-if="isAdmin"
-            type="button"
-            class="guide-defaults"
-            :aria-current="showGuide && isDefault ? 'page' : undefined"
-            @click="openGuide('defaults')"
-          >
-            <SlidersHorizontal :size="17" aria-hidden="true" /> Padrões do guia
-          </button>
           <button
             v-for="champion in champions"
             :key="champion.id"
@@ -740,12 +776,13 @@ onBeforeUnmount(() => {
             <button
               v-if="isAdmin"
               type="button"
-              class="text-button"
+              class="secondary-button"
+              title="Busca no Data Dragon da Riot Games os campeões, itens, runas e ícones do patch mais recente disponível para atualizar as opções do editor do guia. Suas builds, runas e dicas salvas são preservadas."
               :disabled="saving || refreshing"
               @click="refresh"
             >
               <RefreshCw :size="13" :class="{ spinning: refreshing }" aria-hidden="true" />{{
-                refreshing ? 'Atualizando…' : 'Atualizar catálogo'
+                refreshing ? 'Atualizando…' : 'Atualizar dados do jogo'
               }}
             </button>
           </div>
