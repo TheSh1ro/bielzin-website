@@ -348,12 +348,19 @@ header {
   }
 }
 @container (max-width: 370px) {
+  .rune-tree,
+  .shards {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .rune-tree {
     padding-left: 27px;
   }
   header {
     margin-left: -27px;
     gap: 6px;
+  }
+  .tree-heading {
+    overflow-wrap: anywhere;
   }
   .tree-emblem {
     width: 34px;
@@ -371,13 +378,16 @@ header {
   .shard-row::before {
     left: -14px;
   }
-  .rune-choice {
+  .rune-choice,
+  .shard-row .rune-choice {
     width: 27px;
-    height: 27px;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1;
+    flex-shrink: 1;
   }
   .keystone .rune-choice {
     width: min(28px, 8cqw);
-    height: min(28px, 8cqw);
   }
   .shards {
     padding-left: 27px;
