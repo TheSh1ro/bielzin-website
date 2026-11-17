@@ -113,7 +113,7 @@ const simuls = [
     </dl>
 
     <section class="chess-simuls" aria-labelledby="chess-simuls-title">
-      <h4 id="chess-simuls-title">Simultâneas no Lichess</h4>
+      <h4 id="chess-simuls-title">Partidas contra jogadores titulados</h4>
       <ul>
         <li v-for="game in simuls" :key="game.id">
           <a

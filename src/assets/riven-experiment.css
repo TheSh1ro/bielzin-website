@@ -10,7 +10,7 @@
     linear-gradient(0deg, #080808d9, transparent 80%);
 }
 .riven-banner .favorite-cover {
-  filter: grayscale(0.8) brightness(0.75);
+  filter: brightness(0.75);
 }
 .riven-banner .favorite-guide {
   color: #eee7e9;
@@ -32,7 +32,7 @@
   box-shadow: 0 12px 40px #0008;
 }
 .riven-banner:is(:hover, :focus-visible) .favorite-cover {
-  filter: grayscale(0.3) brightness(0.95);
+  filter: brightness(0.95);
 }
 .riven-page {
   --riven-green: #d7a4b3;

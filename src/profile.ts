@@ -86,7 +86,7 @@ export const profile = {
   ] satisfies Link[],
   favoriteGame: {
     name: 'League of Legends',
-    cover: '/media/riven/broken-covenant-monochrome.jpg',
+    cover: '/media/riven/broken-covenant.jpg',
     guide: 'https://www.canva.com/design/DAGO4iMzYcM/b25o5mj_BhH2WvXUZOIkoA/view',
   },
   games: [
