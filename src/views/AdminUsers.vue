@@ -205,7 +205,7 @@ onUnmounted(() => clearTimeout(searchTimer))
         </label>
         <small
           >Envie apenas à pessoa convidada. O link é de uso único.{{
-            pendingUser ? '' : ' O convite vence em 24 horas.'
+            pendingUser ? '' : ' O convite vence em 72 horas.'
           }}</small
         >
         <p v-if="copyStatus" role="status">{{ copyStatus }}</p>
