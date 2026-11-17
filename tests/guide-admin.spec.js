@@ -99,14 +99,20 @@ async function setup(page, configure, role = 'admin') {
     saves: [],
   }
   configure?.(state.guide)
-  await page.route('**/auth/v1/token?grant_type=password', (route) =>
+  const user = { id: 'test-editor', aud: 'authenticated', email: 'editor@exemplo.test' }
+  const token = [
+    Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url'),
+    Buffer.from(
+      JSON.stringify({ sub: user.id, exp: Math.floor(Date.now() / 1000) + 3600 }),
+    ).toString('base64url'),
+    'test-signature',
+  ].join('.')
+  await page.route('**/auth/v1/user', (route) => route.fulfill({ json: user }))
+  await page.route('**/api/admin-login', (route) =>
     route.fulfill({
       json: {
-        access_token: 'test-access-token',
+        access_token: token,
         refresh_token: 'test-refresh-token',
-        token_type: 'bearer',
-        expires_in: 3600,
-        user: { id: 'test-editor', aud: 'authenticated', email: 'editor@exemplo.test' },
       },
     }),
   )
@@ -118,7 +124,12 @@ async function setup(page, configure, role = 'admin') {
     if (pathname === '/guide/catalog') return route.fulfill({ json: gameCatalog })
     if (pathname === '/guide' && route.request().method() === 'GET')
       return route.fulfill({
-        json: { ...state.guide, role, catalog: gameCatalog, revisions: state.revisions },
+        json: {
+          ...state.guide,
+          role: role === 'legacy' ? undefined : role,
+          catalog: gameCatalog,
+          revisions: state.revisions,
+        },
       })
     if (route.request().method() === 'PUT') {
       const { data, revision } = route.request().postDataJSON()
@@ -143,12 +154,18 @@ async function setup(page, configure, role = 'admin') {
   await page.getByLabel('E-mail').fill('editor@exemplo.test')
   await page.getByLabel('Senha').fill('senha-teste')
   await page.getByRole('button', { name: 'Entrar', exact: true }).click()
-  const heading = role === 'admin' ? 'Padrões do guia' : 'Matchups'
+  const heading = role === 'editor' ? 'Matchups' : 'Padrões do guia'
   await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
-  if (role === 'admin')
+  if (role !== 'editor')
     await expect(page.getByRole('tablist', { name: 'Conteúdo para editar' })).toBeVisible()
   return state
 }
+
+test('mostra os atalhos de administração com a resposta antiga do guia', async ({ page }) => {
+  await setup(page, undefined, 'legacy')
+  await expect(page.getByRole('button', { name: 'Padrões do guia' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Visitas' })).toBeVisible()
+})
 
 test('editor salva um matchup e cadastra uma conta privada pelo menu do painel', async ({
   page,
@@ -172,6 +189,8 @@ test('editor salva um matchup e cadastra uma conta privada pelo menu do painel',
   const state = await setup(page, undefined, 'editor')
   const nav = page.getByRole('navigation', { name: 'Seções do painel' })
   await expect(nav.getByRole('link', { name: 'Visitas' })).toHaveCount(0)
+  await expect(nav.getByRole('link', { name: 'Usuários' })).toHaveCount(0)
+  await expect(nav.getByRole('link', { name: 'Auditoria' })).toHaveCount(0)
   await expect(nav.getByRole('button', { name: 'Padrões do guia' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: /Minhas contas/ })).toBeVisible()
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
@@ -457,14 +476,20 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
   )
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await page.getByRole('tab', { name: /^Itens/ }).click()
-  await page.getByLabel('Rota indicada para a lane').selectOption('base')
+  const routePicker = page.getByRole('group', { name: 'Rota indicada para a lane' })
+  const routeOption = routePicker.getByRole('radio', { name: 'Rota base' })
+  await expect(routePicker.getByRole('radio', { name: 'Usar padrão do guia' })).toBeChecked()
+  await expect(routeOption.locator('..').locator('img')).toHaveAttribute('src', image)
+  await routePicker.getByText('Rota base', { exact: true }).click()
+  await expect(routeOption).toBeChecked()
   await expect(page.getByLabel('Explicação para esta lane')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Adicionar componente da lane', exact: true }).click()
+  await page.getByRole('button', { name: 'Adicionar item', exact: true }).click()
   await page.getByLabel('Buscar item').fill('Carrasco')
   await page.getByRole('button', { name: 'Chamado do Carrasco', exact: true }).click()
-  await page.getByLabel('componente da lane 1 · Quando e por quê').fill('Antes do núcleo')
+  await page.getByLabel('item 1 · Quando e por quê').fill('Antes do núcleo')
   await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.build).toBeNull()
+  expect(state.guide.matchups.Ahri.lanePlan.route).toBe('base')
   expect(state.guide.matchups.Ahri.lanePlan.components[0]).toEqual({
     item: 3123,
     condition: 'Antes do núcleo',
@@ -472,10 +497,9 @@ test('edita builds compartilhadas e compras antecipadas com persistência', asyn
   await page.reload()
   await page.getByRole('button', { name: 'Ahri', exact: true }).click()
   await page.getByRole('tab', { name: /^Itens/ }).click()
-  await expect(page.getByLabel('componente da lane 1 · Quando e por quê')).toHaveValue(
-    'Antes do núcleo',
-  )
-  await page.getByRole('button', { name: 'Remover componente da lane 1', exact: true }).click()
+  await expect(routeOption).toBeChecked()
+  await expect(page.getByLabel('item 1 · Quando e por quê')).toHaveValue('Antes do núcleo')
+  await page.getByRole('button', { name: 'Remover item 1', exact: true }).click()
   await expect(page.getByRole('status', { name: 'Salvamento' })).toContainText('Alterações salvas')
   expect(state.guide.matchups.Ahri.lanePlan.components).toEqual([])
   expect(state.guide.defaults.itemization.routes[0].reason).toBe('Sinergia editada')
@@ -562,7 +586,7 @@ test('separa padrões por assunto, navega com teclado e protege builds em uso', 
   await page.getByRole('button', { name: 'Renekton', exact: true }).click()
   expect(state.guide.defaults.itemization.intro).toBe('Texto antigo preservado nos dados')
   await page.getByRole('tab', { name: /^Itens/ }).click()
-  await page.getByRole('button', { name: 'Editar builds compartilhadas' }).click()
+  await page.getByRole('button', { name: 'Padrões do guia', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Padrões do guia', exact: true })).toBeVisible()
   await expect(page.getByRole('tab', { name: 'Builds', exact: true })).toHaveAttribute(
     'aria-selected',
@@ -581,6 +605,11 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
     city: 'São Paulo',
     region: 'SP',
     userAgent: 'Mozilla/5.0 (teste)',
+    activity: [
+      { id: '1', at: '2026-11-15T19:00:00Z', kind: 'admin_login' },
+      { id: '2', at: '2026-11-15T19:00:10Z', kind: 'admin_login_failed' },
+      { id: '3', at: '2026-11-15T19:00:30Z', kind: 'admin_panel' },
+    ],
   }
   let failedOnce = false
   await page.route('**/functions/v1/guide-admin/visits*', (route) => {
@@ -607,6 +636,8 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
   await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
   await expect(page.getByRole('cell', { name: 'Mozilla/5.0 (teste)' })).toBeVisible()
   await expect(page.locator('time').first()).toContainText('16:00')
+  await page.locator('summary').filter({ hasText: 'Credenciais recusadas' }).click()
+  await expect(page.getByText('16:00:10', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Carregar mais' }).click()
   await expect(page.getByRole('alert')).toHaveText('Visitas indisponíveis no momento.')
   await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
@@ -621,4 +652,109 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
   await expect(visitsLink).toHaveAttribute('aria-current', 'page')
   await page.reload()
   await expect(page.getByRole('cell', { name: 'São Paulo, SP' })).toBeVisible()
+})
+
+test('convida, reenvia e revoga cargos pelo painel, com auditoria filtrável', async ({ page }) => {
+  await setup(page)
+  const user = {
+    id: 'new-user',
+    email: 'colaborador@exemplo.test',
+    role: 'editor',
+    confirmed: false,
+    invited: true,
+    self: false,
+  }
+  const invitations = []
+  const changes = []
+  let invited = false
+  await page.route('**/functions/v1/guide-admin/users**', (route) => {
+    const path = new URL(route.request().url()).pathname
+    if (path.endsWith('/invite')) {
+      invitations.push(route.request().postDataJSON())
+      invited = true
+      return route.fulfill({ json: { id: user.id } })
+    }
+    if (path.endsWith('/role')) {
+      changes.push(route.request().postDataJSON())
+      user.role = changes.at(-1).role
+      return route.fulfill({ json: {} })
+    }
+    return route.fulfill({ json: { items: invited ? [user] : [], next: null } })
+  })
+  let filter
+  await page.route('**/functions/v1/guide-admin/audit?*', (route) => {
+    filter = new URL(route.request().url()).searchParams.get('actor')
+    return route.fulfill({
+      json: {
+        next: null,
+        items: [
+          {
+            id: '1',
+            at: '2026-11-17T18:00:00Z',
+            actorEmail: user.email,
+            action: 'matchup_saved',
+            target: 'Ahri',
+            changes: { tips: { before: ['Dica antiga'], after: ['Dica nova'] } },
+          },
+        ],
+      },
+    })
+  })
+
+  await page.getByRole('link', { name: 'Usuários' }).click()
+  await page.getByLabel('E-mail do convite').fill(user.email)
+  await page.getByRole('button', { name: 'Enviar convite' }).click()
+  await expect(page.getByText('Convite enviado.')).toBeVisible()
+  expect(invitations[0]).toEqual({ email: user.email, role: 'editor', resend: false })
+  await page.getByRole('button', { name: 'Reenviar convite' }).click()
+  await expect(page.getByText('Convite reenviado.')).toBeVisible()
+  expect(invitations[1].resend).toBe(true)
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByLabel('Cargo de ' + user.email).selectOption('')
+  await expect(page.getByText('Cargo atualizado.')).toBeVisible()
+  expect(changes).toEqual([{ role: null }])
+  await expect(page.getByRole('button', { name: 'Reenviar convite' })).toHaveCount(0)
+
+  await page.getByRole('link', { name: 'Auditoria' }).click()
+  await page.getByLabel('E-mail ou UUID').fill(user.email)
+  await page.getByRole('button', { name: 'Filtrar' }).click()
+  await expect(
+    page.getByRole('list', { name: 'Eventos de auditoria' }).getByText('Editou matchup'),
+  ).toBeVisible()
+  await page.getByText('Ver alterações').click()
+  await expect(page.getByText('Dica antiga')).toBeVisible()
+  await expect(page.getByText('Dica nova')).toBeVisible()
+  expect(filter).toBe(user.email)
+})
+
+test('solicita e salva a senha em um convite', async ({ page }) => {
+  const user = { id: 'invite-user', aud: 'authenticated', email: 'colaborador@exemplo.test' }
+  const token = [
+    Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url'),
+    Buffer.from(
+      JSON.stringify({ sub: user.id, exp: Math.floor(Date.now() / 1000) + 3600 }),
+    ).toString('base64url'),
+    'test-signature',
+  ].join('.')
+  await page.route('**/auth/v1/verify', (route) => {
+    expect(route.request().postDataJSON()).toMatchObject({
+      token_hash: 'invite-fixture',
+      type: 'invite',
+    })
+    return route.fulfill({
+      json: { access_token: token, refresh_token: 'refresh', expires_in: 3600, user },
+    })
+  })
+  await page.route('**/auth/v1/user', (route) => {
+    expect(route.request().postDataJSON()).toMatchObject({ password: 'senha-ficticia-segura' })
+    return route.fulfill({ json: user })
+  })
+  await page.route('**/auth/v1/logout?*', (route) => route.fulfill({ status: 204 }))
+  await page.goto('/admin/convite#token_hash=invite-fixture')
+  await expect(page).toHaveURL(/\/admin\/convite$/)
+  await page.getByLabel('Nova senha').fill('senha-ficticia-segura')
+  await page.getByLabel('Confirmar senha').fill('senha-ficticia-segura')
+  await page.getByRole('button', { name: 'Salvar senha' }).click()
+  await expect(page.getByRole('status')).toContainText('Senha definida')
 })

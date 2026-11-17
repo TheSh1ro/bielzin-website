@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { guideRequest, type VisitPage } from '@/lib/guide-admin'
+import {
+  guideRequest,
+  type VisitActivity,
+  type VisitDetails,
+  type VisitPage,
+} from '@/lib/guide-admin'
 
 const visits = ref<VisitPage['items']>([])
 const next = ref<VisitPage['next']>(null)
@@ -15,6 +20,30 @@ const time = new Intl.DateTimeFormat('pt-BR', {
   timeStyle: 'short',
   timeZone: 'America/Sao_Paulo',
 })
+const eventTime = new Intl.DateTimeFormat('pt-BR', {
+  timeStyle: 'medium',
+  timeZone: 'America/Sao_Paulo',
+})
+const screens: Record<VisitActivity, string> = {
+  home: 'Home',
+  guide: 'Guia da Riven',
+  admin_login: 'Login do admin',
+  admin_login_failed: 'Credenciais recusadas',
+  admin_denied: 'Conta sem acesso ao painel',
+  admin_panel: 'Painel autorizado',
+}
+
+function visitSummary(visit: VisitDetails) {
+  const kinds = [...new Set(visit.activity?.map(({ kind }) => kind))]
+  const loginOnly =
+    kinds.includes('admin_login') &&
+    !kinds.some(
+      (kind) => kind === 'admin_login_failed' || kind === 'admin_denied' || kind === 'admin_panel',
+    )
+  return kinds
+    .map((kind) => (kind === 'admin_login' && loginOnly ? 'Só abriu o login' : screens[kind]))
+    .join(' · ')
+}
 
 async function loadPage() {
   busy.value = true
@@ -41,7 +70,7 @@ onMounted(loadPage)
       <div class="editor-identity">
         <div>
           <h1 id="visits-title">Visitas</h1>
-          <p class="muted">Histórico de acessos ao perfil.</p>
+          <p class="muted">Telas acessadas por navegador e dia.</p>
         </div>
       </div>
     </header>
@@ -57,6 +86,7 @@ onMounted(loadPage)
             <tr>
               <th scope="col">Data e hora <span>(Brasília)</span></th>
               <th scope="col">Localização <span>(aproximada)</span></th>
+              <th scope="col">Telas e acessos</th>
               <th scope="col">User-agent</th>
             </tr>
           </thead>
@@ -69,6 +99,18 @@ onMounted(loadPage)
                 </time>
               </td>
               <td>{{ [visit.city, visit.region].filter(Boolean).join(', ') || 'Indisponível' }}</td>
+              <td>
+                <details v-if="visit.activity?.length" class="visit-activity">
+                  <summary>{{ visitSummary(visit) }}</summary>
+                  <ol>
+                    <li v-for="event in visit.activity" :key="event.id">
+                      <time :datetime="event.at">{{ eventTime.format(new Date(event.at)) }}</time>
+                      {{ screens[event.kind] }}
+                    </li>
+                  </ol>
+                </details>
+                <span v-else class="muted">Sem histórico de telas</span>
+              </td>
               <td>{{ visit.userAgent || 'Indisponível' }}</td>
             </tr>
           </tbody>
@@ -142,6 +184,23 @@ time {
 td:last-child {
   color: var(--admin-muted);
 }
+.visit-activity summary {
+  cursor: pointer;
+}
+.visit-activity ol {
+  margin-top: 8px;
+  font-size: 12px;
+}
+.visit-activity li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin-top: 4px;
+}
+.visit-activity time {
+  color: var(--admin-muted);
+  font-variant-numeric: tabular-nums;
+}
 td:last-child {
   font: 12px/1.65 var(--mono);
   overflow-wrap: anywhere;
@@ -170,6 +229,7 @@ td:last-child {
 @media (max-width: 760px) {
   table {
     table-layout: fixed;
+    min-width: 34rem;
   }
   th,
   td,

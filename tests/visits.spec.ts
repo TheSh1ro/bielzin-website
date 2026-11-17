@@ -42,7 +42,7 @@ test('conta acessos diretos e deduplica entre páginas, abas e recargas no dia d
   await expect.poll(() => counted.size).toBe(2)
   await page.getByRole('link', { name: 'Voltar ao perfil' }).click()
   await expect(page.locator('.profile-visits')).toHaveText('2 visitas')
-  expect(ids).toHaveLength(5)
+  await expect.poll(() => ids.length).toBe(6)
   expect(new Set(ids).size).toBe(1)
 
   const independent = await browser.newContext({ baseURL: new URL(nextTab.url()).origin })

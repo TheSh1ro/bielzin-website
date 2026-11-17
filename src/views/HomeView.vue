@@ -31,6 +31,7 @@ import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import '@/assets/riven-experiment.css'
 
 defineProps<{ visitCount?: number }>()
+const emit = defineEmits<{ screenChange: [screen: 'home' | 'guide'] }>()
 
 const loadRiven = () => import('@/components/RivenGuide.vue')
 const RivenGuide = defineAsyncComponent(loadRiven)
@@ -193,6 +194,7 @@ const sectionTabs = ref<HTMLButtonElement[]>([])
 function syncSection() {
   const wasRivenOpen = rivenOpen.value
   rivenOpen.value = isRivenLocation()
+  if (wasRivenOpen !== rivenOpen.value) emit('screenChange', rivenOpen.value ? 'guide' : 'home')
   if (rivenOpen.value) {
     entered.value = true
     rivenMounted.value = true

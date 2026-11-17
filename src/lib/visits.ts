@@ -43,24 +43,35 @@ function getVisitor() {
   })
 }
 
-export async function recordSiteVisit(): Promise<number | undefined> {
-  if (!backendConfigured) return
+export type PublicScreen = 'home' | 'guide'
+
+export async function visitIdentity() {
   const visitor = await getVisitor().catch(() => undefined)
-  if (!visitor) return readVisitCount()
+  return { id: visitor?.id, event: crypto.randomUUID() }
+}
+
+export async function recordSiteVisit(
+  screen: PublicScreen | 'admin_login',
+): Promise<number | undefined> {
+  if (!backendConfigured) return
+  const fallback = () => (screen === 'admin_login' ? undefined : readVisitCount())
 
   try {
+    const visit = await visitIdentity()
+    if (!visit.id) return fallback()
     const response = await fetch('/api/visit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: visitor.id }),
+      body: JSON.stringify({ ...visit, screen }),
+      keepalive: true,
       signal: AbortSignal.timeout(6000),
     })
-    if (!response.ok) return readVisitCount()
+    if (!response.ok) return fallback()
     const count: unknown = await response.json()
-    if (typeof count !== 'number') return readVisitCount()
+    if (typeof count !== 'number') return fallback()
     return count
   } catch {
-    return readVisitCount()
+    return fallback()
   }
 }
 

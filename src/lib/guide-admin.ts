@@ -21,7 +21,7 @@ export type GuideContent = {
   matchups: Partial<Record<string, GuideMatchup>>
 }
 export type AdminGuide = GuideContent & {
-  role: 'admin' | 'editor'
+  role?: 'admin' | 'editor'
   catalog: GuideCatalog
   revisions: Partial<Record<string, string>>
 }
@@ -31,7 +31,15 @@ export type VisitDetails = {
   city: string | null
   region: string | null
   userAgent: string | null
+  activity?: Array<{ id: string; at: string; kind: VisitActivity }>
 }
+export type VisitActivity =
+  | 'home'
+  | 'guide'
+  | 'admin_login'
+  | 'admin_login_failed'
+  | 'admin_denied'
+  | 'admin_panel'
 export type VisitPage = {
   items: VisitDetails[]
   next: { before: string; id: string } | null

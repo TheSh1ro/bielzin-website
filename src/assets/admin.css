@@ -1,15 +1,21 @@
+html:has(.admin-page) {
+  scrollbar-gutter: stable;
+}
+
 .admin-page {
-  --admin-bg: #171816;
-  --admin-surface: #21221f;
-  --admin-raised: #292b27;
-  --admin-line: #383b34;
-  --admin-control-line: #6b7065;
-  --admin-text: #f1f2ed;
-  --admin-muted: #b4b8ae;
-  --admin-accent: #c5d6bb;
-  --admin-accent-hover: #dce8d5;
-  --admin-hover: #2e312b;
-  --admin-selected: #343d31;
+  --admin-bg: #111113;
+  --admin-shade: linear-gradient(rgb(7 7 8 / 79%), rgb(7 7 8 / 88%));
+  --admin-surface: color-mix(in srgb, var(--admin-bg) 62%, transparent);
+  --admin-panel: color-mix(in srgb, var(--admin-bg) 80%, transparent);
+  --admin-raised: #26262a;
+  --admin-line: color-mix(in srgb, var(--admin-text) 14%, transparent);
+  --admin-control-line: #71717a;
+  --admin-text: #f4f4f5;
+  --admin-muted: #b4b4bd;
+  --admin-accent: #e4e4e7;
+  --admin-accent-hover: #fafafa;
+  --admin-hover: #2c2c31;
+  --admin-selected: #36363c;
   --admin-success: #abd0a0;
   --admin-warning: #e6c58f;
   --admin-danger: #f3aaa6;
@@ -17,6 +23,8 @@
   --focus-color: var(--admin-accent);
   color-scheme: dark;
   min-height: 100svh;
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template:
     'sidebar toolbar' auto
@@ -25,6 +33,15 @@
   color: var(--admin-text);
   font-size: 14px;
   line-height: 1.5;
+}
+.admin-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    var(--admin-shade),
+    url('/media/riven/broken-covenant.jpg') 60% center / cover no-repeat;
 }
 .admin-page button,
 .admin-page a,
@@ -59,26 +76,64 @@
   color: var(--admin-muted);
 }
 .admin-page.admin-session {
+  --admin-shade: linear-gradient(rgb(7 7 8 / 45%), rgb(7 7 8 / 72%));
   grid-template: auto / minmax(0, 24rem);
   place-content: center;
   padding: 24px;
 }
-.admin-session-content,
+.admin-session-content {
+  display: grid;
+  gap: 24px;
+  padding: clamp(24px, 5vw, 36px);
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  background: var(--admin-surface);
+}
+.admin-page .admin-session-content h1 {
+  margin: 0;
+}
+.admin-session-content .login-error {
+  color: var(--admin-danger);
+}
 .admin-login,
 .admin-login label {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
-.admin-session h1 {
-  font-size: 1.125rem;
+.admin-login label {
+  gap: 8px;
 }
 .admin-login input {
   width: 100%;
-  border: 1px solid var(--admin-line);
-  border-radius: 6px;
+  min-height: 44px;
+  border: 1px solid var(--admin-control-line);
+  border-radius: 4px;
   padding: 9px 12px;
   color: var(--admin-text);
-  background: var(--admin-surface);
+  background: var(--admin-panel);
+}
+.admin-page .admin-login button {
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--admin-accent);
+  color: var(--admin-bg);
+}
+.admin-page .admin-login button:hover:not(:disabled) {
+  background: var(--admin-accent-hover);
+}
+.admin-page .admin-session-content .back-link {
+  margin: 0;
+  padding: 16px 0 0;
+  font-size: 13px;
+}
+.admin-page :is(.admin-session-content, .admin-main, .admin-sidebar, .admin-toolbar) {
+  backdrop-filter: blur(12px);
+}
+.admin-page .admin-main,
+.admin-page .admin-sidebar,
+.admin-page .admin-toolbar {
+  background: var(--admin-panel);
 }
 .admin-page .admin-sidebar {
   grid-area: sidebar;
@@ -88,21 +143,13 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--admin-line);
-  background: var(--admin-surface);
   padding: 24px 16px 16px;
   min-width: 0;
 }
 .admin-page .admin-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 12px 24px;
-  font: 600 15px/1.4 var(--display);
-}
-.admin-page .brand-mark {
-  font: 600 30px/1 var(--display);
-  letter-spacing: -0.1em;
-  color: var(--admin-text);
+  align-self: flex-start;
+  margin: 0 12px 20px;
+  font: 600 20px/1.2 var(--display);
 }
 .admin-page small {
   display: block;
@@ -160,7 +207,7 @@
   border: 1px solid var(--admin-line);
   border-radius: 5px;
   padding: 0 12px;
-  background: var(--admin-bg);
+  background: var(--admin-surface);
   color: var(--admin-muted);
 }
 .admin-page .search-field:focus-within {
@@ -261,7 +308,12 @@
 }
 .admin-page .admin-main {
   grid-area: content;
+  align-self: start;
+  width: min(1260px, calc(100% - clamp(32px, 4vw, 64px)));
   min-width: 0;
+  margin: clamp(16px, 2vw, 32px) auto;
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
 }
 .admin-page .admin-vault {
   --page: var(--admin-bg);
@@ -291,7 +343,6 @@
   position: sticky;
   top: 0;
   z-index: 7;
-  background: var(--admin-bg);
   border-bottom: 1px solid var(--admin-line);
   min-height: 64px;
   padding: 12px clamp(20px, 3vw, 48px);
@@ -320,9 +371,7 @@
 }
 
 .admin-page .admin-content {
-  max-width: 1260px;
-  padding: 36px clamp(20px, 3vw, 48px) 80px;
-  margin: auto;
+  padding: 28px clamp(20px, 3vw, 48px) 36px;
 }
 .admin-page .editor-heading {
   display: flex;
@@ -466,9 +515,6 @@
     gap: 12px;
     margin-bottom: 0;
   }
-  .admin-page .duel-panel .assessment-card {
-    padding: 14px 16px;
-  }
 }
 .admin-page .section-heading {
   display: flex;
@@ -511,20 +557,15 @@
 }
 .admin-page .assessment {
   display: grid;
+  align-content: start;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-bottom: 32px;
 }
-.admin-page .assessment-card {
-  border: 1px solid var(--admin-line);
-  background: var(--admin-surface);
-  padding: 20px;
-  border-radius: 5px;
-}
 .admin-page label {
   font-size: 13px;
 }
-.admin-page .assessment-card label {
+.admin-page .assessment label {
   display: block;
   margin-bottom: 12px;
   color: var(--admin-text);
@@ -550,7 +591,7 @@
 }
 .admin-page select option {
   color: var(--admin-text);
-  background: var(--admin-surface);
+  background: var(--admin-bg);
 }
 .admin-page textarea {
   display: block;
@@ -1003,7 +1044,7 @@
   flex-direction: column;
 }
 .admin-page .item-shop::backdrop {
-  background: #0a0b09cc;
+  background: #070708cc;
   backdrop-filter: blur(6px);
 }
 .admin-page .dialog-heading {
@@ -1200,8 +1241,12 @@
     padding: 0 5px;
   }
 
+  .admin-page .admin-main {
+    width: calc(100% - 16px);
+    margin-block: 12px;
+  }
   .admin-page .admin-content {
-    padding: 24px 16px 56px;
+    padding: 20px 12px 24px;
   }
   .admin-page .champion-portrait {
     width: 60px;
@@ -1215,9 +1260,6 @@
   }
   .admin-page .assessment {
     gap: 12px;
-  }
-  .admin-page .assessment-card {
-    padding: 12px;
   }
   .admin-page select {
     padding: 8px;
@@ -1370,14 +1412,53 @@
   gap: 12px;
   margin-top: 32px;
 }
-.admin-page .early-purchases-editor .field-help {
-  margin: 0;
+.admin-page .lane-route-field {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  font-size: 13px;
 }
-.admin-page .early-purchases-editor > .choices-editor {
-  margin-top: 8px;
+.admin-page .lane-route-field > legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-weight: 600;
 }
-.admin-page .matchup-build-panel > .text-button {
-  margin-top: 24px;
+.admin-page .lane-route-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 8px;
+}
+.admin-page .lane-route-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 9px 12px;
+  border: 1px solid var(--admin-control-line);
+  border-radius: 6px;
+  background: var(--admin-surface);
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.admin-page .lane-route-option:hover,
+.admin-page .lane-route-option:has(input:checked) {
+  border-color: var(--admin-accent);
+  background: var(--admin-hover);
+}
+.admin-page .lane-route-option:has(input:focus-visible) {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 2px;
+}
+.admin-page .lane-route-option > :nth-child(2) {
+  justify-self: center;
+}
+.admin-page .lane-route-option img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
 }
 .admin-page .itemization-editor,
 .admin-page .route-editor-fields {
@@ -1509,10 +1590,6 @@
   outline-offset: 6px;
 }
 .admin-page .source-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
   margin: -8px 0 24px;
 }
 .admin-page .source-label {
@@ -1623,7 +1700,7 @@
   background: var(--admin-surface);
 }
 .admin-page .reset-dialog::backdrop {
-  background: #0a0b09cc;
+  background: #070708cc;
 }
 .admin-page .reset-dialog h2 {
   margin-bottom: 16px;
@@ -1703,4 +1780,62 @@
   .admin-page .sequence-editor .secondary-button {
     flex-basis: 50%;
   }
+}
+
+.admin-page .management-form {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+.admin-page .management-form label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.admin-page .management-form input {
+  min-height: 44px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--admin-control-line);
+  border-radius: 4px;
+  background: var(--admin-surface);
+  color: var(--admin-text);
+}
+.admin-page .management-form button {
+  min-height: 44px;
+}
+.admin-page .management-list {
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  background: var(--admin-surface);
+}
+.admin-page .management-list li + li {
+  border-top: 1px solid var(--admin-line);
+}
+.admin-page .management-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+.admin-page .management-row > div {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-page .management-row select {
+  width: auto;
+}
+.admin-page .management-more {
+  margin-top: 16px;
+}
+.admin-page .management-error,
+.admin-page .management-status {
+  margin-bottom: 12px;
+}
+.admin-page .management-error {
+  color: var(--admin-danger);
 }

@@ -6,11 +6,15 @@ import GuideItemizationEditor from '@/components/GuideItemizationEditor.vue'
 import GuideChoicesEditor from '@/components/GuideChoicesEditor.vue'
 import LeagueAccounts from '@/components/LeagueAccounts.vue'
 import AdminVisits from './AdminVisits.vue'
+import AdminUsers from './AdminUsers.vue'
+import AdminAudit from './AdminAudit.vue'
+import { visitIdentity } from '@/lib/visits'
 import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from '@/lib/riven-guide'
 import {
   clone,
   normalized,
   guideRequest,
+  GuideRequestError,
   type AdminGuide,
   type GuideContent,
   type GuideCatalog,
@@ -29,8 +33,11 @@ import {
   ChevronDown,
   Menu,
   RotateCcw,
+  Route,
   ArrowUpRight,
   ChartNoAxesColumn,
+  UsersRound,
+  ClipboardList,
   LockKeyhole,
 } from 'lucide-vue-next'
 
@@ -39,12 +46,18 @@ const emit = defineEmits<{ logout: [] }>()
 const guide = ref<GuideContent>()
 let revisions: AdminGuide['revisions'] = {}
 const catalog = ref<GuideCatalog>()
-type PanelSection = 'guia' | 'contas' | 'visitas'
+const adminSections = [
+  { id: 'usuarios', title: 'Usuários', icon: UsersRound, component: AdminUsers },
+  { id: 'auditoria', title: 'Auditoria', icon: ClipboardList, component: AdminAudit },
+  { id: 'visitas', title: 'Visitas', icon: ChartNoAxesColumn, component: AdminVisits },
+] as const
+type PanelSection = 'guia' | 'contas' | (typeof adminSections)[number]['id']
 function sectionFromUrl(): PanelSection {
   const tab = new URLSearchParams(window.location.search).get('aba')
-  return tab === 'contas' || tab === 'visitas' ? tab : 'guia'
+  return tab === 'contas' ? tab : (adminSections.find(({ id }) => id === tab)?.id ?? 'guia')
 }
 const panelSection = ref(sectionFromUrl())
+const managementSection = computed(() => adminSections.find(({ id }) => id === panelSection.value))
 const showGuide = computed(() => panelSection.value === 'guia')
 const panelRole = ref<AdminGuide['role']>()
 const isAdmin = computed(() => panelRole.value === 'admin')
@@ -120,6 +133,25 @@ const indicatedRoute = computed({
       route,
     }
   },
+})
+const routeOptions = computed(() => {
+  const itemization = guide.value?.defaults.itemization
+  const routes = (itemization?.routes ?? []).map((route) => {
+    const [firstItem] = route.items
+    return {
+      id: route.id,
+      title: route.title,
+      cover: firstItem === undefined ? undefined : catalog.value?.items[firstItem]?.icon,
+    }
+  })
+  return [
+    {
+      id: null,
+      title: 'Usar padrão do guia',
+      cover: routes.find((route) => route.id === itemization?.defaultRoute)?.cover,
+    },
+    ...routes,
+  ]
 })
 
 type ResetGroup = 'build' | 'runes' | 'lanePlan'
@@ -293,10 +325,6 @@ async function selectSection(id: string, focus = false) {
     document.getElementById('tab-' + id)?.focus()
   }
 }
-async function openDefaults(section: string) {
-  await navigate('defaults')
-  if (isDefault.value) await selectSection(section)
-}
 function syncSection() {
   panelSection.value = sectionFromUrl()
   mobileNavigation.value = false
@@ -346,6 +374,17 @@ function onTabKey(event: KeyboardEvent) {
   event.preventDefault()
   void selectSection(ids[next]!, true)
 }
+const reportedAccess = new Set<string>()
+async function reportAccess(screen: 'admin_panel' | 'admin_denied') {
+  if (reportedAccess.has(screen)) return
+  reportedAccess.add(screen)
+  try {
+    await guideRequest('/access-event', 'POST', { ...(await visitIdentity()), screen })
+  } catch {
+    reportedAccess.delete(screen)
+  }
+}
+
 async function load() {
   if (loadingGuide.value) return
   loadingGuide.value = true
@@ -353,13 +392,18 @@ async function load() {
   try {
     const initial = await guideRequest<AdminGuide>('')
     if (disposed) return
-    panelRole.value = initial.role
+    // Legacy guide responses omit the role and are only returned to administrators.
+    panelRole.value = initial.role ?? 'admin'
     guide.value = { defaults: initial.defaults, matchups: initial.matchups }
     catalog.value = initial.catalog
     revisions = { ...initial.revisions }
     if (isAdmin.value) await navigate('defaults')
+    if (!disposed) void reportAccess('admin_panel')
   } catch (error) {
     guideError.value = (error as Error).message
+    if (!disposed && error instanceof GuideRequestError && error.status === 403) {
+      void reportAccess('admin_denied')
+    }
   } finally {
     loadingGuide.value = false
   }
@@ -473,11 +517,7 @@ onBeforeUnmount(() => {
         <strong>{{
           panelSection === 'contas'
             ? 'Minhas contas'
-            : panelSection === 'visitas'
-              ? 'Visitas'
-              : isDefault
-                ? 'Padrões'
-                : title || 'Matchups'
+            : (managementSection?.title ?? (isDefault ? 'Padrões' : title || 'Matchups'))
         }}</strong>
       </span>
       <a
@@ -499,7 +539,6 @@ onBeforeUnmount(() => {
     </header>
     <aside id="admin-navigation" class="admin-sidebar" :class="{ 'mobile-open': mobileNavigation }">
       <a class="admin-brand" href="/">
-        <span class="brand-mark" aria-hidden="true">bz</span>
         <span>Painel<small>bielzin</small></span>
       </a>
       <nav v-if="panelRole" class="admin-sections" aria-label="Seções do painel">
@@ -519,14 +558,17 @@ onBeforeUnmount(() => {
           <LockKeyhole :size="17" aria-hidden="true" />
           <span>Minhas contas<small>Logins e elos do LoL</small></span>
         </a>
-        <a
-          v-if="isAdmin"
-          href="/admin?aba=visitas"
-          :aria-current="panelSection === 'visitas' ? 'page' : undefined"
-          @click="openPanelSection($event, 'visitas')"
-        >
-          <ChartNoAxesColumn :size="17" aria-hidden="true" /> Visitas
-        </a>
+        <template v-if="isAdmin">
+          <a
+            v-for="section in adminSections"
+            :key="section.id"
+            :href="'/admin?aba=' + section.id"
+            :aria-current="panelSection === section.id ? 'page' : undefined"
+            @click="openPanelSection($event, section.id)"
+          >
+            <component :is="section.icon" :size="17" aria-hidden="true" /> {{ section.title }}
+          </a>
+        </template>
       </nav>
       <template v-if="catalog">
         <div class="roster-heading">
@@ -605,9 +647,11 @@ onBeforeUnmount(() => {
           </button>
         </div>
       </div>
-      <template v-else-if="panelSection === 'visitas'">
-        <AdminVisits v-if="isAdmin" />
-        <p v-else class="admin-content" role="alert">Visitas são restritas à administração.</p>
+      <template v-else-if="managementSection">
+        <component :is="managementSection.component" v-if="isAdmin" />
+        <p v-else class="admin-content" role="alert">
+          {{ managementSection.title }} são restritas à administração.
+        </p>
       </template>
       <LeagueAccounts
         v-else-if="panelSection === 'contas'"
@@ -741,7 +785,7 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
                 <div class="assessment">
-                  <div v-for="stage in stages" :key="stage.key" class="assessment-card">
+                  <div v-for="stage in stages" :key="stage.key">
                     <label :for="stage.key">{{ stage.label }}</label
                     ><select
                       :id="stage.key"
@@ -850,7 +894,7 @@ onBeforeUnmount(() => {
               </section>
               <section
                 v-if="!isDefault && guide.defaults.itemization && section.id === 'build'"
-                class="editor-panel matchup-build-panel"
+                class="editor-panel"
                 aria-labelledby="heading-early-purchases"
               >
                 <div class="section-heading">
@@ -858,42 +902,41 @@ onBeforeUnmount(() => {
                     <h2 id="heading-early-purchases">Build contra {{ title }}</h2>
                   </div>
                 </div>
-                <div class="itemization-editor">
-                  <label for="lane-route">Rota indicada para a lane</label>
-                  <select id="lane-route" v-model="indicatedRoute">
-                    <option :value="null">Usar padrão do guia</option>
-                    <optgroup label="Indicar uma build para esta lane">
-                      <option
-                        v-for="route in guide.defaults.itemization.routes"
-                        :key="route.id"
+                <fieldset class="lane-route-field">
+                  <legend>Rota indicada para a lane</legend>
+                  <div class="lane-route-options">
+                    <label
+                      v-for="route in routeOptions"
+                      :key="route.id === null ? 'default' : 'route-' + route.id"
+                      class="lane-route-option"
+                    >
+                      <input
+                        v-model="indicatedRoute"
+                        class="sr-only"
+                        type="radio"
+                        name="lane-route"
                         :value="route.id"
-                      >
-                        {{ route.title }}
-                      </option>
-                    </optgroup>
-                  </select>
-                </div>
+                      />
+                      <img v-if="route.cover" :src="route.cover" alt="" />
+                      <Route v-else :size="20" aria-hidden="true" />
+                      <span>{{ route.title }}</span>
+                      <Check v-if="indicatedRoute === route.id" :size="16" aria-hidden="true" />
+                    </label>
+                  </div>
+                </fieldset>
                 <div class="early-purchases-editor">
                   <h3>Compras antecipadas</h3>
                   <p class="field-help">
-                    Componentes que vale rushar nesta matchup, sem precisar fechar o item.
+                    Itens ou componentes que podem valer a pena rushar nessa matchup
                   </p>
                   <GuideChoicesEditor
                     v-model="earlyPurchases"
                     :catalog="catalog"
                     prefix="lane-component"
-                    label="componente da lane"
+                    label="item"
                     @pick="pick"
                   />
                 </div>
-                <button
-                  v-if="isAdmin"
-                  type="button"
-                  class="text-button"
-                  @click="openDefaults('routes')"
-                >
-                  Editar builds compartilhadas <ArrowUpRight :size="14" />
-                </button>
               </section>
               <section
                 v-if="section.id === 'build'"
@@ -930,15 +973,7 @@ onBeforeUnmount(() => {
                 <div v-if="!isDefault" class="source-line">
                   <span class="source-label">{{
                     draft.build ? 'Próprio de ' + title : 'Padrões do guia'
-                  }}</span
-                  ><button
-                    v-if="isAdmin && !draft.build"
-                    type="button"
-                    class="text-button"
-                    @click="openDefaults('build')"
-                  >
-                    Editar padrão <ArrowUpRight :size="14" />
-                  </button>
+                  }}</span>
                 </div>
                 <GuideBuildEditor
                   v-model="build"
@@ -979,15 +1014,7 @@ onBeforeUnmount(() => {
                 <div v-if="!isDefault" class="source-line">
                   <span class="source-label">{{
                     draft.runes ? 'Próprias de ' + title : 'Padrões do guia'
-                  }}</span
-                  ><button
-                    v-if="isAdmin && !draft.runes"
-                    type="button"
-                    class="text-button"
-                    @click="openDefaults('runes')"
-                  >
-                    Editar padrão <ArrowUpRight :size="14" />
-                  </button>
+                  }}</span>
                 </div>
                 <GuideRuneEditor v-model="runes" :catalog="catalog" :disabled="!draft.runes" />
               </section>
