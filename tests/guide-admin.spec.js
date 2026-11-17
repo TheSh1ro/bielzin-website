@@ -679,6 +679,14 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
       { id: '3', at: '2026-11-15T19:00:30Z', kind: 'admin_panel' },
     ],
   }
+  const headlessVisit = {
+    ...visit,
+    id: 'headless',
+    city: 'San Jose',
+    region: 'CA',
+    userAgent: 'Mozilla/5.0 HeadlessChrome/131.0.0.0',
+    activity: [],
+  }
   let failedOnce = false
   await page.route('**/functions/v1/guide-admin/visits*', (route) => {
     const cursor = new URL(route.request().url()).searchParams.get('before')
@@ -689,7 +697,7 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
     return route.fulfill({
       json: cursor
         ? { items: [{ ...visit, id: 'older', city: null, region: null }], next: null }
-        : { items: [visit], next: { before: visit.visitedAt, id: visit.id } },
+        : { items: [visit, headlessVisit], next: { before: visit.visitedAt, id: visit.id } },
     })
   })
   await openHiddenMatchup(page, 'Ahri')
@@ -704,6 +712,14 @@ test('abre visitas no painel, mantém o editor e permite repetir a paginação',
   await expect(sectionTrigger).toHaveAttribute('aria-expanded', 'false')
   await expect(page.getByRole('heading', { name: 'Visitas', exact: true })).toBeVisible()
   await expect(page.getByText('São Paulo, SP', { exact: true })).toBeVisible()
+  const includeHeadless = page.getByRole('checkbox', { name: 'Incluir navegações headless' })
+  const headlessLocation = page.getByText('San Jose, CA', { exact: true })
+  await expect(includeHeadless).not.toBeChecked()
+  await expect(headlessLocation).toHaveCount(0)
+  await includeHeadless.check()
+  await expect(headlessLocation).toBeVisible()
+  await includeHeadless.uncheck()
+  await expect(headlessLocation).toHaveCount(0)
   await expect(page.locator('time').first()).toContainText('16:00')
   await page.locator('summary').filter({ hasText: 'Credenciais recusadas' }).click()
   await expect(page.getByText('16:00:10', { exact: true })).toBeVisible()

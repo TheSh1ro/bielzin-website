@@ -9,6 +9,7 @@ import {
 } from '@/lib/guide-admin'
 
 const visits = ref<VisitPage['items']>([])
+const showHeadless = ref(false)
 const next = ref<VisitPage['next']>(null)
 const loaded = ref(false)
 const busy = ref(true)
@@ -52,7 +53,9 @@ function visitSummary(visit: VisitDetails) {
   }
 }
 const visitRows = computed(() =>
-  visits.value.map((visit) => ({ visit, summary: visitSummary(visit) })),
+  visits.value
+    .filter((visit) => showHeadless.value || !/\bheadless/i.test(visit.userAgent ?? ''))
+    .map((visit) => ({ visit, summary: visitSummary(visit) })),
 )
 
 async function loadPage() {
@@ -81,14 +84,19 @@ onMounted(loadPage)
         <h1 id="visits-title">Visitas</h1>
         <p class="muted">Por navegador e dia, no horário de Brasília.</p>
       </div>
+      <label class="visibility-toggle">
+        <input v-model="showHeadless" type="checkbox" />
+        <span class="switch-track" aria-hidden="true" />
+        Incluir navegações headless
+      </label>
     </header>
 
     <p v-if="error" class="management-error" role="alert">{{ error }}</p>
     <p v-if="busy && !loaded" class="management-empty muted" role="status">Carregando visitas…</p>
-    <p v-else-if="loaded && !visits.length" class="management-empty muted">
-      Nenhuma visita registrada.
+    <p v-else-if="loaded && !visitRows.length" class="management-empty muted">
+      {{ visits.length ? 'Nenhuma visita com o filtro atual.' : 'Nenhuma visita registrada.' }}
     </p>
-    <ol v-if="visits.length" class="management-list" aria-label="Histórico de visitas">
+    <ol v-if="visitRows.length" class="management-list" aria-label="Histórico de visitas">
       <li v-for="{ visit, summary } in visitRows" :key="visit.id">
         <details class="visit-entry">
           <summary class="visit-summary">
