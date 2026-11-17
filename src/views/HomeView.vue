@@ -62,8 +62,8 @@ const publicSections = [
 const accountsSection = {
   id: 'accounts',
   panel: 'contas',
-  label: 'Contas',
-  detail: 'League of Legends',
+  label: 'Minhas contas (Admin)',
+  detail: 'Logins e tracking',
   icon: LockKeyhole,
   arrow: ArrowRight,
 } as const

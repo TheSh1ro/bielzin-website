@@ -90,7 +90,7 @@ const gameCatalog = {
   ),
 }
 
-async function setup(page, configure) {
+async function setup(page, configure, role = 'admin') {
   const state = {
     guide: structuredClone(seed),
     revisions: {},
@@ -118,7 +118,7 @@ async function setup(page, configure) {
     if (pathname === '/guide/catalog') return route.fulfill({ json: gameCatalog })
     if (pathname === '/guide' && route.request().method() === 'GET')
       return route.fulfill({
-        json: { ...state.guide, catalog: gameCatalog, revisions: state.revisions },
+        json: { ...state.guide, role, catalog: gameCatalog, revisions: state.revisions },
       })
     if (route.request().method() === 'PUT') {
       const { data, revision } = route.request().postDataJSON()
@@ -143,10 +143,59 @@ async function setup(page, configure) {
   await page.getByLabel('E-mail').fill('editor@exemplo.test')
   await page.getByLabel('Senha').fill('senha-teste')
   await page.getByRole('button', { name: 'Entrar', exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Padrões do guia', exact: true })).toBeVisible()
-  await expect(page.getByRole('tablist', { name: 'Conteúdo para editar' })).toBeVisible()
+  const heading = role === 'admin' ? 'Padrões do guia' : 'Matchups'
+  await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
+  if (role === 'admin')
+    await expect(page.getByRole('tablist', { name: 'Conteúdo para editar' })).toBeVisible()
   return state
 }
+
+test('editor salva um matchup e cadastra uma conta privada pelo menu do painel', async ({
+  page,
+}) => {
+  const id = '329ff7f8-2dbd-41db-9025-567499e51acf'
+  const account = { id, riotId: 'Teste#BR1', ownership: 'owner', profile: null, lastError: null }
+  let items = []
+  await page.route('**/functions/v1/lol-vault', (route) => {
+    if (route.request().method() === 'POST') {
+      expect(route.request().postDataJSON()).toEqual({
+        riotId: account.riotId,
+        ownership: 'owner',
+        login: 'login-demo',
+        password: 'senha-demo',
+      })
+      items = [account]
+      return route.fulfill({ status: 201, json: { id } })
+    }
+    return route.fulfill({ json: { items } })
+  })
+  const state = await setup(page, undefined, 'editor')
+  const nav = page.getByRole('navigation', { name: 'Seções do painel' })
+  await expect(nav.getByRole('link', { name: 'Visitas' })).toHaveCount(0)
+  await expect(nav.getByRole('button', { name: 'Padrões do guia' })).toHaveCount(0)
+  await expect(nav.getByRole('link', { name: /Minhas contas/ })).toBeVisible()
+  await page.getByRole('button', { name: 'Ahri', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Atualizar catálogo' })).toHaveCount(0)
+  await page.getByRole('checkbox', { name: 'Mostrar este campeão na lista pública' }).click()
+  await expect
+    .poll(() => state.saves.map((entry) => entry.pathname))
+    .toEqual(['/guide/matchups/Ahri'])
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.getByRole('banner').getByRole('link', { name: 'Minhas contas' }).click()
+  await expect(page).toHaveURL(/\/admin\?aba=contas$/)
+  await expect(page.getByRole('heading', { name: 'Minhas contas' })).toBeVisible()
+  await page.getByRole('button', { name: 'Adicionar conta' }).click()
+  await page.getByLabel('Riot ID').fill(account.riotId)
+  await page.getByLabel('Login', { exact: true }).fill('login-demo')
+  await page.getByLabel('Senha', { exact: true }).fill('senha-demo')
+  await page.getByRole('button', { name: 'Salvar', exact: true }).click()
+  await expect(page.getByRole('button', { name: /Teste#BR1/ })).toBeVisible()
+  await expect(page.getByText('senha-demo')).toHaveCount(0)
+
+  await page.goto('/admin?aba=visitas')
+  await expect(page.getByRole('alert')).toHaveText('Visitas são restritas à administração.')
+})
 
 test('preserva o rascunho quando outra sessão salva o mesmo matchup', async ({ page }) => {
   const state = await setup(page)

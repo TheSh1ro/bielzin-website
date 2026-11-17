@@ -21,6 +21,7 @@ export type GuideContent = {
   matchups: Partial<Record<string, GuideMatchup>>
 }
 export type AdminGuide = GuideContent & {
+  role: 'admin' | 'editor'
   catalog: GuideCatalog
   revisions: Partial<Record<string, string>>
 }

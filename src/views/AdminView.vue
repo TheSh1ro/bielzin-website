@@ -4,6 +4,7 @@ import GuideBuildEditor from '@/components/GuideBuildEditor.vue'
 import GuideRuneEditor from '@/components/GuideRuneEditor.vue'
 import GuideItemizationEditor from '@/components/GuideItemizationEditor.vue'
 import GuideChoicesEditor from '@/components/GuideChoicesEditor.vue'
+import LeagueAccounts from '@/components/LeagueAccounts.vue'
 import AdminVisits from './AdminVisits.vue'
 import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from '@/lib/riven-guide'
 import {
@@ -30,6 +31,7 @@ import {
   RotateCcw,
   ArrowUpRight,
   ChartNoAxesColumn,
+  LockKeyhole,
 } from 'lucide-vue-next'
 
 defineProps<{ sessionMessage: string; sessionBusy: boolean }>()
@@ -37,12 +39,19 @@ const emit = defineEmits<{ logout: [] }>()
 const guide = ref<GuideContent>()
 let revisions: AdminGuide['revisions'] = {}
 const catalog = ref<GuideCatalog>()
-const isVisitsUrl = () => new URLSearchParams(window.location.search).get('aba') === 'visitas'
-const showVisits = ref(isVisitsUrl())
+type PanelSection = 'guia' | 'contas' | 'visitas'
+function sectionFromUrl(): PanelSection {
+  const tab = new URLSearchParams(window.location.search).get('aba')
+  return tab === 'contas' || tab === 'visitas' ? tab : 'guia'
+}
+const panelSection = ref(sectionFromUrl())
+const showGuide = computed(() => panelSection.value === 'guia')
+const panelRole = ref<AdminGuide['role']>()
+const isAdmin = computed(() => panelRole.value === 'admin')
 const loadingGuide = ref(false)
 const guideError = ref('')
 const mainContent = ref<HTMLElement>()
-const selected = ref('defaults')
+const selected = ref('')
 const empty = (): GuideMatchup => ({
   visible: false,
   early: null,
@@ -224,6 +233,7 @@ watch(
   { flush: 'sync' },
 )
 async function navigate(id: string) {
+  if (id === 'defaults' && !isAdmin.value) return
   if (id === selected.value && baseline.value) {
     mobileNavigation.value = false
     return
@@ -248,7 +258,7 @@ async function navigate(id: string) {
   baseline.value = JSON.stringify(payload.value)
   hydrating = false
   status('')
-  if (!showVisits.value) window.scrollTo({ top: 0, behavior: 'instant' })
+  if (showGuide.value) window.scrollTo({ top: 0, behavior: 'instant' })
 }
 function moveTip(index: number, offset: number) {
   const tips = draft.value.tips
@@ -288,36 +298,35 @@ async function openDefaults(section: string) {
   if (isDefault.value) await selectSection(section)
 }
 function syncSection() {
-  showVisits.value = isVisitsUrl()
+  panelSection.value = sectionFromUrl()
   mobileNavigation.value = false
-  if (!showVisits.value && !guide.value) void load()
+  if (!showGuide.value && dirty.value) void save()
 }
-async function switchSection(visits: boolean) {
-  if (visits === showVisits.value) {
+async function switchSection(section: PanelSection) {
+  if (section === panelSection.value) {
     mobileNavigation.value = false
-    if (visits) {
+    if (section !== 'guia') {
       await nextTick()
       mainContent.value?.focus()
     }
     return
   }
   const url = new URL(window.location.href)
-  if (visits) url.searchParams.set('aba', 'visitas')
-  else url.searchParams.delete('aba')
+  if (section === 'guia') url.searchParams.delete('aba')
+  else url.searchParams.set('aba', section)
   window.history.pushState(null, '', url)
   syncSection()
   window.scrollTo({ top: 0, behavior: 'instant' })
-  if (visits && dirty.value) void save()
   await nextTick()
   mainContent.value?.focus()
 }
-function openVisits(event: MouseEvent) {
+function openPanelSection(event: MouseEvent, section: PanelSection) {
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
   event.preventDefault()
-  void switchSection(true)
+  void switchSection(section)
 }
 async function openGuide(id: string) {
-  await switchSection(false)
+  await switchSection('guia')
   if (guide.value) await navigate(id)
 }
 function onTabKey(event: KeyboardEvent) {
@@ -344,10 +353,11 @@ async function load() {
   try {
     const initial = await guideRequest<AdminGuide>('')
     if (disposed) return
+    panelRole.value = initial.role
     guide.value = { defaults: initial.defaults, matchups: initial.matchups }
     catalog.value = initial.catalog
     revisions = { ...initial.revisions }
-    await navigate('defaults')
+    if (isAdmin.value) await navigate('defaults')
   } catch (error) {
     guideError.value = (error as Error).message
   } finally {
@@ -458,10 +468,26 @@ onBeforeUnmount(() => {
         <Menu :size="20" />
       </button>
       <span class="editor-breadcrumb">
-        {{ showVisits ? 'Painel' : 'Guia de Riven' }}
+        {{ showGuide ? 'Guia de Riven' : 'Painel' }}
         <span aria-hidden="true">/</span>
-        <strong>{{ showVisits ? 'Visitas' : isDefault ? 'Padrões' : title }}</strong>
+        <strong>{{
+          panelSection === 'contas'
+            ? 'Minhas contas'
+            : panelSection === 'visitas'
+              ? 'Visitas'
+              : isDefault
+                ? 'Padrões'
+                : title || 'Matchups'
+        }}</strong>
       </span>
+      <a
+        v-if="panelRole && panelSection !== 'contas'"
+        class="mobile-accounts"
+        href="/admin?aba=contas"
+        @click="openPanelSection($event, 'contas')"
+      >
+        Minhas contas
+      </a>
       <button
         type="button"
         class="secondary-button logout-button"
@@ -476,18 +502,28 @@ onBeforeUnmount(() => {
         <span class="brand-mark" aria-hidden="true">bz</span>
         <span>Painel<small>bielzin</small></span>
       </a>
-      <nav class="admin-sections" aria-label="Seções do painel">
+      <nav v-if="panelRole" class="admin-sections" aria-label="Seções do painel">
         <button
+          v-if="isAdmin"
           type="button"
-          :aria-current="!showVisits && isDefault ? 'page' : undefined"
+          :aria-current="showGuide && isDefault ? 'page' : undefined"
           @click="openGuide('defaults')"
         >
           <SlidersHorizontal :size="17" aria-hidden="true" /> Padrões do guia
         </button>
         <a
+          href="/admin?aba=contas"
+          :aria-current="panelSection === 'contas' ? 'page' : undefined"
+          @click="openPanelSection($event, 'contas')"
+        >
+          <LockKeyhole :size="17" aria-hidden="true" />
+          <span>Minhas contas<small>Logins e elos do LoL</small></span>
+        </a>
+        <a
+          v-if="isAdmin"
           href="/admin?aba=visitas"
-          :aria-current="showVisits ? 'page' : undefined"
-          @click="openVisits"
+          :aria-current="panelSection === 'visitas' ? 'page' : undefined"
+          @click="openPanelSection($event, 'visitas')"
         >
           <ChartNoAxesColumn :size="17" aria-hidden="true" /> Visitas
         </a>
@@ -534,7 +570,7 @@ onBeforeUnmount(() => {
             :key="champion.id"
             type="button"
             :disabled="saving"
-            :aria-current="!showVisits && selected === champion.id ? 'page' : undefined"
+            :aria-current="showGuide && selected === champion.id ? 'page' : undefined"
             @click="openGuide(champion.id)"
           >
             <img :src="champion.icon" alt="" loading="lazy" /><span>{{ champion.name }}</span
@@ -559,17 +595,31 @@ onBeforeUnmount(() => {
       <p v-if="sessionMessage" class="admin-content session-error" role="alert">
         {{ sessionMessage }}
       </p>
-      <AdminVisits v-if="showVisits" />
-      <div v-show="!showVisits" class="admin-content">
-        <div v-if="!guide" class="load-error">
-          <h1>Padrões do guia</h1>
+      <div v-if="!guide" class="admin-content">
+        <div class="load-error">
+          <h1>Painel</h1>
           <p v-if="loadingGuide" role="status" class="muted">Carregando guia…</p>
           <p v-else-if="guideError" role="alert">{{ guideError }}</p>
           <button v-if="guideError" type="button" class="secondary-button" @click="load">
             Tentar novamente
           </button>
         </div>
-        <div v-if="guide" class="editor-heading">
+      </div>
+      <template v-else-if="panelSection === 'visitas'">
+        <AdminVisits v-if="isAdmin" />
+        <p v-else class="admin-content" role="alert">Visitas são restritas à administração.</p>
+      </template>
+      <LeagueAccounts
+        v-else-if="panelSection === 'contas'"
+        class="admin-content admin-vault"
+        heading="h1"
+      />
+      <div v-show="guide && showGuide" class="admin-content">
+        <div v-if="guide && !selected" class="load-error">
+          <h1>Matchups</h1>
+          <p class="muted">Escolha um campeão no menu para editar o confronto.</p>
+        </div>
+        <div v-if="guide && selected" class="editor-heading">
           <div class="editor-identity">
             <img
               v-if="selectedChampion"
@@ -600,10 +650,11 @@ onBeforeUnmount(() => {
             ><component :is="draft.visible ? Eye : EyeOff" :size="16"
           /></label>
         </div>
-        <div v-if="guide" class="editor-meta">
+        <div v-if="guide && selected" class="editor-meta">
           <div class="catalog-tools">
             <span>Patch {{ catalog?.version ?? '…' }}</span>
             <button
+              v-if="isAdmin"
               type="button"
               class="text-button"
               :disabled="saving || refreshing"
@@ -631,7 +682,7 @@ onBeforeUnmount(() => {
           </div>
           <p v-if="catalogMessage" class="catalog-status" role="status">{{ catalogMessage }}</p>
         </div>
-        <template v-if="guide && catalog">
+        <template v-if="guide && catalog && selected">
           <div v-if="resetUndo" class="reset-feedback" role="status">
             <span>O ajuste foi removido deste matchup.</span
             ><button type="button" class="text-button" @click="undoReset">
@@ -835,7 +886,12 @@ onBeforeUnmount(() => {
                     @pick="pick"
                   />
                 </div>
-                <button type="button" class="text-button" @click="openDefaults('routes')">
+                <button
+                  v-if="isAdmin"
+                  type="button"
+                  class="text-button"
+                  @click="openDefaults('routes')"
+                >
                   Editar builds compartilhadas <ArrowUpRight :size="14" />
                 </button>
               </section>
@@ -876,7 +932,7 @@ onBeforeUnmount(() => {
                     draft.build ? 'Próprio de ' + title : 'Padrões do guia'
                   }}</span
                   ><button
-                    v-if="!draft.build"
+                    v-if="isAdmin && !draft.build"
                     type="button"
                     class="text-button"
                     @click="openDefaults('build')"
@@ -925,7 +981,7 @@ onBeforeUnmount(() => {
                     draft.runes ? 'Próprias de ' + title : 'Padrões do guia'
                   }}</span
                   ><button
-                    v-if="!draft.runes"
+                    v-if="isAdmin && !draft.runes"
                     type="button"
                     class="text-button"
                     @click="openDefaults('runes')"

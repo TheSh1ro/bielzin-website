@@ -86,7 +86,7 @@ test('abre detalhes, busca credenciais sob demanda e remove o conteúdo ao sair'
   })
 
   await openProfile(page)
-  await page.getByRole('tab', { name: /^Contas/ }).click()
+  await page.getByRole('tab', { name: /^Minhas contas/ }).click()
   const summary = page.getByRole('button', { name: /Conta Demo/ })
   await expect(summary).toHaveAttribute('aria-expanded', 'false')
   await expect(summary).toContainText('Dono')
@@ -116,7 +116,7 @@ test('abre detalhes, busca credenciais sob demanda e remove o conteúdo ao sair'
     channel.postMessage({ event: 'SIGNED_OUT', session: null })
     channel.close()
   })
-  await expect(page.getByRole('tab', { name: /^Contas/ })).toHaveCount(0)
+  await expect(page.getByRole('tab', { name: /^Minhas contas/ })).toHaveCount(0)
   await expect(page.getByText('senha-demo')).toHaveCount(0)
 })
 
@@ -145,8 +145,8 @@ test('ordena apenas pelo elo de Solo/Duo e mantém o ícone em telas estreitas',
     }),
   )
   await openProfile(page)
-  await page.getByRole('tab', { name: /^Contas/ }).click()
-  const panel = page.getByRole('tabpanel', { name: /^Contas/ })
+  await page.getByRole('tab', { name: /^Minhas contas/ }).click()
+  const panel = page.getByRole('tabpanel', { name: /^Minhas contas/ })
   await expect(panel.locator('.vault-identity strong')).toHaveText([
     'Mestre#BR1',
     'Ouro divisão maior#BR1',

@@ -6,8 +6,8 @@ Perfil pessoal feito em Vue. Use `npm install` para instalar as dependências, `
 
 Copie `.env.example` para `.env.local` e informe a URL e a chave **publicável** do projeto. Configure essas mesmas variáveis no Vercel para produção. O repositório `bielzin-tracker` contém o backend e o procedimento de implantação.
 
-- `/admin` aceita a conta cadastrada no Supabase Auth e autorizada no banco. Cada salvamento fica disponível imediatamente no guia público. Reabra o guia ou volte à aba para ler a atualização.
-- Após entrar em `/admin`, volte ao perfil para abrir **Contas**. A aba privada mostra nível e ranques com atualização diária e permite cadastrar contas, editar o Riot ID e revelar ou copiar credenciais sob demanda.
+- `/admin` aceita usuários do Supabase Auth autorizados como administradores ou editores. Editores podem editar os matchups. Padrões do guia, atualização do catálogo e visitas exigem acesso de administrador. Cada salvamento fica disponível na próxima leitura do guia público.
+- **Minhas contas** fica no painel e no perfil após o login. Cada usuário guarda seus próprios logins e senhas, revela ou copia as credenciais sob demanda e acompanha o elo de Solo/Duo.
 - A seção League of Legends atualiza o perfil, as últimas 40 partidas ranqueadas e o histórico de elo pelo Supabase. O site carrega os ícones no Data Dragon.
 - O total abaixo de **Conexões** conta um navegador uma vez por dia de Brasília enquanto o armazenamento for preservado. O registro é disparado no carregamento de qualquer página pública do app, inclusive em acessos diretos ao guia da Riven. Os detalhes das novas entradas aparecem em **Visitas** no painel. A função Vercel usa `VISIT_INGEST_TOKEN` no servidor e envia ao Supabase a estimativa de cidade e estado disponível na requisição.
 

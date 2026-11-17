@@ -6,6 +6,7 @@ import { leagueProfileUrl, rankLabel, tierNames } from '@/lib/league'
 import { vaultRequest, type Credentials, type VaultAccount } from '@/lib/lol-vault'
 import LeagueAccountForm from './LeagueAccountForm.vue'
 
+withDefaults(defineProps<{ heading?: 'h1' | 'h2' }>(), { heading: 'h2' })
 const emit = defineEmits<{ 'access-denied': [] }>()
 const tiers = Object.keys(tierNames)
 const divisions = ['IV', 'III', 'II', 'I']
@@ -51,10 +52,18 @@ let hideTimer: number | undefined
 
 function requestMessage(error: unknown) {
   if (error instanceof AdminRequestError && [401, 403].includes(error.status)) {
-    hideCredentials()
-    emit('access-denied')
+    revokeAccess()
   }
   return error instanceof Error ? error.message : 'Não foi possível concluir. Tente novamente.'
+}
+
+function revokeAccess() {
+  hideCredentials()
+  accounts.value = []
+  openId.value = undefined
+  editor.value = undefined
+  loadError.value = 'Seu acesso às contas foi encerrado. Entre novamente.'
+  emit('access-denied')
 }
 
 async function load() {
@@ -148,8 +157,13 @@ onBeforeUnmount(() => {
 <template>
   <div class="league-vault">
     <header class="section-heading vault-heading">
-      <h2>Contas</h2>
-      <button v-if="editor !== 'new'" type="button" @click="startEdit('new')">
+      <component :is="heading">Minhas contas</component>
+      <button
+        v-if="editor !== 'new' && !loading && !loadError"
+        type="button"
+        class="vault-add"
+        @click="startEdit('new')"
+      >
         <Plus :size="16" aria-hidden="true" /> Adicionar conta
       </button>
     </header>
@@ -159,7 +173,7 @@ onBeforeUnmount(() => {
       class="vault-new"
       @saved="accountSaved"
       @cancel="editor = undefined"
-      @access-denied="emit('access-denied')"
+      @access-denied="revokeAccess"
     />
 
     <p v-if="loadError" class="vault-message" role="alert">
@@ -168,7 +182,9 @@ onBeforeUnmount(() => {
     <p v-else-if="loading && !accounts.length" class="vault-message" role="status">
       Carregando contas…
     </p>
-    <p v-else-if="!accounts.length && !editor" class="vault-message">Nenhuma conta cadastrada.</p>
+    <p v-else-if="!accounts.length && !editor" class="vault-empty vault-message">
+      Adicione uma conta com o Riot ID para acompanhar o elo.
+    </p>
 
     <ul v-if="accounts.length" class="vault-list" aria-label="Contas de League of Legends">
       <li v-for="{ account, rank } in rankedAccounts" :key="account.id" class="vault-account">
@@ -258,7 +274,7 @@ onBeforeUnmount(() => {
               :account="account"
               @saved="accountSaved"
               @cancel="editor = undefined"
-              @access-denied="emit('access-denied')"
+              @access-denied="revokeAccess"
             />
             <template v-else>
               <div class="vault-actions">
@@ -310,7 +326,15 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px 24px;
+}
+.vault-heading :is(h1, h2) {
+  font-size: clamp(1.375rem, 4vw, 1.75rem);
+}
+.vault-empty {
+  padding: 16px;
+  border: 1px solid var(--vault-border);
+  background: var(--surface);
 }
 .vault-list {
   display: grid;

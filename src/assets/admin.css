@@ -263,6 +263,26 @@
   grid-area: content;
   min-width: 0;
 }
+.admin-page .admin-vault {
+  --page: var(--admin-bg);
+  --text: var(--admin-text);
+  --muted: var(--admin-muted);
+  --surface: var(--admin-surface);
+  --vault-border: var(--admin-line);
+}
+.admin-page .admin-vault .vault-heading {
+  margin-bottom: 20px;
+}
+.admin-page .admin-vault h1 {
+  font-weight: 600;
+}
+.admin-page .admin-vault .vault-identity small {
+  display: inline;
+}
+.admin-page .admin-vault button.vault-add {
+  border-color: var(--admin-control-line);
+  background: var(--admin-raised);
+}
 .admin-page .admin-main:focus {
   outline: none;
 }
@@ -281,6 +301,9 @@
 }
 .admin-page .logout-button {
   margin-left: auto;
+}
+.admin-page .mobile-accounts {
+  display: none;
 }
 .admin-page .editor-breadcrumb {
   display: flex;
@@ -1153,6 +1176,21 @@
     min-height: 60px;
     padding: 10px 16px;
     gap: 10px;
+  }
+  .admin-page .mobile-accounts {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    margin-left: auto;
+    padding: 0 8px;
+    border: 1px solid var(--admin-control-line);
+    border-radius: 5px;
+    color: var(--admin-accent);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .admin-page .mobile-accounts + .logout-button {
+    margin-left: 0;
   }
   .admin-page .editor-breadcrumb {
     font-size: 11px;
