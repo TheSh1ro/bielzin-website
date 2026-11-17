@@ -1,9 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { adminRequest } from './admin-api'
 import type { GuideBuild, GuideMatchup, GuideRunes, Itemization } from './riven-guide'
-import { apiHeaders, backendUrl, publishableKey } from './supabase'
 
-export const adminClient =
-  backendUrl && publishableKey ? createClient(backendUrl, publishableKey) : null
+export { adminClient, AdminRequestError as GuideRequestError } from './admin-api'
 
 export type RuneChoice = { id: number; name: string; icon: string }
 export type GuideCatalog = {
@@ -39,14 +37,6 @@ export type VisitPage = {
 }
 export type SavedEntry<T> = { data: T; revision: string }
 
-export class GuideRequestError extends Error {
-  constructor(
-    readonly status: number,
-    message: string,
-  ) {
-    super(message)
-  }
-}
 export function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value))
 }
@@ -56,28 +46,6 @@ export const normalized = (text: string) =>
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
 
-export async function guideRequest<T>(path: string, method = 'GET', payload?: unknown): Promise<T> {
-  const session = (await adminClient?.auth.getSession())?.data.session
-  if (!session) throw new GuideRequestError(401, 'Sua sessão expirou. Entre novamente.')
-  const headers = apiHeaders()
-  headers.set('Authorization', 'Bearer ' + session.access_token)
-  if (payload !== undefined) headers.set('Content-Type', 'application/json')
-  const response = await fetch(backendUrl + '/functions/v1/guide-admin' + path, {
-    method,
-    headers,
-    body: payload === undefined ? undefined : JSON.stringify(payload),
-    signal: AbortSignal.timeout(12000),
-  }).catch(() => {
-    throw new GuideRequestError(503, 'Não foi possível acessar o painel. Tente novamente.')
-  })
-  const data = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    throw new GuideRequestError(
-      response.status,
-      typeof data.message === 'string'
-        ? data.message
-        : 'Não foi possível concluir. Tente novamente.',
-    )
-  }
-  return data as T
+export function guideRequest<T>(path: string, method = 'GET', payload?: unknown): Promise<T> {
+  return adminRequest('/guide-admin' + path, method, payload)
 }

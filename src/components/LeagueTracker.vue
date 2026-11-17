@@ -2,17 +2,10 @@
 import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import { ArrowUpRight, ChevronDown } from 'lucide-vue-next'
 import { publicRpc } from '@/lib/supabase'
+import { leagueProfileUrl, rankLabel, tierNames, type Rank } from '@/lib/league'
 import LeagueRankChart from './LeagueRankChart.vue'
 
 const matchPageSize = 6
-type Rank = {
-  queueType: string
-  tier: string
-  division: string
-  leaguePoints: number
-  wins: number
-  losses: number
-}
 type Match = {
   id: string
   queueId: number
@@ -132,21 +125,6 @@ const champions = computed(() => {
 const history = computed(
   () => account.value?.rankHistory.filter((point) => point.queueType === queueType.value) ?? [],
 )
-const tierNames: Record<string, string> = {
-  IRON: 'Ferro',
-  BRONZE: 'Bronze',
-  SILVER: 'Prata',
-  GOLD: 'Ouro',
-  PLATINUM: 'Platina',
-  EMERALD: 'Esmeralda',
-  DIAMOND: 'Diamante',
-  MASTER: 'Mestre',
-  GRANDMASTER: 'Grão-Mestre',
-  CHALLENGER: 'Desafiante',
-}
-function rankLabel(rank: { tier: string; division: string }) {
-  return `${tierNames[rank.tier] || rank.tier}${['MASTER', 'GRANDMASTER', 'CHALLENGER'].includes(rank.tier) ? '' : ` ${rank.division}`}`
-}
 function dateLabel(value: string, time = false) {
   return new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
@@ -160,9 +138,7 @@ function duration(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 }
 const profileUrl = computed(
-  () =>
-    account.value &&
-    `https://www.leagueofgraphs.com/pt/summoner/br/${encodeURIComponent(account.value.gameName)}-${encodeURIComponent(account.value.tagLine)}`,
+  () => account.value && leagueProfileUrl(account.value.gameName, account.value.tagLine),
 )
 watch([accountIndex, queue], () => {
   visibleCount.value = matchPageSize

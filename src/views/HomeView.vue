@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Code2,
   Gamepad2,
+  LockKeyhole,
   Pause,
   Play,
   Volume2,
@@ -25,19 +26,21 @@ import YouTubeTrack from '@/components/YouTubeTrack.vue'
 import ChessProfile from '@/components/ChessProfile.vue'
 import LeagueTracker from '@/components/LeagueTracker.vue'
 import OsuProfile from '@/components/OsuProfile.vue'
+import { authStorageKey } from '@/lib/supabase'
 import { readVisitCount, recordEntrance } from '@/lib/visits'
 import rivenPoster from '@/assets/riven-pacto-quebrado.webp'
 import '@/assets/riven-experiment.css'
 
 const loadRiven = () => import('@/components/RivenGuide.vue')
 const RivenGuide = defineAsyncComponent(loadRiven)
+const LeagueAccounts = defineAsyncComponent(() => import('@/components/LeagueAccounts.vue'))
 
 function preloadRiven() {
   const poster = new Image()
   poster.src = rivenPoster
   void loadRiven().catch(() => {})
 }
-const sections = [
+const publicSections = [
   {
     id: 'games',
     panel: 'mural',
@@ -55,9 +58,22 @@ const sections = [
     arrow: ArrowRight,
   },
 ] as const
-type Section = (typeof sections)[number]['id']
+const accountsSection = {
+  id: 'accounts',
+  panel: 'contas',
+  label: 'Contas',
+  detail: 'League of Legends',
+  icon: LockKeyhole,
+  arrow: ArrowRight,
+} as const
+type Section = (typeof publicSections)[number]['id'] | 'accounts'
+const canAccessAccounts = ref(false)
+const sections = computed(() =>
+  canAccessAccounts.value ? [...publicSections, accountsSection] : publicSections,
+)
 
 function sectionFromLocation(): Section {
+  if (canAccessAccounts.value && window.history.state?.section === 'accounts') return 'accounts'
   return window.history.state?.section === 'development' ? 'development' : 'games'
 }
 
@@ -70,12 +86,64 @@ const rivenMounted = ref(rivenOpen.value)
 const rivenShortcut = ref<HTMLAnchorElement>()
 const rivenBack = ref<HTMLAnchorElement>()
 const activeSection = ref<Section>(sectionFromLocation())
-const sectionIndex = computed(() => sections.findIndex(({ id }) => id === activeSection.value))
+const sectionIndex = computed(() =>
+  sections.value.findIndex(({ id }) => id === activeSection.value),
+)
 const entered = ref(rivenOpen.value || Number.isFinite(window.history.state?.rivenReturnScroll))
 const leagueMounted = ref(false)
 const visitCount = ref<number>()
 const numberFormat = new Intl.NumberFormat('pt-BR')
 let visitRequestStarted = false
+let stopWatchingSession: (() => void) | undefined
+let accessCheck = 0
+let disposed = false
+
+function hideAccounts() {
+  canAccessAccounts.value = false
+  if (activeSection.value === 'accounts') void selectSection('games')
+}
+
+async function watchAdminSession() {
+  const { adminClient, adminRequest } = await import('@/lib/admin-api')
+  if (!adminClient || disposed) return
+  let previousUser: string | undefined
+  const { data } = adminClient.auth.onAuthStateChange((event, session) => {
+    const user = session?.user.id
+    if (user && user === previousUser && event === 'SIGNED_IN') return
+    const check = ++accessCheck
+    if (!user || previousUser !== user) hideAccounts()
+    previousUser = user
+    if (!user) return
+    // Leave the auth callback before reading the current session for the request.
+    window.setTimeout(async () => {
+      if (disposed || check !== accessCheck) return
+      try {
+        const { allowed } = await adminRequest<{ allowed: boolean }>('/lol-vault/access')
+        if (disposed || check !== accessCheck) return
+        canAccessAccounts.value = allowed === true
+        if (canAccessAccounts.value && sectionFromLocation() === 'accounts') {
+          activeSection.value = 'accounts'
+        } else if (!canAccessAccounts.value) {
+          hideAccounts()
+        }
+      } catch {
+        if (!disposed && check === accessCheck) hideAccounts()
+      }
+    }, 0)
+  })
+  stopWatchingSession = () => data.subscription.unsubscribe()
+}
+
+function checkForAdminSession() {
+  if (!authStorageKey) return
+  try {
+    if (!localStorage.getItem(authStorageKey)) return
+  } catch {
+    return
+  }
+  window.removeEventListener('storage', checkForAdminSession)
+  void watchAdminSession()
+}
 
 watchEffect(() => {
   if (!entered.value || rivenOpen.value) return
@@ -203,8 +271,13 @@ onMounted(() => {
   window.addEventListener('resize', scheduleSwitcher)
   window.addEventListener('popstate', syncSection)
   if (!rivenOpen.value && entered.value) void restoreGamesPosition()
+  window.addEventListener('storage', checkForAdminSession)
+  checkForAdminSession()
 })
 onBeforeUnmount(() => {
+  disposed = true
+  stopWatchingSession?.()
+  window.removeEventListener('storage', checkForAdminSession)
   window.removeEventListener('scroll', scheduleSwitcher)
   window.removeEventListener('resize', scheduleSwitcher)
   window.removeEventListener('popstate', syncSection)
@@ -254,7 +327,8 @@ function closeRiven() {
 }
 
 async function selectSection(section: Section, scroll = false) {
-  const targetIndex = sections.findIndex(({ id }) => id === section)
+  const targetIndex = sections.value.findIndex(({ id }) => id === section)
+  if (targetIndex < 0) return
   sectionDirection.value = targetIndex > sectionIndex.value ? 'forward' : 'backward'
   if (section !== activeSection.value) {
     window.history.replaceState({ ...window.history.state, section }, '')
@@ -279,11 +353,11 @@ function onSectionKeydown(event: KeyboardEvent) {
   const direction = switcherDocked.value ? ['ArrowUp', 'ArrowDown'] : ['ArrowLeft', 'ArrowRight']
   if (![...direction, 'Home', 'End'].includes(event.key)) return
   event.preventDefault()
-  let index =
-    (sectionIndex.value + (event.key === direction[0] ? -1 : 1) + sections.length) % sections.length
+  const count = sections.value.length
+  let index = (sectionIndex.value + (event.key === direction[0] ? -1 : 1) + count) % count
   if (event.key === 'Home') index = 0
-  if (event.key === 'End') index = sections.length - 1
-  selectSection(sections[index]!.id)
+  if (event.key === 'End') index = count - 1
+  selectSection(sections.value[index]!.id)
   sectionTabs.value[index]?.focus()
 }
 
@@ -502,11 +576,11 @@ function finishEntrance() {
           <div
             ref="sectionSwitcher"
             class="section-switcher"
-            :class="{ 'is-docked': switcherDocked }"
+            :class="{ 'is-docked': switcherDocked, 'has-accounts': canAccessAccounts }"
             role="tablist"
             aria-label="Explorar perfil"
             :aria-orientation="switcherDocked ? 'vertical' : 'horizontal'"
-            :style="{ '--section-index': sectionIndex }"
+            :style="{ '--section-index': sectionIndex, '--section-count': sections.length }"
             @keydown="onSectionKeydown"
           >
             <span class="section-switcher-indicator" aria-hidden="true"></span>
@@ -909,6 +983,16 @@ function finishEntrance() {
                   ><ArrowLeft :size="22" aria-hidden="true" /> Voltar para Jogos</span
                 >
               </button>
+            </section>
+            <section
+              v-else-if="activeSection === 'accounts' && canAccessAccounts"
+              id="contas"
+              key="accounts"
+              role="tabpanel"
+              aria-labelledby="accounts-tab"
+              tabindex="0"
+            >
+              <LeagueAccounts v-if="canAccessAccounts" @access-denied="hideAccounts" />
             </section>
           </Transition>
         </div>

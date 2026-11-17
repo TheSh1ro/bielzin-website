@@ -1,6 +1,10 @@
 export const backendUrl = import.meta.env.VITE_SUPABASE_URL?.replace(/\/$/, '')
 export const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 export const backendConfigured = !!(backendUrl && publishableKey)
+export const authStorageKey =
+  backendUrl && URL.canParse(backendUrl)
+    ? `sb-${new URL(backendUrl).hostname.split('.')[0]}-auth-token`
+    : undefined
 
 export function apiHeaders() {
   const headers = new Headers({ apikey: publishableKey ?? '' })
