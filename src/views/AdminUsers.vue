@@ -27,6 +27,7 @@ const inviteError = ref('')
 const invitation = ref<HTMLDialogElement>()
 const inviteForm = ref<HTMLFormElement>()
 const pendingUser = ref<PanelUser>()
+const emailMode = ref(false)
 const inviteUrl = ref('')
 const linkField = ref<HTMLInputElement>()
 const copyStatus = ref('')
@@ -57,6 +58,7 @@ async function load(append = false) {
 
 function openInvitation(user?: PanelUser) {
   pendingUser.value = user
+  emailMode.value = false
   email.value = user?.email ?? ''
   role.value = user?.role ?? 'editor'
   inviteError.value = ''
@@ -84,10 +86,13 @@ async function invite(delivery: 'link' | 'email' = 'link') {
   const user = pendingUser.value
   const target = email.value.trim()
   const targetRole = role.value
+  const signup = delivery === 'link' && !user
   if (
     !user &&
     targetRole === 'admin' &&
-    !window.confirm('Convidar ' + target + ' como administrador?')
+    !window.confirm(
+      signup ? 'Gerar um convite de administrador?' : 'Convidar ' + target + ' como administrador?',
+    )
   )
     return
   writing.value = true
@@ -95,12 +100,11 @@ async function invite(delivery: 'link' | 'email' = 'link') {
   inviteError.value = ''
   status.value = ''
   try {
-    const result = await guideRequest<{ inviteUrl?: string }>('/users/invite', 'POST', {
-      email: target,
-      role: targetRole,
-      resend: !!user,
-      delivery,
-    })
+    const result = await guideRequest<{ inviteUrl?: string }>(
+      signup ? '/users/signup-link' : '/users/invite',
+      'POST',
+      signup ? { role: targetRole } : { email: target, role: targetRole, resend: !!user, delivery },
+    )
     if (delivery === 'link') {
       if (!result.inviteUrl) throw new Error('O link do convite não foi retornado.')
       inviteUrl.value = result.inviteUrl
@@ -108,7 +112,7 @@ async function invite(delivery: 'link' | 'email' = 'link') {
       invitation.value?.close()
       status.value = user ? 'Convite reenviado.' : 'Convite enviado.'
     }
-    if (!user) {
+    if (!user && !signup) {
       search.value = ''
       await load()
     }
@@ -196,10 +200,14 @@ onUnmounted(() => clearTimeout(searchTimer))
       </div>
       <div v-if="inviteUrl" class="management-invite">
         <label>
-          Link para {{ email }}
+          {{ pendingUser ? 'Link para ' + email : 'Link de cadastro' }}
           <input ref="linkField" :value="inviteUrl" readonly @focus="linkField?.select()" />
         </label>
-        <small>Envie apenas à pessoa convidada. O link é de uso único.</small>
+        <small
+          >Envie apenas à pessoa convidada. O link é de uso único.{{
+            pendingUser ? '' : ' O convite vence em 24 horas.'
+          }}</small
+        >
         <p v-if="copyStatus" role="status">{{ copyStatus }}</p>
         <div class="reset-actions">
           <button type="button" class="secondary-button reset-confirm" @click="copyInviteLink">
@@ -207,8 +215,13 @@ onUnmounted(() => clearTimeout(searchTimer))
           </button>
         </div>
       </div>
-      <form v-else ref="inviteForm" class="management-invite" @submit.prevent="invite()">
-        <label
+      <form
+        v-else
+        ref="inviteForm"
+        class="management-invite"
+        @submit.prevent="invite(emailMode ? 'email' : 'link')"
+      >
+        <label v-if="emailMode || pendingUser"
           >E-mail do convite
           <input v-model="email" type="email" maxlength="254" :readonly="!!pendingUser" required
         /></label>
@@ -225,16 +238,21 @@ onUnmounted(() => clearTimeout(searchTimer))
             type="button"
             class="secondary-button"
             :disabled="writing"
-            @click="inviteForm?.reportValidity() && invite('email')"
+            @click="
+              pendingUser
+                ? inviteForm?.reportValidity() && invite('email')
+                : (emailMode = !emailMode)
+            "
           >
-            <MailPlus :size="16" aria-hidden="true" /> Enviar por e-mail
+            <MailPlus v-if="!emailMode" :size="16" aria-hidden="true" />
+            {{ emailMode ? 'Voltar ao link' : 'Enviar por e-mail' }}
           </button>
           <button
             type="submit"
             class="secondary-button reset-confirm"
             :disabled="writing || loading"
           >
-            {{ writing ? 'Preparando…' : 'Gerar link' }}
+            {{ writing ? 'Preparando…' : emailMode ? 'Enviar convite' : 'Gerar link' }}
           </button>
         </div>
       </form>

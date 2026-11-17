@@ -685,14 +685,12 @@ test('gera e copia o link, reenvia por e-mail e revoga cargos pelo painel', asyn
     self: false,
   }
   const invitations = []
-  const inviteUrl = 'https://bielzin.xyz/admin/convite#token_hash=convite-de-teste'
+  const inviteUrl = 'https://bielzin.xyz/admin/convite#signup_token=convite-de-teste'
   const changes = []
-  let invited = false
   await page.route('**/functions/v1/guide-admin/users**', (route) => {
     const path = new URL(route.request().url()).pathname
-    if (path.endsWith('/invite')) {
+    if (path.endsWith('/invite') || path.endsWith('/signup-link')) {
       invitations.push(route.request().postDataJSON())
-      invited = true
       return route.fulfill({ json: { id: user.id, inviteUrl } })
     }
     if (path.endsWith('/role')) {
@@ -700,7 +698,7 @@ test('gera e copia o link, reenvia por e-mail e revoga cargos pelo painel', asyn
       user.role = changes.at(-1).role
       return route.fulfill({ json: {} })
     }
-    return route.fulfill({ json: { items: invited ? [user] : [], next: null } })
+    return route.fulfill({ json: { items: [user], next: null } })
   })
   let filter
   await page.route('**/functions/v1/guide-admin/audit?*', (route) => {
@@ -726,15 +724,10 @@ test('gera e copia o link, reenvia por e-mail e revoga cargos pelo painel', asyn
   await sectionTrigger.click()
   await page.getByRole('link', { name: 'Usuários' }).click()
   await page.getByRole('button', { name: 'Convidar usuário' }).click()
-  await page.getByLabel('E-mail do convite').fill(user.email)
+  await expect(page.getByLabel('E-mail do convite')).toBeHidden()
   await page.getByRole('button', { name: 'Gerar link' }).click()
-  await expect(page.getByLabel('Link para ' + user.email)).toHaveValue(inviteUrl)
-  expect(invitations[0]).toEqual({
-    email: user.email,
-    role: 'editor',
-    resend: false,
-    delivery: 'link',
-  })
+  await expect(page.getByLabel('Link de cadastro')).toHaveValue(inviteUrl)
+  expect(invitations[0]).toEqual({ role: 'editor' })
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.getByRole('button', { name: 'Copiar link' }).click()
   await expect(page.getByText('Link copiado.', { exact: true })).toBeVisible()
@@ -769,6 +762,24 @@ test('gera e copia o link, reenvia por e-mail e revoga cargos pelo painel', asyn
   const end = await page.getByLabel('Até', { exact: true }).boundingBox()
   expect(start?.y).toBe(end?.y)
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360)
+})
+
+test('solicita e-mail e senha no link de cadastro', async ({ page }) => {
+  await page.route('**/functions/v1/panel-signup', (route) => {
+    expect(route.request().postDataJSON()).toEqual({
+      token: 'cadastro-fixture',
+      email: 'convidado@exemplo.test',
+      password: 'senha-ficticia-segura',
+    })
+    return route.fulfill({ status: 201, json: {} })
+  })
+  await page.goto('/admin/convite#signup_token=cadastro-fixture')
+  await expect(page).toHaveURL(/\/admin\/convite$/)
+  await page.getByLabel('E-mail', { exact: true }).fill('convidado@exemplo.test')
+  await page.getByLabel('Nova senha').fill('senha-ficticia-segura')
+  await page.getByLabel('Confirmar senha').fill('senha-ficticia-segura')
+  await page.getByRole('button', { name: 'Criar conta' }).click()
+  await expect(page.getByRole('heading', { name: 'Conta criada' })).toBeVisible()
 })
 
 test('solicita e salva a senha em um convite', async ({ page }) => {
